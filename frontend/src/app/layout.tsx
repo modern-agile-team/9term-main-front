@@ -1,20 +1,22 @@
-import type { Metadata } from "next";
-import "@/styles/globals.css";
+"use client";
 
-export const metadata: Metadata = {
-  title: "My Next.js App",
-  description: "Next.js 프로젝트 기본 설정",
-};
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { useState } from "react";
+import "@/styles/globals.css";
 
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const [queryClient] = useState(() => new QueryClient());
+
   return (
     <html lang="ko">
       <body>
-        {children} {/* ✅ 클라이언트 컴포넌트를 여기서 불러오지 않음 */}
+        <QueryClientProvider client={queryClient}>
+          {children}
+        </QueryClientProvider>
       </body>
     </html>
   );
