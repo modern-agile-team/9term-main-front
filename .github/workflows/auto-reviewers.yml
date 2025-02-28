@@ -1,0 +1,20 @@
+name: "Auto Assign Reviewers"
+on:
+  pull_request:
+    types: [opened]
+
+jobs:
+  add_reviewers:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Add Reviewers
+        uses: kentaro-m/auto-assign-action@v1
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          reviewers: |
+            ssi02014
+            rhehfl
+            eric5025
+            bluetree7878
+            yihimin
+          number-of-reviewers: 5 # 모든 리뷰어를 추가하려면 이 값을 5로 설정

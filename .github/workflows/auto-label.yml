@@ -1,0 +1,14 @@
+name: Auto Label PRs
+on:
+  pull_request:
+    types: [opened]
+
+jobs:
+  label_pr:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Apply labels based on PR title
+        uses: TimonVS/pr-labeler-action@v4
+        with:
+          configuration-path: .github/labeler.yml
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
