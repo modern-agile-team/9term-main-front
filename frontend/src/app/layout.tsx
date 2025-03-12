@@ -12,11 +12,22 @@ export default function RootLayout({
   const [queryClient] = useState(() => new QueryClient());
 
   useEffect(() => {
-    if (process.env.NODE_ENV === "development") {
-      import("@/mocks/msw")
-        .then(() => console.log("[MSW] Mocking enabled."))
-        .catch((err) => console.error("MSW 실행 실패:", err));
+    // MSW 초기화 코드 개선
+    async function enableMocking() {
+      if (process.env.NODE_ENV === "development") {
+        try {
+          // 브라우저 환경에서만 실행
+          if (typeof window !== "undefined") {
+            await import("@/mocks/msw");
+            console.log("[MSW] Mocking enabled.");
+          }
+        } catch (err) {
+          console.error("[MSW] Failed to initialize:", err);
+        }
+      }
     }
+
+    enableMocking();
   }, []);
 
   return (
