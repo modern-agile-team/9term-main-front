@@ -1,13 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import Navbar from "@/components/Navbar";
-import Banner from "@/components/Banner";
-import BoardHeader from "@/components/BoardHeader";
-import PostList from "@/components/PostList";
-import Sidebar from "@/components/Sidebar";
-import CreatePostButton from "@/components/CreatePostButton";
-import { Post } from "@/types/Post";
+import Navbar from "@/components/layout/Navbar";
+import Banner from "@/components/layout/Banner";
+import BoardHeader from "@/components/features/posts/BoardHeader";
+import PostList from "@/components/features/posts/PostList";
+import Sidebar from "@/components/layout/Sidebar";
+import CreatePostButton from "@/components/features/posts/CreatePostButton";
+import { Post } from "@/types/models/post.types";
 
 export default function HomePage() {
   const [activeTab, setActiveTab] = useState("전체");

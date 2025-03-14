@@ -1,6 +1,6 @@
 import { http } from "msw";
-import { posts } from "./data/posts";
-import { Post } from "@/types/models/post.types";
+import { posts } from "@/mocks/data/posts";
+import { Post } from "@/types/Post";
 
 export const handlers = [
   // 로그인 API Mock
