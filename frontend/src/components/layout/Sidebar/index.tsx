@@ -1,6 +1,6 @@
-import KeywordAnalysis from "./KeywordAnalysis";
-import ActivityStats from "./ActivityStats";
-import MemberInvite from "./MemberInvite";
+import KeywordAnalysis from "@/components/features/analytics/KeywordAnalysis";
+import ActivityStats from "@/components/features/analytics/ActivityStats";
+import MemberInvite from "@/components/features/members/MemberInvite";
 
 export default function Sidebar() {
   return (
