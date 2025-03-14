@@ -3,6 +3,7 @@ import {
   Group,
   CreateGroupRequest,
   UpdateGroupRequest,
+  Post,
 } from "@/types/models/group.types";
 
 const BASE_URL = "/api/groups";
@@ -41,7 +42,7 @@ export const groupService = {
   },
 
   // 동아리 게시글 목록 조회
-  getGroupPosts: async (groupId: number): Promise<any[]> => {
+  getGroupPosts: async (groupId: number): Promise<Post[]> => {
     const response = await apiClient.get(`${BASE_URL}/${groupId}/posts`);
     return response.data;
   },

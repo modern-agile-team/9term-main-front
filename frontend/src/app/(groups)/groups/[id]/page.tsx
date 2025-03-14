@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Group } from "@/types/models/group.types";
+import { Group, Post } from "@/types/models/group.types";
 import { groupService } from "@/services/group.service";
 import Navbar from "@/components/layout/Navbar";
 
@@ -13,7 +13,7 @@ interface GroupDetailPageProps {
 
 export default function GroupDetailPage({ params }: GroupDetailPageProps) {
   const [group, setGroup] = useState<Group | null>(null);
-  const [posts, setPosts] = useState<any[]>([]);
+  const [posts, setPosts] = useState<Post[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {

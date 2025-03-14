@@ -1,56 +1,57 @@
 import axios from "axios";
 
-// API 요청 디버깅을 위한 인터셉터 추가
-const api = axios.create({
-  baseURL: "/api", // 로컬 개발 환경에서는 MSW가 이 경로를 가로챔
-  headers: { "Content-Type": "application/json" },
+// API 클라이언트 기본 설정
+export const apiClient = axios.create({
+  baseURL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000",
+  headers: {
+    "Content-Type": "application/json",
+  },
 });
 
-// 요청 인터셉터 추가
-api.interceptors.request.use(
+// 요청 인터셉터 - 토큰 추가
+apiClient.interceptors.request.use(
   (config) => {
-    console.log("API 요청:", config.method?.toUpperCase(), config.url);
+    const token = localStorage.getItem("token");
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
     return config;
   },
   (error) => {
-    console.error("API 요청 오류:", error);
     return Promise.reject(error);
   }
 );
 
-// 응답 인터셉터 추가
-api.interceptors.response.use(
+// 응답 인터셉터 - 에러 처리
+apiClient.interceptors.response.use(
   (response) => {
-    console.log("API 응답:", response.status, response.config.url);
     return response;
   },
   (error) => {
-    console.error(
-      "API 응답 오류:",
-      error.response?.status,
-      error.config?.url,
-      error.message
-    );
+    // 401 에러 처리 (인증 실패)
+    if (error.response && error.response.status === 401) {
+      localStorage.removeItem("token");
+      // 로그인 페이지로 리다이렉트
+      window.location.href = "/login";
+    }
     return Promise.reject(error);
   }
 );
 
 // 로그인 API 호출
 export const login = async (username: string, password: string) => {
-  const response = await api.post("/login", { username, password });
+  const response = await apiClient.post("/login", { username, password });
   return response.data;
 };
 
 // 유저 정보 가져오기
 export const getUser = async () => {
-  const response = await api.get("/user");
+  const response = await apiClient.get("/user");
   return response.data;
 };
 
 // 게시물 리스트 가져오기
 export const getPosts = async () => {
-  const response = await api.get("/posts");
+  const response = await apiClient.get("/posts");
   return response.data;
 };
-
-export default api;
