@@ -1,57 +1,88 @@
-import axios from "axios";
-
 // API 클라이언트 기본 설정
-export const apiClient = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000",
-  headers: {
-    "Content-Type": "application/json",
-  },
-});
+const baseURL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+const defaultHeaders = {
+  "Content-Type": "application/json",
+};
 
-// 요청 인터셉터 - 토큰 추가
-apiClient.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
+// 토큰 가져오기
+const getToken = () => localStorage.getItem("token");
 
-// 응답 인터셉터 - 에러 처리
-apiClient.interceptors.response.use(
-  (response) => {
-    return response;
-  },
-  (error) => {
-    // 401 에러 처리 (인증 실패)
-    if (error.response && error.response.status === 401) {
-      localStorage.removeItem("token");
-      // 로그인 페이지로 리다이렉트
-      window.location.href = "/login";
+// API 요청 래퍼 함수
+export const apiClient = {
+  async request(endpoint: string, options: RequestInit = {}) {
+    const url = `${baseURL}${endpoint}`;
+
+    try {
+      // 토큰이 있다면 헤더에 추가
+      const token = getToken();
+      const headers = {
+        ...defaultHeaders,
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        ...options.headers,
+      };
+
+      const response = await fetch(url, {
+        ...options,
+        headers,
+      });
+
+      // 401 에러 처리 (인증 실패)
+      if (response.status === 401) {
+        localStorage.removeItem("token");
+        window.location.href = "/login";
+        throw new Error("Unauthorized");
+      }
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      return await response.json();
+    } catch (error) {
+      if (error instanceof Error && error.message === "Unauthorized") {
+        throw error;
+      }
+      console.error("API 요청 실패:", error);
+      throw error;
     }
-    return Promise.reject(error);
-  }
-);
+  },
+
+  get(endpoint: string) {
+    return this.request(endpoint);
+  },
+
+  post(endpoint: string, data: unknown) {
+    return this.request(endpoint, {
+      method: "POST",
+      body: JSON.stringify(data),
+    });
+  },
+
+  put(endpoint: string, data: unknown) {
+    return this.request(endpoint, {
+      method: "PUT",
+      body: JSON.stringify(data),
+    });
+  },
+
+  delete(endpoint: string) {
+    return this.request(endpoint, {
+      method: "DELETE",
+    });
+  },
+};
 
 // 로그인 API 호출
 export const login = async (username: string, password: string) => {
-  const response = await apiClient.post("/login", { username, password });
-  return response.data;
+  return apiClient.post("/login", { username, password });
 };
 
 // 유저 정보 가져오기
 export const getUser = async () => {
-  const response = await apiClient.get("/user");
-  return response.data;
+  return apiClient.get("/user");
 };
 
 // 게시물 리스트 가져오기
 export const getPosts = async () => {
-  const response = await apiClient.get("/posts");
-  return response.data;
+  return apiClient.get("/posts");
 };

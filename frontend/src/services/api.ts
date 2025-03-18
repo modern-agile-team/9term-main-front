@@ -1,56 +1,90 @@
-import axios from "axios";
+// API 요청 디버깅을 위한 유틸리티 함수
+const logRequest = (method: string, url: string) => {
+  console.log("API 요청:", method.toUpperCase(), url);
+};
 
-// API 요청 디버깅을 위한 인터셉터 추가
-const api = axios.create({
-  baseURL: "/api", // 로컬 개발 환경에서는 MSW가 이 경로를 가로챔
-  headers: { "Content-Type": "application/json" },
-});
+const logResponse = (status: number, url: string) => {
+  console.log("API 응답:", status, url);
+};
 
-// 요청 인터셉터 추가
-api.interceptors.request.use(
-  (config) => {
-    console.log("API 요청:", config.method?.toUpperCase(), config.url);
-    return config;
+const logError = (error: Error | unknown, url?: string) => {
+  console.error("API 오류:", error, url);
+};
+
+// 기본 API 설정
+const baseURL = "/api"; // 로컬 개발 환경에서는 MSW가 이 경로를 가로챔
+const defaultHeaders = {
+  "Content-Type": "application/json",
+};
+
+// API 요청 래퍼 함수
+const api = {
+  async request(endpoint: string, options: RequestInit = {}) {
+    const url = `${baseURL}${endpoint}`;
+    const method = options.method || "GET";
+
+    try {
+      logRequest(method, url);
+
+      const response = await fetch(url, {
+        ...options,
+        headers: {
+          ...defaultHeaders,
+          ...options.headers,
+        },
+      });
+
+      logResponse(response.status, url);
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      return await response.json();
+    } catch (error) {
+      logError(error, url);
+      throw error;
+    }
   },
-  (error) => {
-    console.error("API 요청 오류:", error);
-    return Promise.reject(error);
-  }
-);
 
-// 응답 인터셉터 추가
-api.interceptors.response.use(
-  (response) => {
-    console.log("API 응답:", response.status, response.config.url);
-    return response;
+  get(endpoint: string) {
+    return this.request(endpoint);
   },
-  (error) => {
-    console.error(
-      "API 응답 오류:",
-      error.response?.status,
-      error.config?.url,
-      error.message
-    );
-    return Promise.reject(error);
-  }
-);
+
+  post(endpoint: string, data: unknown) {
+    return this.request(endpoint, {
+      method: "POST",
+      body: JSON.stringify(data),
+    });
+  },
+
+  put(endpoint: string, data: unknown) {
+    return this.request(endpoint, {
+      method: "PUT",
+      body: JSON.stringify(data),
+    });
+  },
+
+  delete(endpoint: string) {
+    return this.request(endpoint, {
+      method: "DELETE",
+    });
+  },
+};
 
 // 로그인 API 호출
 export const login = async (username: string, password: string) => {
-  const response = await api.post("/login", { username, password });
-  return response.data;
+  return api.post("/login", { username, password });
 };
 
 // 유저 정보 가져오기
 export const getUser = async () => {
-  const response = await api.get("/user");
-  return response.data;
+  return api.get("/user");
 };
 
 // 게시물 리스트 가져오기
 export const getPosts = async () => {
-  const response = await api.get("/posts");
-  return response.data;
+  return api.get("/posts");
 };
 
 export default api;
