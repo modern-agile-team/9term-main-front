@@ -22,14 +22,34 @@ jobs:
           cache: "yarn"
           cache-dependency-path: frontend/yarn.lock
 
+      - name: Show environment info
+        run: |
+          echo "Current directory: $(pwd)"
+          echo "Directory contents:"
+          ls -la
+          echo "Node version: $(node -v)"
+          echo "Yarn version: $(yarn -v)"
+
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
+        run: |
+          echo "Installing dependencies..."
+          yarn install --frozen-lockfile
+          echo "Dependencies installed successfully"
+          echo "node_modules contents:"
+          ls -la node_modules/.bin/
 
       - name: Type check
-        run: yarn tsc
+        run: |
+          echo "Running type check..."
+          yarn tsc --version
+          yarn tsc
 
       - name: Lint check
-        run: yarn lint
+        run: |
+          echo "Running lint check..."
+          yarn lint
 
       - name: Build check
-        run: yarn build
+        run: |
+          echo "Running build check..."
+          yarn build
