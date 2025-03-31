@@ -1,39 +1,39 @@
-'use client';
+'use client'
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
+import { useState } from 'react'
+import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 
 export default function LoginPage() {
-  const router = useRouter();
+  const router = useRouter()
   const [formData, setFormData] = useState({
     email: '',
     password: '',
-  });
-  const [error, setError] = useState('');
+  })
+  const [error, setError] = useState('')
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
+    const { name, value } = e.target
+    setFormData((prev) => ({
       ...prev,
       [name]: value,
-    }));
-  };
+    }))
+  }
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setError('');
+    e.preventDefault()
+    setError('')
 
     try {
       // TODO: 실제 로그인 API 연동
-      console.log('로그인 시도:', formData);
-      
+      console.info('로그인 시도:', formData)
+
       // 임시로 성공 처리
-      router.push('/');
-    } catch (err) {
-      setError('로그인에 실패했습니다. 다시 시도해주세요.');
+      router.push('/')
+    } catch (_err) {
+      setError('로그인에 실패했습니다. 다시 시도해주세요.')
     }
-  };
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
@@ -101,5 +101,5 @@ export default function LoginPage() {
         </form>
       </div>
     </div>
-  );
-} 
+  )
+}

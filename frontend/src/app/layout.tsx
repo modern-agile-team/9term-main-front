@@ -1,36 +1,36 @@
-"use client";
+'use client'
 
-import { useState, useEffect } from "react";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import Navigation from "@/components/Navigation";
-import Banner from "@/components/layout/Banner";
-import "@/styles/globals.css";
+import { useState, useEffect } from 'react'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import Navigation from '@/components/Navigation'
+import Banner from '@/components/layout/Banner'
+import '@/styles/globals.css'
 
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode;
+  children: React.ReactNode
 }) {
-  const [queryClient] = useState(() => new QueryClient());
+  const [queryClient] = useState(() => new QueryClient())
 
   useEffect(() => {
     // MSW 초기화 코드 개선
     async function enableMocking() {
-      if (process.env.NODE_ENV === "development") {
+      if (process.env.NODE_ENV === 'development') {
         try {
           // 브라우저 환경에서만 실행
-          if (typeof window !== "undefined") {
-            await import("@/mocks/msw");
-            console.log("[MSW] Mocking enabled.");
+          if (typeof window !== 'undefined') {
+            await import('@/mocks/msw')
+            console.info('[MSW] Mocking enabled.')
           }
         } catch (err) {
-          console.error("[MSW] Failed to initialize:", err);
+          console.error('[MSW] Failed to initialize:', err)
         }
       }
     }
 
-    enableMocking();
-  }, []);
+    enableMocking()
+  }, [])
 
   return (
     <html lang="ko">
@@ -43,9 +43,7 @@ export default function RootLayout({
           </header>
 
           {/* 메인 콘텐츠 영역 */}
-          <main className="max-w-7xl mx-auto px-4 py-6">
-            {children}
-          </main>
+          <main className="max-w-7xl mx-auto px-4 py-6">{children}</main>
 
           {/* 푸터 영역 (필요한 경우 추가) */}
           {/* <footer className="bg-white border-t mt-auto">
@@ -56,5 +54,5 @@ export default function RootLayout({
         </QueryClientProvider>
       </body>
     </html>
-  );
+  )
 }

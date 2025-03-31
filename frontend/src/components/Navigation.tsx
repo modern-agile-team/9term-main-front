@@ -1,17 +1,17 @@
-'use client';
+'use client'
 
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { useState, useRef, useEffect } from 'react';
-import NotificationList from './NotificationList';
-import type { Notification } from '@/types/Notification';
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
+import { useState, useRef, useEffect } from 'react'
+import NotificationList from './NotificationList'
+import type { Notification } from '@/types/Notification'
 
 export default function Navigation() {
-  const pathname = usePathname();
-  const [showNotifications, setShowNotifications] = useState(false);
-  const notificationRef = useRef<HTMLDivElement>(null);
+  const pathname = usePathname()
+  const [showNotifications, setShowNotifications] = useState(false)
+  const notificationRef = useRef<HTMLDivElement>(null)
 
-  const isActive = (path: string) => pathname === path;
+  const isActive = (path: string) => pathname === path
 
   // 알림 목록 외부 클릭 시 닫기
   useEffect(() => {
@@ -20,15 +20,15 @@ export default function Navigation() {
         notificationRef.current &&
         !notificationRef.current.contains(event.target as Node)
       ) {
-        setShowNotifications(false);
+        setShowNotifications(false)
       }
     }
 
-    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('mousedown', handleClickOutside)
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [])
 
   // 임시 알림 데이터
   const notifications: Notification[] = [
@@ -46,17 +46,17 @@ export default function Navigation() {
       time: '1시간 전',
       isRead: false,
     },
-  ];
+  ]
 
   const handleMarkAllAsRead = () => {
-    console.log('모든 알림을 읽음 표시했습니다.');
+    console.info('모든 알림을 읽음 표시했습니다.')
     // TODO: 알림 상태 업데이트 로직 구현
-  };
+  }
 
   const handleViewAllNotifications = () => {
-    console.log('모든 알림 보기 페이지로 이동합니다.');
+    console.info('모든 알림 보기 페이지로 이동합니다.')
     // TODO: 알림 페이지 이동 로직 구현
-  };
+  }
 
   return (
     <header className="bg-white shadow-sm">
@@ -65,8 +65,13 @@ export default function Navigation() {
         <div className="max-w-7xl mx-auto px-4 py-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
-              <Link href="/" className="text-2xl font-bold text-blue-600">모동구</Link>
-              <Link href="/" className="flex items-center space-x-2 text-gray-600 hover:text-gray-900">
+              <Link href="/" className="text-2xl font-bold text-blue-600">
+                모동구
+              </Link>
+              <Link
+                href="/"
+                className="flex items-center space-x-2 text-gray-600 hover:text-gray-900"
+              >
                 <span className="text-lg">🏠</span>
                 <span>내 모임</span>
               </Link>
@@ -79,7 +84,7 @@ export default function Navigation() {
                 >
                   <span className="text-lg">🔔</span>
                   <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
-                    {notifications.filter(n => !n.isRead).length}
+                    {notifications.filter((n) => !n.isRead).length}
                   </span>
                 </button>
 
@@ -117,8 +122,8 @@ export default function Navigation() {
             <Link
               href="/"
               className={`inline-flex items-center px-1 border-b-2 font-medium ${
-                isActive('/') 
-                  ? 'border-blue-500 text-blue-600' 
+                isActive('/')
+                  ? 'border-blue-500 text-blue-600'
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
               }`}
             >
@@ -158,5 +163,5 @@ export default function Navigation() {
         </div>
       </div>
     </header>
-  );
-} 
+  )
+}
