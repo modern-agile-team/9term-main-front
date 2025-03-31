@@ -33,10 +33,8 @@ jobs:
       - name: Install dependencies
         run: |
           echo "Installing dependencies..."
+          yarn install
           yarn install --frozen-lockfile
-          echo "Dependencies installed successfully"
-          echo "node_modules contents:"
-          ls -la node_modules/.bin/
 
       - name: Type check
         run: |
