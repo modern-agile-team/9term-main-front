@@ -1,4 +1,4 @@
-import { Providers } from '@/lib/providers'
+import Providers from '@/lib/providers'
 import Navbar from '@/components/layout/Navbar'
 import Banner from '@/components/common/Banner'
 import '@/styles/globals.css'
