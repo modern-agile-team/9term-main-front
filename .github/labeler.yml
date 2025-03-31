@@ -18,3 +18,6 @@ bug:
 refactor:
   - "src/utils/**" # 유틸 함수 변경
   - "src/store/**" # Zustand, Redux 등 상태 관리 관련 변경
+
+mvp:
+  - ".github/ISSUE_TEMPLATE/mvp-task.yml" # MVP 기능 작업 이슈
