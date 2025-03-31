@@ -1,4 +1,4 @@
-/** @type {import('next').NextConfig} */
+// next.config.js
 const nextConfig = {
   reactStrictMode: true,
   webpack: (config) => {
@@ -7,6 +7,10 @@ const nextConfig = {
       fs: false,
     }
     return config
+  },
+  eslint: {
+    dirs: ['src'],
+    ignoreDuringBuilds: false,
   },
 }
 
