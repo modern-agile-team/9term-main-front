@@ -30,7 +30,8 @@ export default function LoginPage() {
 
       // 임시로 성공 처리
       router.push('/')
-    } catch (_err) {
+    } catch (error) {
+      console.error('로그인 실패:', error)
       setError('로그인에 실패했습니다. 다시 시도해주세요.')
     }
   }
