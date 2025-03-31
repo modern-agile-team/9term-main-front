@@ -1,15 +1,15 @@
-"use client";
+'use client'
 
-import { useState } from "react";
-import BoardHeader from "@/components/features/posts/BoardHeader";
-import PostList from "@/components/features/posts/PostList";
-import Sidebar from "@/components/Sidebar";
-import CreatePostButton from "@/components/features/posts/CreatePostButton";
-import type { Post } from "@/types/Post";
+import { useState } from 'react'
+import BoardHeader from '@/components/features/posts/BoardHeader'
+import PostList from '@/components/features/posts/PostList'
+import Sidebar from '@/components/layout/Sidebar'
+import CreatePostButton from '@/components/features/posts/CreatePostButton'
+import type { Post } from '@/types/Post'
 
 export default function HomePage() {
-  const [activeTab, setActiveTab] = useState("전체");
-  const [posts] = useState<Post[]>([]);
+  const [activeTab, setActiveTab] = useState('전체')
+  const [posts] = useState<Post[]>([])
 
   return (
     <>
@@ -43,5 +43,5 @@ export default function HomePage() {
         </div>
       </div>
     </>
-  );
+  )
 }
