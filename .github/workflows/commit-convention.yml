@@ -1,0 +1,25 @@
+name: Commit Convention Check
+
+on: [pull_request]
+
+jobs:
+  commit-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18"
+          cache: "yarn"
+
+      - name: Install commitlint
+        run: |
+          yarn add -D @commitlint/config-conventional @commitlint/cli
+          echo "module.exports = {extends: ['@commitlint/config-conventional']}" > commitlint.config.js
+
+      - name: Check commit messages
+        run: yarn commitlint --from ${{ github.event.pull_request.base.sha }} --to ${{ github.event.pull_request.head.sha }} --verbose
