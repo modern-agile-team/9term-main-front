@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useState, useRef, useEffect } from 'react'
-import NotificationList from './NotificationList'
+import NotificationList from '@/components/features/notification/NotificationList'
 import type { Notification } from '@/types/Notification'
 
 export default function Navigation() {
