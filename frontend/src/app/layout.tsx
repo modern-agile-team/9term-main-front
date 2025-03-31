@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from 'react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import Navigation from '@/components/Navigation'
-import Banner from '@/components/layout/Banner'
+import Navigation from '@/components/layout/Navigation'
+import Banner from '@/components/common/Banner'
 import '@/styles/globals.css'
 
 export default function RootLayout({
