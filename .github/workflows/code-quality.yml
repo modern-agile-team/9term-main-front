@@ -41,8 +41,7 @@ jobs:
       - name: Type check
         run: |
           echo "Running type check..."
-          yarn tsc --version
-          yarn tsc
+          yarn type-check
 
       - name: Lint check
         run: |
