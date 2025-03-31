@@ -5,7 +5,10 @@ const defaultHeaders = {
 };
 
 // 토큰 가져오기
-const getToken = () => localStorage.getItem("token");
+const getToken = () => {
+  if (typeof window === 'undefined') return null;
+  return localStorage.getItem("token");
+};
 
 // API 요청 래퍼 함수
 export const apiClient = {
@@ -28,8 +31,10 @@ export const apiClient = {
 
       // 401 에러 처리 (인증 실패)
       if (response.status === 401) {
-        localStorage.removeItem("token");
-        window.location.href = "/login";
+        if (typeof window !== 'undefined') {
+          localStorage.removeItem("token");
+          window.location.href = "/login";
+        }
         throw new Error("Unauthorized");
       }
 
@@ -37,7 +42,8 @@ export const apiClient = {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      return await response.json();
+      const data = await response.json();
+      return { data, status: response.status };
     } catch (error) {
       if (error instanceof Error && error.message === "Unauthorized") {
         throw error;
@@ -65,6 +71,13 @@ export const apiClient = {
     });
   },
 
+  patch(endpoint: string, data: unknown) {
+    return this.request(endpoint, {
+      method: "PATCH",
+      body: JSON.stringify(data),
+    });
+  },
+
   delete(endpoint: string) {
     return this.request(endpoint, {
       method: "DELETE",
@@ -86,3 +99,5 @@ export const getUser = async () => {
 export const getPosts = async () => {
   return apiClient.get("/posts");
 };
+
+export default apiClient;
