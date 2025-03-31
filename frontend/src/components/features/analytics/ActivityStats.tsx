@@ -1,8 +1,8 @@
-import Chart from "./Chart";
+import Chart from './Chart'
 
 export default function ActivityStats() {
   return (
-    <div className="bg-white rounded-lg shadow-sm p-4">
+    <div>
       <h3 className="text-lg font-bold mb-3">
         <span className="mr-2">📊</span> 활동 통계
       </h3>
@@ -11,5 +11,5 @@ export default function ActivityStats() {
         <Chart />
       </div>
     </div>
-  );
+  )
 }

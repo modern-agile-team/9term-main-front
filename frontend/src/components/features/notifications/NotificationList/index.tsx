@@ -1,9 +1,9 @@
-import { Notification } from "@/types/Notification";
+import { Notification } from '@/types/models/notification.types'
 
 interface NotificationListProps {
-  notifications: Notification[];
-  onMarkAllAsRead: () => void;
-  onViewAllNotifications: () => void;
+  notifications: Notification[]
+  onMarkAllAsRead: () => void
+  onViewAllNotifications: () => void
 }
 
 export default function NotificationList({
@@ -12,49 +12,54 @@ export default function NotificationList({
   onViewAllNotifications,
 }: NotificationListProps) {
   return (
-    <div className="absolute right-0 mt-2 w-80 bg-white rounded-md shadow-lg z-10 overflow-hidden">
-      <div className="p-3 border-b border-gray-100 flex justify-between items-center">
-        <h3 className="font-medium">알림</h3>
-        <button className="text-xs text-blue-600" onClick={onMarkAllAsRead}>
-          모두 읽음 표시
+    <div className="absolute right-0 top-8 w-96 bg-white rounded-lg shadow-xl z-50 overflow-hidden border border-gray-200">
+      <div className="px-4 py-3 border-b border-gray-200 flex justify-between items-center bg-gray-50">
+        <h3 className="text-lg font-semibold text-gray-800">알림</h3>
+        <button
+          className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+          onClick={onMarkAllAsRead}
+        >
+          모두 읽음
         </button>
       </div>
-      <div className="max-h-96 overflow-y-auto">
+      <div className="max-h-[480px] overflow-y-auto">
         {notifications.length > 0 ? (
           <div>
             {notifications.map((notification) => (
               <div
                 key={notification.id}
-                className={`p-3 border-b border-gray-100 hover:bg-gray-50 cursor-pointer ${
-                  !notification.isRead ? "bg-blue-50" : ""
+                className={`px-4 py-3 border-b border-gray-100 hover:bg-gray-50 cursor-pointer transition-colors ${
+                  !notification.isRead ? 'bg-blue-50' : ''
                 }`}
               >
-                <div className="flex justify-between">
-                  <h4 className="font-medium text-sm">{notification.title}</h4>
-                  <span className="text-xs text-gray-500">
+                <div className="flex justify-between items-start mb-1">
+                  <h4 className="font-medium text-gray-900">
+                    {notification.title}
+                  </h4>
+                  <span className="text-xs text-gray-500 whitespace-nowrap ml-4">
                     {notification.time}
                   </span>
                 </div>
-                <p className="text-sm text-gray-600 mt-1">
+                <p className="text-sm text-gray-600 line-clamp-2">
                   {notification.content}
                 </p>
               </div>
             ))}
           </div>
         ) : (
-          <div className="p-4 text-center text-gray-500">
-            <p>새로운 알림이 없습니다</p>
+          <div className="py-8 text-center text-gray-500">
+            <p className="text-sm">새로운 알림이 없습니다</p>
           </div>
         )}
       </div>
-      <div className="p-2 border-t border-gray-100 text-center">
+      <div className="px-4 py-3 border-t border-gray-200 bg-gray-50">
         <button
-          className="text-sm text-blue-600 hover:underline"
+          className="w-full text-sm text-blue-600 hover:text-blue-700 font-medium hover:underline"
           onClick={onViewAllNotifications}
         >
           모든 알림 보기
         </button>
       </div>
     </div>
-  );
+  )
 }

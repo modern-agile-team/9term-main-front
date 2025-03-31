@@ -1,6 +1,6 @@
 export default function KeywordAnalysis() {
   return (
-    <div className="bg-white rounded-lg shadow-sm p-4">
+    <div>
       <h3 className="text-lg font-bold mb-3">
         <span className="mr-2">🔍</span> 키워드 분석
       </h3>
@@ -39,5 +39,5 @@ export default function KeywordAnalysis() {
         <div className="text-sm text-gray-500">강남역</div>
       </div>
     </div>
-  );
+  )
 }

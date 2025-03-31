@@ -1,8 +1,8 @@
-import PostItem from "@/components/features/posts/PostItem";
-import { Post } from "@/types/Post";
+import PostItem from '@/components/features/posts/PostItem'
+import { Post } from '@/types/Post'
 
 interface PostListProps {
-  posts: Post[];
+  posts: Post[]
 }
 
 export default function PostList({ posts }: PostListProps) {
@@ -12,5 +12,5 @@ export default function PostList({ posts }: PostListProps) {
         <PostItem key={post.id} post={post} />
       ))}
     </div>
-  );
+  )
 }

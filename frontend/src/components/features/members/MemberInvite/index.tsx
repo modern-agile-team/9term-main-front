@@ -1,6 +1,6 @@
 export default function MemberInvite() {
   return (
-    <div className="bg-white rounded-lg shadow-sm p-4">
+    <div>
       <h3 className="text-lg font-bold mb-3">
         <span className="mr-2">👋</span> 멤버 초대
       </h3>
@@ -20,5 +20,5 @@ export default function MemberInvite() {
         새 링크 생성
       </button>
     </div>
-  );
+  )
 }
