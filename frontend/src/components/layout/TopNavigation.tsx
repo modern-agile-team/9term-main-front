@@ -3,7 +3,7 @@ import { useState, useRef, useEffect } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import NotificationList from '@/components/features/notification/NotificationList'
 import { getCurrentUser } from '@/services/userApi'
-import type { Notification } from '@/types/Notification'
+import type { Notification } from '@/types/models/notification.types'
 
 export default function TopNavigation() {
   const [showNotifications, setShowNotifications] = useState(false)

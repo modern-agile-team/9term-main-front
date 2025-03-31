@@ -34,14 +34,15 @@ export default function NotificationList({
               >
                 <div className="flex justify-between items-start mb-1">
                   <h4 className="font-medium text-gray-900">
-                    {notification.title}
+                    {notification.type.charAt(0).toUpperCase() +
+                      notification.type.slice(1)}
                   </h4>
                   <span className="text-xs text-gray-500 whitespace-nowrap ml-4">
-                    {notification.time}
+                    {new Date(notification.createdAt).toLocaleString()}
                   </span>
                 </div>
                 <p className="text-sm text-gray-600 line-clamp-2">
-                  {notification.content}
+                  {notification.message}
                 </p>
               </div>
             ))}
