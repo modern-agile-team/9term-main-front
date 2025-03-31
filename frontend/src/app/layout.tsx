@@ -1,8 +1,5 @@
-'use client'
-
-import { useState, useEffect } from 'react'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import Navigation from '@/components/layout/Navigation'
+import { Providers } from '@/lib/providers'
+import Navbar from '@/components/layout/Navbar'
 import Banner from '@/components/common/Banner'
 import '@/styles/globals.css'
 
@@ -11,34 +8,13 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
-  const [queryClient] = useState(() => new QueryClient())
-
-  useEffect(() => {
-    // MSW 초기화 코드 개선
-    async function enableMocking() {
-      if (process.env.NODE_ENV === 'development') {
-        try {
-          // 브라우저 환경에서만 실행
-          if (typeof window !== 'undefined') {
-            await import('@/mocks/msw')
-            console.info('[MSW] Mocking enabled.')
-          }
-        } catch (err) {
-          console.error('[MSW] Failed to initialize:', err)
-        }
-      }
-    }
-
-    enableMocking()
-  }, [])
-
   return (
     <html lang="ko">
       <body className="min-h-screen bg-gray-50">
-        <QueryClientProvider client={queryClient}>
+        <Providers>
           {/* 헤더 영역 */}
           <header>
-            <Navigation />
+            <Navbar />
             <Banner />
           </header>
 
@@ -51,7 +27,7 @@ export default function RootLayout({
               <p className="text-center text-gray-500">© 2024 모동구. All rights reserved.</p>
             </div>
           </footer> */}
-        </QueryClientProvider>
+        </Providers>
       </body>
     </html>
   )
