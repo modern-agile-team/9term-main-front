@@ -1,10 +1,10 @@
-import KeywordAnalysis from "./KeywordAnalysis";
-import ActivityStats from "./ActivityStats";
-import MemberInvite from "./MemberInvite";
+import KeywordAnalysis from '@/components/features/analytics/KeywordAnalysis'
+import ActivityStats from '@/components/features/analytics/ActivityStats'
+import MemberInvite from '@/components/features/member/MemberInvite'
 
 export default function Sidebar() {
   return (
-    <div className="space-y-4">
+    <div className="w-64 bg-white p-4 border-l">
       <KeywordAnalysis />
       <ActivityStats />
 
@@ -13,5 +13,5 @@ export default function Sidebar() {
 
       <MemberInvite />
     </div>
-  );
+  )
 }
