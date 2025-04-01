@@ -24,3 +24,32 @@ body {
   background: var(--background);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Carousel Styles */
+.carousel-viewport {
+  position: relative;
+  padding: 1rem;
+  margin: -1rem;
+}
+
+.carousel-container {
+  display: flex;
+  gap: 1rem;
+}
+
+.carousel-slide {
+  flex: 0 0 100%;
+  min-width: 0;
+}
+
+@media (min-width: 640px) {
+  .carousel-slide {
+    flex: 0 0 calc(50% - 0.5rem);
+  }
+}
+
+@media (min-width: 1024px) {
+  .carousel-slide {
+    flex: 0 0 calc(33.333% - 0.667rem);
+  }
+}
