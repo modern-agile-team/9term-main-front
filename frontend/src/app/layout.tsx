@@ -1,6 +1,5 @@
 'use client'
 
-import { useEffect } from 'react'
 import Providers from '@/lib/providers'
 import Navbar from '@/components/layout/Navbar'
 import Banner from '@/components/common/Banner'
@@ -11,12 +10,6 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
-  useEffect(() => {
-    if (process.env.NEXT_PUBLIC_API_MOCKING === 'enabled') {
-      import('@/mocks/msw')
-    }
-  }, [])
-
   return (
     <html lang="ko">
       <body className="min-h-screen bg-gray-50">

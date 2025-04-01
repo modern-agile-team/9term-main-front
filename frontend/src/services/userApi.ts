@@ -1,19 +1,15 @@
-import { apiClient } from '@/lib/api/client'
-import type { User } from '@/types/user'
+import { mockUser } from '@/mocks/data'
 
 /**
  * 현재 로그인한 사용자 정보를 가져옵니다.
  * @throws {Error} API 요청 실패 시 에러를 던집니다.
  */
-export const getCurrentUser = async (): Promise<User> => {
+export const getCurrentUser = async () => {
   try {
-    const { data } = await apiClient.get('/api/user')
-    return data as User
+    // 실제 API 호출 대신 목업 데이터 사용
+    return mockUser
   } catch (error) {
-    // 개발 환경에서만 로그 출력
-    if (process.env.NODE_ENV === 'development') {
-      console.error('[UserAPI] 사용자 정보 요청 실패:', error)
-    }
-    throw new Error('사용자 정보를 가져오는데 실패했습니다.')
+    console.error('Failed to fetch current user:', error)
+    throw error
   }
 }
