@@ -48,11 +48,6 @@ const GroupPage = ({ params }: PageProps) => {
 
       {/* 오른쪽 컨텐츠 */}
       <div className="flex-1 p-6">
-        <div className="mb-6">
-          <h1 className="text-2xl font-bold mb-2">{group.name}</h1>
-          <p className="text-gray-600">함께 성장하는 개발자 모임</p>
-        </div>
-
         <BoardHeader activeTab={activeTab} setActiveTab={setActiveTab} />
         {renderContent()}
       </div>
