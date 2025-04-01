@@ -84,7 +84,6 @@ export default function Sidebar() {
         onClick={() => {
           if (confirm("정말로 동아리를 탈퇴하시겠습니까?")) {
             // TODO: 탈퇴 로직 구현
-            console.log("동아리 탈퇴 처리");
           }
         }}
       >
