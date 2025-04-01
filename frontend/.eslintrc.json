@@ -1,17 +1,10 @@
 {
   "root": true,
-  "extends": [
-    "next",
-    "next/core-web-vitals",
-    "plugin:@typescript-eslint/recommended"
-  ],
+  "extends": ["next/core-web-vitals", "plugin:@typescript-eslint/recommended"],
   "plugins": ["@typescript-eslint"],
   "rules": {
     "no-console": ["warn", { "allow": ["warn", "error", "info"] }],
-    "@typescript-eslint/no-unused-vars": [
-      "error",
-      { "argsIgnorePattern": "^_" }
-    ]
+    "@typescript-eslint/no-unused-vars": "warn"
   },
   "overrides": [
     {

@@ -1,39 +1,39 @@
-"use client";
+'use client'
 
-import { useState, useEffect } from "react";
-import { Group, Post } from "@/types/models/group.types";
-import { groupService } from "@/services/group.service";
-import Navbar from "@/components/layout/Navbar";
+import { useState, useEffect } from 'react'
+import { Group, Post } from '@/types/models/group.types'
+import { groupService } from '@/services/group.service'
+import Navbar from '@/components/layout/Navbar'
 
 interface GroupDetailPageProps {
   params: {
-    id: string;
-  };
+    id: string
+  }
 }
 
 export default function GroupDetailPage({ params }: GroupDetailPageProps) {
-  const [group, setGroup] = useState<Group | null>(null);
-  const [posts, setPosts] = useState<Post[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [group, setGroup] = useState<Group | null>(null)
+  const [posts, setPosts] = useState<Post[]>([])
+  const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
     const fetchGroupDetails = async () => {
       try {
-        const groupId = parseInt(params.id);
-        const groupData = await groupService.getGroupById(groupId);
-        setGroup(groupData);
+        const groupId = parseInt(params.id)
+        const groupData = await groupService.getGroupById(groupId)
+        setGroup(groupData)
 
-        const postsData = await groupService.getGroupPosts(groupId);
-        setPosts(postsData);
+        const postsData = await groupService.getGroupPosts(groupId)
+        setPosts(postsData)
       } catch (error) {
-        console.error("동아리 정보를 불러오는데 실패했습니다:", error);
+        console.error('동아리 정보를 불러오는데 실패했습니다:', error)
       } finally {
-        setIsLoading(false);
+        setIsLoading(false)
       }
-    };
+    }
 
-    fetchGroupDetails();
-  }, [params.id]);
+    fetchGroupDetails()
+  }, [params.id])
 
   if (isLoading) {
     return (
@@ -43,7 +43,7 @@ export default function GroupDetailPage({ params }: GroupDetailPageProps) {
           <p>로딩 중...</p>
         </div>
       </div>
-    );
+    )
   }
 
   if (!group) {
@@ -56,7 +56,7 @@ export default function GroupDetailPage({ params }: GroupDetailPageProps) {
           </div>
         </div>
       </div>
-    );
+    )
   }
 
   return (
@@ -102,5 +102,5 @@ export default function GroupDetailPage({ params }: GroupDetailPageProps) {
         )}
       </div>
     </div>
-  );
+  )
 }
