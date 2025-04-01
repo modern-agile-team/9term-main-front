@@ -1,5 +1,6 @@
-import Image from 'next/image'
-import Link from 'next/link'
+import Image from "next/image";
+import Link from "next/link";
+import { PenSquare } from "lucide-react";
 
 export default function Sidebar() {
   return (
@@ -26,7 +27,7 @@ export default function Sidebar() {
           href="/posts/new"
           className="flex items-center justify-center w-full px-4 py-2 mb-4 text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors"
         >
-          <span className="text-lg mr-2">✏️</span>
+          <PenSquare size={20} className="mr-2" />
           <span>새 게시글 작성하기</span>
         </Link>
 
@@ -81,14 +82,14 @@ export default function Sidebar() {
       <button
         className="mt-6 w-full px-4 py-2 text-red-600 border border-red-600 rounded-lg hover:bg-red-50 transition-colors"
         onClick={() => {
-          if (confirm('정말로 동아리를 탈퇴하시겠습니까?')) {
+          if (confirm("정말로 동아리를 탈퇴하시겠습니까?")) {
             // TODO: 탈퇴 로직 구현
-            console.log('동아리 탈퇴 처리')
+            console.log("동아리 탈퇴 처리");
           }
         }}
       >
         동아리 탈퇴하기
       </button>
     </div>
-  )
+  );
 }
