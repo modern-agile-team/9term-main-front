@@ -6,7 +6,16 @@
     "no-console": ["warn", { "allow": ["warn", "error", "info"] }],
     "@typescript-eslint/no-unused-vars": "warn"
   },
-  "ignorePatterns": ["*.config.js"],
+  "ignorePatterns": [
+    ".next/",
+    "node_modules/",
+    "public/",
+    "*.config.js",
+    "tailwind.config.js",
+    "jest.setup.js",
+    "postcss.config.js"
+  ],
+
   "overrides": [
     {
       "files": ["**/__tests__/**/*", "**/*.test.*", "**/mocks/**/*"],
