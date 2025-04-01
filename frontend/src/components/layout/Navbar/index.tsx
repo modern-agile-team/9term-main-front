@@ -80,13 +80,6 @@ export default function TopNavigation() {
             <Link href="/" className="text-2xl font-bold text-blue-600">
               모동구
             </Link>
-            <Link
-              href="/"
-              className="flex items-center space-x-2 text-gray-600 hover:text-gray-900"
-            >
-              <span className="text-lg">🏠</span>
-              <span>내 모임</span>
-            </Link>
           </div>
           <div className="flex items-center space-x-6">
             {/* 알림 버튼 - 로그인 시에만 표시 */}
