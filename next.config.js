@@ -5,11 +5,11 @@ const nextConfig = {
     config.resolve.fallback = {
       ...config.resolve.fallback,
       fs: false,
-    }
-    return config
+    };
+    return config;
   },
   eslint: {
-    dirs: ['src'],
+    dirs: ["src"],
     ignoreDuringBuilds: false,
   },
   typescript: {
@@ -18,6 +18,9 @@ const nextConfig = {
     // 프로덕션에서는 활성화하는 것을 권장합니다.
     ignoreBuildErrors: true,
   },
-}
+  experimental: {
+    esmExternals: true,
+  },
+};
 
-module.exports = nextConfig
+module.exports = nextConfig;
