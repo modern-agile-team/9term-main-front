@@ -19,9 +19,9 @@ export interface Group {
 export const mockGroups: Group[] = [
   {
     id: 1,
-    name: "모각코",
-    description: "모여서 각자 코딩",
-    memberCount: 42,
+    name: "개발자 스터디",
+    description: "함께 성장하는 개발자 모임",
+    memberCount: 32,
   },
   {
     id: 2,
