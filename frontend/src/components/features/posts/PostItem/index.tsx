@@ -28,35 +28,47 @@ export default function PostItem({ post }: PostItemProps) {
           <p className="text-sm flex items-center mb-1">
             <span className="mr-2">📍</span> {post.location}
           </p>
-          <p className="text-sm flex items-center">
-            <span className="mr-2">🕒</span> {post.time}
-          </p>
+          {post.time && (
+            <p className="text-sm flex items-center">
+              <span className="mr-2">🕒</span> {post.time}
+            </p>
+          )}
         </div>
       )}
 
       {/* 태그 */}
-      <div className="flex flex-wrap gap-2 mb-3">
-        {post.tags.map((tag) => (
-          <span
-            key={tag}
-            className="bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded-full"
-          >
-            {tag}
-          </span>
-        ))}
-      </div>
+      {post.tags && post.tags.length > 0 && (
+        <div className="flex flex-wrap gap-2 mb-3">
+          {post.tags.map((tag) => (
+            <span
+              key={tag}
+              className="bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded-full"
+            >
+              {tag}
+            </span>
+          ))}
+        </div>
+      )}
 
-      {/* 좋아요, 댓글, 저장 */}
-      <div className="flex items-center text-sm text-gray-500 pt-3 border-t">
-        <button className="flex items-center mr-4">
-          <span className="mr-1">👍</span> 좋아요 {post.likes}
-        </button>
-        <button className="flex items-center mr-4">
-          <span className="mr-1">💬</span> 댓글 {post.comments}
-        </button>
-        <button className="flex items-center">
-          <span className="mr-1">{post.saved ? '⭐' : '☆'}</span> 저장
-        </button>
+      {/* 작성일 및 카테고리 */}
+      <div className="flex items-center justify-between text-sm text-gray-500 pt-3 border-t">
+        <div className="flex items-center space-x-4">
+          <button className="flex items-center">
+            <span className="mr-1">👍</span> {post.likes}
+          </button>
+          <button className="flex items-center">
+            <span className="mr-1">💬</span> {post.comments}
+          </button>
+          <button className="flex items-center">
+            <span>{post.saved ? '⭐' : '☆'}</span>
+          </button>
+        </div>
+        <div className="flex items-center space-x-3">
+          <span>{post.createdAt}</span>
+          <span className="px-2 py-1 bg-gray-100 rounded-full">
+            {post.category}
+          </span>
+        </div>
       </div>
     </div>
   )
