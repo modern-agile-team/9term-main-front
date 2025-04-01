@@ -1,32 +1,38 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import Link from 'next/link'
 import { Group, Post } from '@/types/models/group.types'
 import { groupService } from '@/services/group.service'
 import Navbar from '@/components/layout/Navbar'
 
-interface GroupDetailPageProps {
-  params: {
-    id: string
-  }
+type PageProps = {
+  params: { id: string }
+  searchParams?: { [key: string]: string | string[] | undefined }
 }
 
-export default function GroupDetailPage({ params }: GroupDetailPageProps) {
+export default function GroupDetailPage({ params }: PageProps) {
   const [group, setGroup] = useState<Group | null>(null)
   const [posts, setPosts] = useState<Post[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     const fetchGroupDetails = async () => {
       try {
+        setError(null)
         const groupId = parseInt(params.id)
-        const groupData = await groupService.getGroupById(groupId)
+        const [groupData, postsData] = await Promise.all([
+          groupService.getGroupById(groupId),
+          groupService.getGroupPosts(groupId),
+        ])
         setGroup(groupData)
-
-        const postsData = await groupService.getGroupPosts(groupId)
         setPosts(postsData)
       } catch (error) {
         console.error('동아리 정보를 불러오는데 실패했습니다:', error)
+        setError(
+          '동아리 정보를 불러오는데 실패했습니다. 잠시 후 다시 시도해주세요.'
+        )
       } finally {
         setIsLoading(false)
       }
@@ -39,8 +45,28 @@ export default function GroupDetailPage({ params }: GroupDetailPageProps) {
     return (
       <div className="min-h-screen bg-gray-50">
         <Navbar />
-        <div className="container mx-auto px-4 py-8 flex justify-center">
-          <p>로딩 중...</p>
+        <div className="container mx-auto px-4 py-8 flex justify-center items-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+          <p className="ml-3">로딩 중...</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <Navbar />
+        <div className="container mx-auto px-4 py-8">
+          <div className="bg-red-50 border border-red-200 rounded-lg p-8 text-center">
+            <p className="text-red-600">{error}</p>
+            <button
+              onClick={() => window.location.reload()}
+              className="mt-4 px-4 py-2 bg-red-100 text-red-700 rounded-md hover:bg-red-200 transition-colors"
+            >
+              다시 시도
+            </button>
+          </div>
         </div>
       </div>
     )
@@ -80,23 +106,75 @@ export default function GroupDetailPage({ params }: GroupDetailPageProps) {
 
         {posts.length === 0 ? (
           <div className="bg-white rounded-lg shadow-sm p-8 text-center">
-            <p className="text-gray-500">등록된 게시글이 없습니다.</p>
+            <svg
+              className="mx-auto h-12 w-12 text-gray-400"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+              />
+            </svg>
+            <p className="mt-4 text-gray-500">아직 등록된 게시글이 없습니다.</p>
+            <p className="text-sm text-gray-400 mt-2">
+              첫 번째 게시글을 작성해보세요!
+            </p>
           </div>
         ) : (
-          <div className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {posts.map((post) => (
-              <div key={post.id} className="bg-white rounded-lg shadow-sm p-6">
-                <h3 className="text-xl font-semibold mb-2">{post.title}</h3>
-                <p className="text-gray-600 mb-4">{post.content}</p>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-500">
-                    작성자: {post.author}
-                  </span>
-                  <span className="text-sm text-gray-500">
-                    {new Date(post.createdAt).toLocaleDateString()}
-                  </span>
+              <Link
+                key={post.id}
+                href={`/groups/${params.id}/posts/${post.id}`}
+                className="block"
+              >
+                <div className="h-full bg-white rounded-lg shadow-sm p-6 hover:shadow-md transition-shadow duration-200">
+                  <h3 className="text-xl font-semibold mb-2">{post.title}</h3>
+                  <p className="text-gray-600 mb-4 line-clamp-3">
+                    {post.content}
+                  </p>
+                  <div className="flex justify-between items-center text-sm text-gray-500">
+                    <div className="flex items-center">
+                      <svg
+                        className="h-4 w-4 mr-1"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                        />
+                      </svg>
+                      <span>{post.author}</span>
+                    </div>
+                    <div className="flex items-center">
+                      <svg
+                        className="h-4 w-4 mr-1"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                        />
+                      </svg>
+                      <span>
+                        {new Date(post.createdAt).toLocaleDateString()}
+                      </span>
+                    </div>
+                  </div>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         )}
