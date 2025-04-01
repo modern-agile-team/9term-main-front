@@ -1,9 +1,15 @@
-import GroupDetailClient from './GroupDetailClient'
+import GroupDetailClient from '@/app/(groups)/groups/[id]/GroupDetailClient'
 
-type PageProps = {
-  params: { id: string }
+interface PageProps {
+  params: {
+    id: string
+  }
+  searchParams: { [key: string]: string | string[] | undefined }
 }
 
-export default async function GroupDetailPage({ params }: PageProps) {
+export default async function GroupDetailPage({
+  params,
+  searchParams: _searchParams,
+}: PageProps) {
   return <GroupDetailClient params={params} />
 }
