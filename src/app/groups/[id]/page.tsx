@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useParams } from "next/navigation";
 import { mockGroups } from "@/mocks/data";
 import { mockPosts } from "@/mocks/posts";
 import BoardHeader from "@/components/features/post/BoardHeader";
@@ -9,13 +10,8 @@ import PostList from "@/components/features/post/PostList";
 import Calendar from "@/components/features/calendar/Calendar";
 import ActivityStats from "@/components/features/analytics/ActivityStats";
 
-interface PageProps {
-  params: {
-    id: string;
-  };
-}
-
-const GroupPage = ({ params }: PageProps) => {
+const GroupPage = () => {
+  const params = useParams();
   const [activeTab, setActiveTab] = useState("공지");
   const group = mockGroups.find((g) => g.id === Number(params.id));
 
