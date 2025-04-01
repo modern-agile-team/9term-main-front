@@ -6,6 +6,7 @@
     "no-console": ["warn", { "allow": ["warn", "error", "info"] }],
     "@typescript-eslint/no-unused-vars": "warn"
   },
+  "ignorePatterns": ["*.config.js"],
   "overrides": [
     {
       "files": ["**/__tests__/**/*", "**/*.test.*", "**/mocks/**/*"],
