@@ -1,5 +1,6 @@
 'use client'
 
+import { usePathname } from 'next/navigation'
 import Providers from '@/lib/providers'
 import Navbar from '@/components/layout/Navbar'
 import Banner from '@/components/common/Banner'
@@ -10,6 +11,9 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
+  const pathname = usePathname()
+  const isHomePage = pathname === '/'
+
   return (
     <html lang="ko">
       <body className="min-h-screen bg-gray-50">
@@ -17,7 +21,7 @@ export default function RootLayout({
           {/* 헤더 영역 */}
           <header>
             <Navbar />
-            <Banner />
+            {!isHomePage && <Banner />}
           </header>
 
           {/* 메인 콘텐츠 영역 */}
