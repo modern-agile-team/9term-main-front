@@ -4,7 +4,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import SuccessModal from "@/components/common/SuccessModal"; // 모달 컴포넌트 경로 수정
+import SuccessModal from "@/components/common/SuccesModal"; // 모달 컴포넌트 경로 수정
 
 // 회원가입 API 함수
 const registerUser = async (userData: {
