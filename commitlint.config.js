@@ -19,7 +19,7 @@ module.exports = {
         'revert',
         'style',
         'test',
-        'setting', // 추가적으로 허용할 커밋 유형
+        'setting',
       ],
     ],
   },
