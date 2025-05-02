@@ -1,10 +1,12 @@
-// src/app/(auth)/login/page.tsx
 "use client";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { useAuth } from "@/store/useAuth"; // 인증 스토어 임포트 zustand
+import { useMutation } from "@tanstack/react-query";
+import { useAuth } from "@/providers/auth-provider"; // Zustand 대신 새 Provider 사용
+import SuccessModal from "@/components/common/SuccesModal";
+import FailModal from "@/components/common/FailModal";
 
 // JWT 로그인 API 함수
 const loginUser = async (credentials: { email: string; password: string }) => {
@@ -26,15 +28,36 @@ const loginUser = async (credentials: { email: string; password: string }) => {
 
 export default function LoginPage() {
   const router = useRouter();
+  const { login } = useAuth(); // 새 Provider에서 login 함수 가져오기
+
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
-  const [error, setError] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
 
-  // 인증 스토어에서 login 액션 가져오기
-  const login = useAuth((state) => state.login);
+  // 모달 상태
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+
+  // useMutation 사용하여 로그인 요청 관리
+  const loginMutation = useMutation({
+    mutationFn: loginUser,
+    onSuccess: (data) => {
+      // 로그인 성공 시 Context API의 login 함수 호출
+      login(data.token, data.userId);
+      setShowSuccessModal(true);
+    },
+    onError: (error) => {
+      // 로그인 실패 시 에러 모달 표시
+      setErrorMessage(
+        error instanceof Error
+          ? error.message
+          : "로그인에 실패했습니다. 다시 시도해주세요."
+      );
+      setShowErrorModal(true);
+    },
+  });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -46,35 +69,28 @@ export default function LoginPage() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setError("");
-    setIsLoading(true);
 
-    try {
-      // 실제 로그인 API 연동
-      const data = await loginUser(formData);
+    // useMutation 실행
+    loginMutation.mutate(formData);
+  };
 
-      // Zustand 스토어에 로그인 정보 저장
-      login({ token: data.token, userId: data.userId });
+  // 로그인 성공 시 홈페이지로 이동
+  const goToHome = () => {
+    router.push("/");
+  };
 
-      console.info("로그인 성공:", data);
+  // 로그인 재시도
+  const handleRetry = async () => {
+    setShowErrorModal(false);
 
-      // 홈페이지로 이동
-      router.push("/");
-    } catch (error) {
-      console.error("로그인 실패:", error);
-      setError(
-        error instanceof Error
-          ? error.message
-          : "로그인에 실패했습니다. 다시 시도해주세요."
-      );
-    } finally {
-      setIsLoading(false);
-    }
+    // 약간의 딜레이 후 로그인 재시도
+    setTimeout(() => {
+      loginMutation.mutate(formData);
+    }, 300);
   };
 
   return (
     <div className="min-h-screen flex items-start justify-center bg-gray-50 pt-24 px-4 sm:px-6 lg:px-8">
-
       <div className="max-w-md w-full space-y-8">
         <div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
@@ -124,21 +140,38 @@ export default function LoginPage() {
             </div>
           </div>
 
-          {error && (
-            <div className="text-red-500 text-sm text-center">{error}</div>
-          )}
-
           <div>
             <button
               type="submit"
-              disabled={isLoading}
+              disabled={loginMutation.isPending}
               className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:bg-blue-400"
             >
-              {isLoading ? "로그인 중..." : "로그인"}
+              {loginMutation.isPending ? "로그인 중..." : "로그인"}
             </button>
           </div>
         </form>
       </div>
+
+      {/* 성공 모달 */}
+      <SuccessModal
+        isOpen={showSuccessModal}
+        onClose={() => setShowSuccessModal(false)}
+        title="로그인 성공!"
+        message="성공적으로 로그인되었습니다."
+        buttonText="홈으로 이동"
+        onButtonClick={goToHome}
+      />
+
+      {/* 실패 모달 */}
+      <FailModal
+        isOpen={showErrorModal}
+        onClose={() => setShowErrorModal(false)}
+        title="로그인 실패"
+        message={errorMessage}
+        buttonText="확인"
+        retryButtonText="다시 시도"
+        onRetry={handleRetry}
+      />
     </div>
   );
 }
