@@ -30,6 +30,9 @@ yarn-error.log*
 # vercel
 .vercel
 
+# turbopack
+.turbo/
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
@@ -48,4 +51,3 @@ next-env.d.ts
 .Trashes
 ehthumbs.db
 Thumbs.db
-.next/
