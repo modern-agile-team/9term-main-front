@@ -2,7 +2,7 @@
 **모동구**는 동아리 및 모임을 위한 공유/초대/분석 플랫폼입니다. 사용자는 모임을 만들고, 초대하여 자료를 공유할 수 있습니다.
 
 ## 배포 링크
-https://9term-main-front.vercel.app/
+https://www.modonggu.site/
 
 ## 구현 화면
 <img width="1290" alt="image" src="https://github.com/user-attachments/assets/3b7df203-c5c6-4995-80a1-505fd331a5df" />
