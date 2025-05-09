@@ -1,27 +1,27 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
-import { useMutation } from "@tanstack/react-query";
-import { useAuth } from "@/providers/auth-provider"; // Zustand 대신 새 Provider 사용
-import SuccessModal from "@/components/common/SuccesModal";
-import FailModal from "@/components/common/FailModal";
-import { PATHS } from "@/types/auth";
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { useMutation } from '@tanstack/react-query';
+import { useAuth } from '@/providers/auth-provider'; // Zustand 대신 새 Provider 사용
+import SuccessModal from '@/components/common/SuccessModal';
+import FailModal from '@/components/common/FailModal';
+import { PATHS } from '@/types/auth';
 
 // JWT 로그인 API 함수
 const loginUser = async (credentials: { email: string; password: string }) => {
-  const response = await fetch("/auth/login", {
-    method: "POST",
+  const response = await fetch('/auth/login', {
+    method: 'POST',
     headers: {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
     body: JSON.stringify(credentials),
   });
 
   if (!response.ok) {
     const errorData = await response.json();
-    throw new Error(errorData.message || "로그인 실패");
+    throw new Error(errorData.message || '로그인 실패');
   }
 
   return response.json();
@@ -32,13 +32,13 @@ export default function LoginPage() {
   const { login } = useAuth(); // 새 Provider에서 login 함수 가져오기
 
   const [formData, setFormData] = useState({
-    email: "",
-    password: "",
+    email: '',
+    password: '',
   });
 
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [showErrorModal, setShowErrorModal] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState('');
 
   const loginMutation = useMutation({
     mutationFn: loginUser,
@@ -50,7 +50,7 @@ export default function LoginPage() {
       setErrorMessage(
         error instanceof Error
           ? error.message
-          : "로그인에 실패했습니다. 다시 시도해주세요."
+          : '로그인에 실패했습니다. 다시 시도해주세요.'
       );
       setShowErrorModal(true);
     },
@@ -87,7 +87,7 @@ export default function LoginPage() {
             로그인
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
-            또는{" "}
+            또는{' '}
             <Link
               href="/register"
               className="font-medium text-blue-600 hover:text-blue-500"
@@ -136,7 +136,7 @@ export default function LoginPage() {
               disabled={loginMutation.isPending}
               className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:bg-blue-400"
             >
-              {loginMutation.isPending ? "로그인 중..." : "로그인"}
+              {loginMutation.isPending ? '로그인 중...' : '로그인'}
             </button>
           </div>
         </form>
