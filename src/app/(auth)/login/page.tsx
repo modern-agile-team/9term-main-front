@@ -7,6 +7,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useAuth } from "@/providers/auth-provider"; // Zustand 대신 새 Provider 사용
 import SuccessModal from "@/components/common/SuccesModal";
 import FailModal from "@/components/common/FailModal";
+import { PATHS } from "@/types/auth";
 
 // JWT 로그인 API 함수
 const loginUser = async (credentials: { email: string; password: string }) => {
@@ -35,21 +36,17 @@ export default function LoginPage() {
     password: "",
   });
 
-  // 모달 상태
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
-  // useMutation 사용하여 로그인 요청 관리
   const loginMutation = useMutation({
     mutationFn: loginUser,
     onSuccess: (data) => {
-      // 로그인 성공 시 Context API의 login 함수 호출
       login(data.token, data.userId);
       setShowSuccessModal(true);
     },
-    onError: (error) => {
-      // 로그인 실패 시 에러 모달 표시
+    onError: (error: Error) => {
       setErrorMessage(
         error instanceof Error
           ? error.message
@@ -70,23 +67,16 @@ export default function LoginPage() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    // useMutation 실행
     loginMutation.mutate(formData);
   };
 
-  // 로그인 성공 시 홈페이지로 이동
   const goToHome = () => {
-    router.push("/");
+    router.push(PATHS.HOME);
   };
 
-  // 로그인 재시도
-  const handleRetry = async () => {
+  const handleRetry = () => {
     setShowErrorModal(false);
-
-    // 약간의 딜레이 후 로그인 재시도
-    setTimeout(() => {
-      loginMutation.mutate(formData);
-    }, 300);
+    loginMutation.mutate(formData);
   };
 
   return (
