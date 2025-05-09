@@ -1,28 +1,28 @@
-// src/app/(auth)/register/page.tsx
-"use client";
+'use client';
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
-import SuccessModal from "@/components/common/SuccessModal"; // 모달 컴포넌트 경로 수정
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { useMutation } from '@tanstack/react-query';
+import SuccessModal from '@/components/common/SuccessModal';
+import FailModal from '@/components/common/FailModal';
 
-// 회원가입 API 함수
 const registerUser = async (userData: {
   username: string;
   email: string;
   password: string;
 }) => {
-  const response = await fetch("/auth/signup", {
-    method: "POST",
+  const response = await fetch('/auth/signup', {
+    method: 'POST',
     headers: {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
     body: JSON.stringify(userData),
   });
 
   if (!response.ok) {
     const errorData = await response.json();
-    throw new Error(errorData.message || "회원가입 실패");
+    throw new Error(errorData.message || '회원가입 실패');
   }
 
   return response.json();
@@ -31,14 +31,28 @@ const registerUser = async (userData: {
 export default function RegisterPage() {
   const router = useRouter();
   const [formData, setFormData] = useState({
-    username: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
+    username: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
   });
-  const [error, setError] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [showSuccessModal, setShowSuccessModal] = useState(false); // 모달 상태 추가
+
+  const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
+  const [isFailModalOpen, setIsFailModalOpen] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+
+  const registerMutation = useMutation({
+    mutationFn: registerUser,
+
+    onSuccess: () => {
+      setIsSuccessModalOpen(true);
+    },
+
+    onError: (error: Error) => {
+      setErrorMessage(error.message || '회원가입에 실패했습니다.');
+      setIsFailModalOpen(true);
+    },
+  });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -50,43 +64,36 @@ export default function RegisterPage() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setError("");
 
-    // 비밀번호 확인 검증
     if (formData.password !== formData.confirmPassword) {
-      setError("비밀번호가 일치하지 않습니다.");
+      setErrorMessage('비밀번호가 일치하지 않습니다.');
+      setIsFailModalOpen(true);
       return;
     }
 
-    setIsLoading(true);
-
-    try {
-      // 회원가입 API 연동
-      const data = await registerUser({
-        username: formData.username,
-        email: formData.email,
-        password: formData.password,
-      });
-
-      console.info("회원가입 성공:", data);
-
-      // 모달 표시
-      setShowSuccessModal(true);
-    } catch (error) {
-      console.error("회원가입 실패:", error);
-      setError(
-        error instanceof Error
-          ? error.message
-          : "회원가입에 실패했습니다. 다시 시도해주세요."
-      );
-    } finally {
-      setIsLoading(false);
-    }
+    registerMutation.mutate({
+      username: formData.username,
+      email: formData.email,
+      password: formData.password,
+    });
   };
 
-  // 로그인 페이지로 이동
+  const handleRetry = () => {
+    setIsFailModalOpen(false);
+
+    if (errorMessage === '비밀번호가 일치하지 않습니다.') {
+      return;
+    }
+
+    registerMutation.mutate({
+      username: formData.username,
+      email: formData.email,
+      password: formData.password,
+    });
+  };
+
   const goToLogin = () => {
-    router.push("/login");
+    router.push('/login');
   };
 
   return (
@@ -97,7 +104,7 @@ export default function RegisterPage() {
             회원가입
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
-            이미 계정이 있으신가요?{" "}
+            이미 계정이 있으신가요?{' '}
             <Link
               href="/login"
               className="font-medium text-blue-600 hover:text-blue-500"
@@ -170,30 +177,35 @@ export default function RegisterPage() {
             </div>
           </div>
 
-          {error && (
-            <div className="text-red-500 text-sm text-center">{error}</div>
-          )}
-
           <div>
             <button
               type="submit"
-              disabled={isLoading}
+              disabled={registerMutation.isPending}
               className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:bg-blue-400"
             >
-              {isLoading ? "가입 중..." : "회원가입"}
+              {registerMutation.isPending ? '가입 중...' : '회원가입'}
             </button>
           </div>
         </form>
       </div>
 
-      {/* 성공 모달 */}
       <SuccessModal
-        isOpen={showSuccessModal}
-        onClose={() => setShowSuccessModal(false)}
+        isOpen={isSuccessModalOpen}
+        onClose={() => setIsSuccessModalOpen(false)}
         title="회원가입 완료!"
         message="회원가입이 성공적으로 완료되었습니다. 이제 로그인하여 서비스를 이용할 수 있습니다."
         buttonText="로그인하러 가기"
         onButtonClick={goToLogin}
+      />
+
+      <FailModal
+        isOpen={isFailModalOpen}
+        onClose={() => setIsFailModalOpen(false)}
+        title="회원가입 실패"
+        message={errorMessage}
+        buttonText="확인"
+        retryButtonText="다시 시도"
+        onRetry={handleRetry}
       />
     </div>
   );
