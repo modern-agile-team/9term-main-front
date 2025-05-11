@@ -19,7 +19,7 @@ https://www.modonggu.site/
 <img src="https://img.shields.io/badge/Visual%20Studio%20Code-0078d7.svg?style=for-the-badge&logo=visual-studio-code&logoColor=white"/> <img src="https://img.shields.io/badge/GitHub-%23121011.svg?style=for-the-badge&logo=github&logoColor=white"/> <img src="https://img.shields.io/badge/Jest-C21325?style=for-the-badge&logo=Jest&logoColor=white"/>
 
 ### 협업 툴
-<img src="https://img.shields.io/badge/Notion-000000?style=for-the-badge&logo=notion&logoColor=white"/> <img src="https://img.shields.io/badge/GitHub%20Projects-000000?style=for-the-badge&logo=github&logoColor=white"/> <img src="https://img.shields.io/badge/Jira-0052CC?style=for-the-badge&logo=Jira&logoColor=white"/>
+<img src="https://img.shields.io/badge/Notion-000000?style=for-the-badge&logo=notion&logoColor=white"/> <img src="https://img.shields.io/badge/GitHub%20Projects-000000?style=for-the-badge&logo=github&logoColor=white"/>
 
 ## 팀 구성
 |<img src="https://avatars.githubusercontent.com/u/127826452?v=4" width="150" height="150"/>|<img src="https://avatars.githubusercontent.com/u/190096282?v=4" width="150" height="150"/>|
