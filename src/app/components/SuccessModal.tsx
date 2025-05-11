@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import React from "react";
+import React from 'react';
 
 // 성공 모달 컴포넌트의 Props 타입 정의
 interface SuccessModalProps {
@@ -27,7 +27,7 @@ export const SuccessModal: React.FC<SuccessModalProps> = ({
   onClose,
   title,
   message,
-  buttonText = "확인",
+  buttonText = '확인',
   onButtonClick,
 }) => {
   if (!isOpen) return null;
