@@ -1,7 +1,7 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
-import Providers from '@/app/services/providers';
+import Providers from '@/app/_services/providers';
 import Navbar from '@/app/_components/Navbar';
 import Banner from '@/app/_components/Banner';
 import '@/styles/globals.css';

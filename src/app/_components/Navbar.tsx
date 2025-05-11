@@ -2,8 +2,8 @@
 
 import Link from 'next/link';
 import { useState, useRef, useEffect } from 'react';
-import NotificationList from '@/app/components/NotificationList';
-import { useAuth } from '@/app/services/auth-provider'; // 새 인증 Provider 사용
+import NotificationList from '@/app/_components/NotificationList';
+import { useAuth } from '@/app/_services/auth-provider'; // 새 인증 Provider 사용
 import type { Notification } from '@/app/_types/notification.types';
 
 export default function TopNavigation() {

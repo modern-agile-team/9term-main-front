@@ -1,9 +1,9 @@
-import { Notification } from '@/types/Notification'
+import { Notification } from '@/app/_types/notification.types';
 
 interface NotificationListProps {
-  notifications: Notification[]
-  onMarkAllAsRead: () => void
-  onViewAllNotifications: () => void
+  notifications: Notification[];
+  onMarkAllAsRead: () => void;
+  onViewAllNotifications: () => void;
 }
 
 export default function NotificationList({
@@ -70,5 +70,5 @@ export default function NotificationList({
         </button>
       </div>
     </div>
-  )
+  );
 }
