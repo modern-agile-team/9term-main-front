@@ -1,4 +1,4 @@
-import Chart from './Chart'
+import Chart from '@/app/groups/components/Chart';
 
 export default function ActivityStats() {
   return (
@@ -11,5 +11,5 @@ export default function ActivityStats() {
         <Chart />
       </div>
     </div>
-  )
+  );
 }

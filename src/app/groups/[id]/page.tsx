@@ -1,20 +1,20 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { useParams } from "next/navigation";
-import { mockGroups } from "@/mocks/data";
-import { mockPosts } from "@/mocks/posts";
-import BoardHeader from "@/components/features/post/BoardHeader";
-import Sidebar from "@/components/layout/Sidebar";
-import PostList from "@/components/features/post/PostList";
-import Calendar from "@/components/features/calendar/Calendar";
-import ActivityStats from "@/components/features/analytics/ActivityStats";
-import { PenSquare } from "lucide-react";
-import Link from "next/link";
+import { useState } from 'react';
+import { useParams } from 'next/navigation';
+import { mockGroups } from '@/mocks/data';
+import { mockPosts } from '@/mocks/posts';
+import BoardHeader from '@/components/features/post/BoardHeader';
+import Sidebar from '@/app/groups/components/Sidebar';
+import PostList from '@/app/groups/components/PostList';
+import Calendar from '@/app/groups/components/Calendar';
+import ActivityStats from '@/app/groups/components/ActivityStats';
+import { PenSquare } from 'lucide-react';
+import Link from 'next/link';
 
 const GroupPage = () => {
   const params = useParams();
-  const [activeTab, setActiveTab] = useState("공지");
+  const [activeTab, setActiveTab] = useState('공지');
   const group = mockGroups.find((g) => g.id === Number(params.id));
 
   if (!group) {
@@ -27,9 +27,9 @@ const GroupPage = () => {
 
   const renderContent = () => {
     switch (activeTab) {
-      case "일정":
+      case '일정':
         return <Calendar />;
-      case "통계":
+      case '통계':
         return <ActivityStats />;
       default:
         const filteredPosts = mockPosts.filter(

@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import Chart from "@/components/features/analytics/Chart";
+import Chart from '@/app/groups/components/Chart';
 
 export default function DashboardPage() {
   return (

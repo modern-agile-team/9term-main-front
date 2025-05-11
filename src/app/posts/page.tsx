@@ -1,19 +1,19 @@
-'use client'
+'use client';
 
-import { useState } from 'react'
-import { useQuery } from '@tanstack/react-query'
-import { getCommunityPosts } from '@/services/communityApi'
-import PostList from '@/components/features/posts/PostList'
-import BoardHeader from '@/components/features/posts/BoardHeader'
-import CreatePostButton from '@/components/features/posts/CreatePostButton'
-import Sidebar from '@/components/layout/Sidebar'
+import { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { getCommunityPosts } from '@/services/communityApi';
+import PostList from '@/components/features/posts/PostList';
+import BoardHeader from '@/components/features/posts/BoardHeader';
+import CreatePostButton from '@/components/features/posts/CreatePostButton';
+import Sidebar from '@/app/groups/components/Sidebar';
 
 export default function PostsPage() {
-  const [activeTab, setActiveTab] = useState('전체')
+  const [activeTab, setActiveTab] = useState('전체');
   const { data: posts = [] } = useQuery({
     queryKey: ['posts', activeTab],
     queryFn: () => getCommunityPosts(activeTab),
-  })
+  });
 
   return (
     <>
@@ -47,5 +47,5 @@ export default function PostsPage() {
         </div>
       </div>
     </>
-  )
+  );
 }

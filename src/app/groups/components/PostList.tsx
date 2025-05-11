@@ -1,5 +1,5 @@
-import PostItem from "./PostItem";
-import { Post } from "@/types/Post";
+import PostItem from '@/app/groups/components/PostItem';
+import { Post } from '@/types/Post';
 
 interface PostListProps {
   posts: Post[];
