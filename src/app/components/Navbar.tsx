@@ -1,11 +1,10 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import { useState, useRef, useEffect } from "react";
-//import { useQuery } from '@tanstack/react-query'
-import NotificationList from "@/components/features/notification/NotificationList";
-import { useAuth } from "@/providers/auth-provider"; // 새 인증 Provider 사용
-import type { Notification } from "@/types/models/notification.types";
+import Link from 'next/link';
+import { useState, useRef, useEffect } from 'react';
+import NotificationList from '@/components/features/notification/NotificationList';
+import { useAuth } from '@/providers/auth-provider'; // 새 인증 Provider 사용
+import type { Notification } from '@/types/models/notification.types';
 
 export default function TopNavigation() {
   const [showNotifications, setShowNotifications] = useState(false);
@@ -25,9 +24,9 @@ export default function TopNavigation() {
       }
     }
 
-    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener('mousedown', handleClickOutside);
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
 
@@ -35,19 +34,19 @@ export default function TopNavigation() {
   const mockNotifications: Notification[] = [
     {
       id: 1,
-      type: "post",
+      type: 'post',
       message: '새로운 게시글이 등록되었습니다: "주말 등산 모임"',
       isRead: false,
       createdAt: new Date().toISOString(),
-      link: "/posts/1",
+      link: '/posts/1',
     },
     {
       id: 2,
-      type: "comment",
-      message: "회원님의 게시글에 새로운 댓글이 달렸습니다.",
+      type: 'comment',
+      message: '회원님의 게시글에 새로운 댓글이 달렸습니다.',
       isRead: false,
       createdAt: new Date(Date.now() - 3600000).toISOString(),
-      link: "/posts/1#comment-2",
+      link: '/posts/1#comment-2',
     },
   ];
 
@@ -65,7 +64,7 @@ export default function TopNavigation() {
 
   const handleViewAllNotifications = () => {
     // 모든 알림 페이지로 이동
-    console.log("모든 알림 보기");
+    console.log('모든 알림 보기');
   };
 
   // 로그아웃 핸들러 추가
@@ -129,10 +128,10 @@ export default function TopNavigation() {
                 >
                   <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
                     <span className="text-blue-600 font-medium">
-                      {user?.name?.charAt(0) || "?"}
+                      {user?.name?.charAt(0) || '?'}
                     </span>
                   </div>
-                  <span>{user?.name || "사용자"}</span>
+                  <span>{user?.name || '사용자'}</span>
                 </Link>
                 {/* 로그아웃 버튼 추가 */}
                 <button

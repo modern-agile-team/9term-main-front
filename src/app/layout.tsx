@@ -1,18 +1,18 @@
-'use client'
+'use client';
 
-import { usePathname } from 'next/navigation'
-import Providers from '@/lib/providers'
-import Navbar from '@/components/layout/Navbar'
-import Banner from '@/components/common/Banner'
-import '@/styles/globals.css'
+import { usePathname } from 'next/navigation';
+import Providers from '@/lib/providers';
+import Navbar from '@/app/components/Navbar';
+import Banner from '@/app/components/Banner';
+import '@/styles/globals.css';
 
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
-  const pathname = usePathname()
-  const isHomePage = pathname === '/'
+  const pathname = usePathname();
+  const isHomePage = pathname === '/';
 
   return (
     <html lang="ko">
@@ -36,5 +36,5 @@ export default function RootLayout({
         </Providers>
       </body>
     </html>
-  )
+  );
 }

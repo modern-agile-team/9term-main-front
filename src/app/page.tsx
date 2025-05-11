@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { Card } from "@/components/ui/card";
-import Link from "next/link";
-import useEmblaCarousel from "embla-carousel-react";
+import { useState } from 'react';
+import { Card } from '@/app/components/Card';
+import Link from 'next/link';
+import useEmblaCarousel from 'embla-carousel-react';
 
 interface Club {
   id: string;
@@ -20,63 +20,63 @@ export default function HomePage() {
 
   const [myClubs] = useState<Club[]>([
     {
-      id: "1",
-      name: "개발자 스터디",
-      description: "함께 성장하는 개발자 모임",
+      id: '1',
+      name: '개발자 스터디',
+      description: '함께 성장하는 개발자 모임',
       memberCount: 15,
-      category: "학술",
-      imageUrl: "https://placehold.co/600x400?text=개발자+스터디",
+      category: '학술',
+      imageUrl: 'https://placehold.co/600x400?text=개발자+스터디',
     },
     {
-      id: "2",
-      name: "축구 동아리",
-      description: "주 2회 축구하는 모임",
+      id: '2',
+      name: '축구 동아리',
+      description: '주 2회 축구하는 모임',
       memberCount: 22,
-      category: "운동",
-      imageUrl: "https://placehold.co/600x400?text=축구+동아리",
+      category: '운동',
+      imageUrl: 'https://placehold.co/600x400?text=축구+동아리',
     },
     {
-      id: "3",
-      name: "영화 감상 모임",
-      description: "매주 금요일 영화 감상 및 토론",
+      id: '3',
+      name: '영화 감상 모임',
+      description: '매주 금요일 영화 감상 및 토론',
       memberCount: 18,
-      category: "문화",
-      imageUrl: "https://placehold.co/600x400?text=영화+감상+모임",
+      category: '문화',
+      imageUrl: 'https://placehold.co/600x400?text=영화+감상+모임',
     },
   ]);
 
   const [recommendedClubs] = useState<Club[]>([
     {
-      id: "4",
-      name: "독서 토론",
-      description: "매주 한 권의 책을 읽고 토론하는 모임",
+      id: '4',
+      name: '독서 토론',
+      description: '매주 한 권의 책을 읽고 토론하는 모임',
       memberCount: 12,
-      category: "교양",
-      imageUrl: "https://placehold.co/600x400?text=독서+토론",
+      category: '교양',
+      imageUrl: 'https://placehold.co/600x400?text=독서+토론',
     },
     {
-      id: "5",
-      name: "기타 연주반",
-      description: "초보자도 환영하는 기타 연주 모임",
+      id: '5',
+      name: '기타 연주반',
+      description: '초보자도 환영하는 기타 연주 모임',
       memberCount: 8,
-      category: "음악",
-      imageUrl: "https://placehold.co/600x400?text=기타+연주반",
+      category: '음악',
+      imageUrl: 'https://placehold.co/600x400?text=기타+연주반',
     },
     {
-      id: "6",
-      name: "사진 촬영반",
-      description: "사진 촬영 및 편집 기술 공유",
+      id: '6',
+      name: '사진 촬영반',
+      description: '사진 촬영 및 편집 기술 공유',
       memberCount: 20,
-      category: "예술",
-      imageUrl: "https://placehold.co/600x400?text=사진+촬영반",
+      category: '예술',
+      imageUrl: 'https://placehold.co/600x400?text=사진+촬영반',
     },
     {
-      id: "7",
-      name: "요리 연구회",
-      description: "함께 요리하고 레시피 공유하는 모임",
+      id: '7',
+      name: '요리 연구회',
+      description: '함께 요리하고 레시피 공유하는 모임',
       memberCount: 15,
-      category: "취미",
-      imageUrl: "https://placehold.co/600x400?text=요리+연구회",
+      category: '취미',
+      imageUrl: 'https://placehold.co/600x400?text=요리+연구회',
     },
   ]);
 
