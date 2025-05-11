@@ -2,9 +2,9 @@
 
 import Link from 'next/link';
 import { useState, useRef, useEffect } from 'react';
-import NotificationList from '@/components/features/notification/NotificationList';
-import { useAuth } from '@/providers/auth-provider'; // 새 인증 Provider 사용
-import type { Notification } from '@/types/models/notification.types';
+import NotificationList from '@/app/components/NotificationList';
+import { useAuth } from '@/app/services/auth-provider'; // 새 인증 Provider 사용
+import type { Notification } from '@/app/types/notification.types';
 
 export default function TopNavigation() {
   const [showNotifications, setShowNotifications] = useState(false);

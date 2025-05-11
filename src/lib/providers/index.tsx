@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { useState } from "react";
-import { AuthProvider } from "@/providers/auth-provider";
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import { useState } from 'react';
+import { AuthProvider } from '@/app/services/auth-provider';
 
 type ProvidersProps = {
   children: React.ReactNode;
@@ -27,7 +27,7 @@ export default function Providers({ children }: ProvidersProps) {
       <AuthProvider>{children}</AuthProvider>
 
       {/* React Query Devtools - 개발 모드에서만 표시 */}
-      {process.env.NODE_ENV === "development" && <ReactQueryDevtools />}
+      {process.env.NODE_ENV === 'development' && <ReactQueryDevtools />}
     </QueryClientProvider>
   );
 }
