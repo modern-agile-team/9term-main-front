@@ -2,8 +2,8 @@
 
 import { useState } from 'react';
 import { useParams } from 'next/navigation';
-import { mockGroups } from '@/mocks/data';
-import { mockPosts } from '@/mocks/posts';
+import { mockGroups } from '@/app/groups/[id]/mocks/data';
+import { mockPosts } from '@/app/groups/[id]/mocks/posts';
 import BoardHeader from '@/app/groups/components/BoardHeader';
 import Sidebar from '@/app/groups/components/Sidebar';
 import PostList from '@/app/groups/components/PostList';

@@ -1,12 +1,12 @@
-import { apiClient } from "@/lib/api/client";
+import { apiClient } from '@/app/apis/client';
 import {
   Group,
   CreateGroupRequest,
   UpdateGroupRequest,
   Post,
-} from "@/types/models/group.types";
+} from '@/types/models/group.types';
 
-const BASE_URL = "/api/groups";
+const BASE_URL = '/api/groups';
 
 export const groupService = {
   // 동아리 목록 조회
