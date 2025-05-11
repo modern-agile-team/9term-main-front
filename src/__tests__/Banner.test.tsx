@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import Banner from '@/app/components/Banner';
+import Banner from '@/app/_components/Banner';
 
 describe('Banner 컴포넌트', () => {
   it('배너가 올바르게 렌더링되어야 합니다', () => {

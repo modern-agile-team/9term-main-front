@@ -4,8 +4,8 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useMutation } from '@tanstack/react-query';
-import SuccessModal from '@/app/components/SuccessModal';
-import FailModal from '@/app/components/FailModal';
+import SuccessModal from '@/app/_components/SuccessModal';
+import FailModal from '@/app/_components/FailModal';
 
 const registerUser = async (userData: {
   username: string;

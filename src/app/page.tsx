@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Card } from '@/app/components/Card';
+import { Card } from '@/app/_components/Card';
 import Link from 'next/link';
 import useEmblaCarousel from 'embla-carousel-react';
 

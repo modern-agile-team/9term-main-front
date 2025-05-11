@@ -2,8 +2,8 @@
 
 import { usePathname } from 'next/navigation';
 import Providers from '@/app/services/providers';
-import Navbar from '@/app/components/Navbar';
-import Banner from '@/app/components/Banner';
+import Navbar from '@/app/_components/Navbar';
+import Banner from '@/app/_components/Banner';
 import '@/styles/globals.css';
 
 export default function RootLayout({
