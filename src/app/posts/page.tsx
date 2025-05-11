@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { getCommunityPosts } from '@/services/communityApi';
 import PostList from '@/components/features/posts/PostList';
-import BoardHeader from '@/components/features/posts/BoardHeader';
+import BoardHeader from '@/app/groups/components/BoardHeader';
 import CreatePostButton from '@/components/features/posts/CreatePostButton';
 import Sidebar from '@/app/groups/components/Sidebar';
 
