@@ -4,10 +4,10 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useMutation } from '@tanstack/react-query';
-import { useAuth } from '@/providers/auth-provider'; // Zustand 대신 새 Provider 사용
-import SuccessModal from '@/components/common/SuccessModal';
-import FailModal from '@/components/common/FailModal';
-import { PATHS } from '@/types/auth';
+import { useAuth } from '@/app/_services/auth-provider'; // Zustand 대신 새 Provider 사용
+import SuccessModal from '@/app/_components/SuccessModal';
+import FailModal from '@/app/_components/FailModal';
+import { PATHS } from '@/app/(auth)/login/types/auth';
 
 // JWT 로그인 API 함수
 const loginUser = async (credentials: { email: string; password: string }) => {
