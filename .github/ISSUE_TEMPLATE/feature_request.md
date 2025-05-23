@@ -1,9 +1,9 @@
 ---
-name: "🚀 Feature Request"
-about: "새로운 기능이나 개선할 내용을 제안해주세요."
-title: "[Feature] "
-labels: ["feature"]
-assignees: ""
+name: '🚀 Feature Request'
+about: '새로운 기능이나 개선할 내용을 제안해주세요.'
+title: '[Feature] '
+labels: ['feature']
+assignees: ''
 ---
 
 ## 🔥 어떤 기능인가요?

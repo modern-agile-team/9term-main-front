@@ -14,11 +14,9 @@ const registerUser = async (userData: {
   password: string;
 }) => {
   try {
-    const response = await apiClient.post(
-      '/auth/signup',
-      userData,
-      { withCredentials: true }
-    );
+    const response = await apiClient.post('/auth/signup', userData, {
+      withCredentials: true,
+    });
     return response.data;
   } catch (error: any) {
     if (error.response && error.response.data && error.response.data.message) {

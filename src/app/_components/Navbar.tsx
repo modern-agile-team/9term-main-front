@@ -12,7 +12,7 @@ export default function TopNavigation() {
 
   // Auth Context에서 로그인 상태와 로그아웃 함수 가져오기
   const { isLoggedIn, logout } = useAuth();
-  const { data: myProfile} = useMyProfile();
+  const { data: myProfile } = useMyProfile();
 
   // 알림 목록 외부 클릭 시 닫기
   useEffect(() => {

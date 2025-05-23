@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useMutation } from '@tanstack/react-query';
-import { useAuth } from '@/app/_services/auth-provider'; 
+import { useAuth } from '@/app/_services/auth-provider';
 import SuccessModal from '@/app/_components/SuccessModal';
 import FailModal from '@/app/_components/FailModal';
 import { PATHS } from '@/app/(auth)/login/types/auth';

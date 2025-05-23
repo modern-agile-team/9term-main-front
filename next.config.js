@@ -9,7 +9,7 @@ const nextConfig = {
     return config;
   },
   eslint: {
-    dirs: ["src"],
+    dirs: ['src'],
     ignoreDuringBuilds: false,
   },
   typescript: {

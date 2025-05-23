@@ -1,13 +1,13 @@
 interface BoardHeaderProps {
-  activeTab: string
-  setActiveTab: (tab: string) => void
+  activeTab: string;
+  setActiveTab: (tab: string) => void;
 }
 
 export default function BoardHeader({
   activeTab,
   setActiveTab,
 }: BoardHeaderProps) {
-  const tabs = ['공지', '자유게시판', '일정', '통계']
+  const tabs = ['공지', '자유게시판', '일정', '통계'];
 
   return (
     <div className="bg-white rounded-lg shadow-sm p-4 mb-4">
@@ -28,5 +28,5 @@ export default function BoardHeader({
         ))}
       </div>
     </div>
-  )
+  );
 }

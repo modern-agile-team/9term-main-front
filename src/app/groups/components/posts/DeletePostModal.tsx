@@ -4,13 +4,13 @@
 // 게시글 삭제 확인 모달에 필요한 props 타입 정의
 interface DeletePostModalProps {
   onConfirm: () => void; // 삭제 확정 시 실행되는 함수
-  onClose: () => void;   // 모달을 닫는 함수
+  onClose: () => void; // 모달을 닫는 함수
 }
 
 // 게시글 삭제 확인 모달 컴포넌트 정의
 export default function DeletePostModal({
   onConfirm, // 삭제 확정 콜백
-  onClose,   // 모달 닫기 콜백
+  onClose, // 모달 닫기 콜백
 }: DeletePostModalProps) {
   // 모달 UI 렌더링
   return (
@@ -38,4 +38,4 @@ export default function DeletePostModal({
       </div>
     </div>
   );
-} 
+}

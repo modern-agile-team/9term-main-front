@@ -1,6 +1,6 @@
-name: "MVP 기능 작업"
-description: "모동구 프로젝트의 MVP 기능 개발을 위한 하위 이슈를 작성합니다."
-title: "[MVP] "
+name: 'MVP 기능 작업'
+description: '모동구 프로젝트의 MVP 기능 개발을 위한 하위 이슈를 작성합니다.'
+title: '[MVP] '
 labels:
   - mvp
 body:
@@ -15,26 +15,26 @@ body:
   - type: textarea
     id: description
     attributes:
-      label: "✅ 기능 설명"
-      description: "기능의 목적과 내용을 간단히 설명해주세요."
-      placeholder: "예) 사용자가 작성한 게시물 목록을 조회하고 리스트로 출력하는 기능"
+      label: '✅ 기능 설명'
+      description: '기능의 목적과 내용을 간단히 설명해주세요.'
+      placeholder: '예) 사용자가 작성한 게시물 목록을 조회하고 리스트로 출력하는 기능'
     validations:
       required: true
 
   - type: input
     id: parent
     attributes:
-      label: "🔗 관련 이슈"
-      description: "상위 이슈 번호를 입력해주세요. (예: #1)"
-      placeholder: "#1"
+      label: '🔗 관련 이슈'
+      description: '상위 이슈 번호를 입력해주세요. (예: #1)'
+      placeholder: '#1'
     validations:
       required: true
 
   - type: textarea
     id: tasks
     attributes:
-      label: "📋 작업 내용"
-      description: "구현해야 할 작업 목록을 체크리스트로 작성해주세요."
+      label: '📋 작업 내용'
+      description: '구현해야 할 작업 목록을 체크리스트로 작성해주세요.'
       value: |
         - [ ] 
         - [ ]
@@ -44,9 +44,9 @@ body:
   - type: textarea
     id: reference
     attributes:
-      label: "💡 참고 사항"
-      description: "추가로 논의가 필요한 사항이나 참고할 자료가 있다면 작성해주세요."
-      placeholder: "- 디자인 관련 논의 필요
-        - API 문서: https://..."
+      label: '💡 참고 사항'
+      description: '추가로 논의가 필요한 사항이나 참고할 자료가 있다면 작성해주세요.'
+      placeholder: '- 디자인 관련 논의 필요
+        - API 문서: https://...'
     validations:
       required: false
