@@ -6,33 +6,33 @@ import Link from 'next/link';
 import { useMutation } from '@tanstack/react-query';
 import SuccessModal from '@/app/_components/SuccessModal';
 import FailModal from '@/app/_components/FailModal';
+import apiClient from '@/app/_apis/client';
 
 const registerUser = async (userData: {
-  username: string;
-  email: string;
+  userName: string;
+  name: string;
   password: string;
 }) => {
-  const response = await fetch('/auth/signup', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(userData),
-  });
-
-  if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData.message || '회원가입 실패');
+  try {
+    const response = await apiClient.post(
+      '/auth/signup',
+      userData,
+      { withCredentials: true }
+    );
+    return response.data;
+  } catch (error: any) {
+    if (error.response && error.response.data && error.response.data.message) {
+      throw new Error(error.response.data.message);
+    }
+    throw new Error('회원가입 실패');
   }
-
-  return response.json();
 };
 
 export default function RegisterPage() {
   const router = useRouter();
   const [formData, setFormData] = useState({
-    username: '',
-    email: '',
+    userName: '',
+    name: '',
     password: '',
     confirmPassword: '',
   });
@@ -72,8 +72,8 @@ export default function RegisterPage() {
     }
 
     registerMutation.mutate({
-      username: formData.username,
-      email: formData.email,
+      userName: formData.userName,
+      name: formData.name,
       password: formData.password,
     });
   };
@@ -86,8 +86,8 @@ export default function RegisterPage() {
     }
 
     registerMutation.mutate({
-      username: formData.username,
-      email: formData.email,
+      userName: formData.userName,
+      name: formData.name,
       password: formData.password,
     });
   };
@@ -117,31 +117,31 @@ export default function RegisterPage() {
           <div className="rounded-md shadow-sm -space-y-px">
             <div>
               <label htmlFor="username" className="sr-only">
-                사용자 이름
+                아이디
               </label>
               <input
-                id="username"
-                name="username"
+                id="userName"
+                name="userName"
                 type="text"
                 required
                 className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-                placeholder="사용자 이름"
-                value={formData.username}
+                placeholder="아이디"
+                value={formData.userName}
                 onChange={handleChange}
               />
             </div>
             <div>
-              <label htmlFor="email" className="sr-only">
-                이메일
+              <label htmlFor="name" className="sr-only">
+                이름
               </label>
               <input
-                id="email"
-                name="email"
-                type="email"
+                id="name"
+                name="name"
+                type="text"
                 required
                 className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-                placeholder="이메일"
-                value={formData.email}
+                placeholder="이름"
+                value={formData.name}
                 onChange={handleChange}
               />
             </div>

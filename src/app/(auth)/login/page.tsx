@@ -4,27 +4,27 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useMutation } from '@tanstack/react-query';
-import { useAuth } from '@/app/_services/auth-provider'; // Zustand 대신 새 Provider 사용
+import { useAuth } from '@/app/_services/auth-provider'; 
 import SuccessModal from '@/app/_components/SuccessModal';
 import FailModal from '@/app/_components/FailModal';
 import { PATHS } from '@/app/(auth)/login/types/auth';
+import apiClient from '@/app/_apis/client';
 
-// JWT 로그인 API 함수
-const loginUser = async (credentials: { email: string; password: string }) => {
-  const response = await fetch('/auth/login', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(credentials),
-  });
-
-  if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData.message || '로그인 실패');
+const loginUser = async (credentials: {
+  userName: string;
+  password: string;
+}) => {
+  try {
+    const response = await apiClient.post('/auth/login', credentials, {
+      withCredentials: true,
+    });
+    return response.data;
+  } catch (error: any) {
+    if (error.response && error.response.data && error.response.data.message) {
+      throw new Error(error.response.data.message);
+    }
+    throw new Error('로그인 실패');
   }
-
-  return response.json();
 };
 
 export default function LoginPage() {
@@ -32,7 +32,7 @@ export default function LoginPage() {
   const { login } = useAuth(); // 새 Provider에서 login 함수 가져오기
 
   const [formData, setFormData] = useState({
-    email: '',
+    userName: '',
     password: '',
   });
 
@@ -43,15 +43,15 @@ export default function LoginPage() {
   const loginMutation = useMutation({
     mutationFn: loginUser,
     onSuccess: (data) => {
-      login(data.token, data.userId);
+      login(data.data.accessToken);
       setShowSuccessModal(true);
     },
-    onError: (error: Error) => {
-      setErrorMessage(
-        error instanceof Error
-          ? error.message
-          : '로그인에 실패했습니다. 다시 시도해주세요.'
-      );
+    onError: (error: any) => {
+      // axios error 객체에서 백엔드 메시지 추출
+      const msg =
+        error?.response?.data?.message ||
+        '로그인에 실패했습니다. 다시 시도해주세요.';
+      setErrorMessage(msg);
       setShowErrorModal(true);
     },
   });
@@ -99,17 +99,17 @@ export default function LoginPage() {
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="rounded-md shadow-sm -space-y-px">
             <div>
-              <label htmlFor="email" className="sr-only">
-                이메일
+              <label htmlFor="userName" className="sr-only">
+                아이디
               </label>
               <input
-                id="email"
-                name="email"
-                type="email"
+                id="userName"
+                name="userName"
+                type="text"
                 required
                 className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-                placeholder="이메일"
-                value={formData.email}
+                placeholder="아이디"
+                value={formData.userName}
                 onChange={handleChange}
               />
             </div>

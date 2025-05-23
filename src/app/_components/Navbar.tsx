@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useState, useRef, useEffect } from 'react';
 import NotificationList from '@/app/_components/NotificationList';
-import { useAuth } from '@/app/_services/auth-provider'; // 새 인증 Provider 사용
+import { useAuth, useMyProfile } from '@/app/_services/auth-provider'; // 새 인증 Provider 사용
 import type { Notification } from '@/app/_types/notification.types';
 
 export default function TopNavigation() {
@@ -11,7 +11,8 @@ export default function TopNavigation() {
   const notificationRef = useRef<HTMLDivElement>(null);
 
   // Auth Context에서 로그인 상태와 로그아웃 함수 가져오기
-  const { isLoggedIn, user, logout } = useAuth();
+  const { isLoggedIn, logout } = useAuth();
+  const { data: myProfile} = useMyProfile();
 
   // 알림 목록 외부 클릭 시 닫기
   useEffect(() => {
@@ -128,10 +129,10 @@ export default function TopNavigation() {
                 >
                   <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
                     <span className="text-blue-600 font-medium">
-                      {user?.name?.charAt(0) || '?'}
+                      {myProfile?.name?.charAt(0) || '?'}
                     </span>
                   </div>
-                  <span>{user?.name || '사용자'}</span>
+                  <span>{myProfile?.name || '프로필'}</span>
                 </Link>
                 {/* 로그아웃 버튼 추가 */}
                 <button
