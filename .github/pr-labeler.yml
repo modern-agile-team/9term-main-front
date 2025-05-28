@@ -1,15 +1,15 @@
-"publishing":
-  - "/design/i" # PR 제목에 `design` 포함되면 publishing 라벨 추가
-  - "/style/i" # PR 제목에 `style` 포함되면 publishing 라벨 추가
+'publishing':
+  - '/design/i' # PR 제목에 `design` 포함되면 publishing 라벨 추가
+  - '/style/i' # PR 제목에 `style` 포함되면 publishing 라벨 추가
 
-"feature":
-  - "/feat/i" # PR 제목에 `feat` 포함되면 feature 라벨 추가
+'feature':
+  - '/feat/i' # PR 제목에 `feat` 포함되면 feature 라벨 추가
 
-"api":
-  - "/api/i" # PR 제목에 `api` 포함되면 api 라벨 추가
+'api':
+  - '/api/i' # PR 제목에 `api` 포함되면 api 라벨 추가
 
-"bug":
-  - "/fix/i" # PR 제목에 `fix` 포함되면 bug 라벨 추가
+'bug':
+  - '/fix/i' # PR 제목에 `fix` 포함되면 bug 라벨 추가
 
-"refactor":
-  - "/refactor/i" # PR 제목에 `refactor` 포함되면 refactor 라벨 추가
+'refactor':
+  - '/refactor/i' # PR 제목에 `refactor` 포함되면 refactor 라벨 추가
