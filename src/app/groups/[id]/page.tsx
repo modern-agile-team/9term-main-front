@@ -19,7 +19,7 @@ import { useAuth } from '@/app/_services/auth-provider';
 // - 각 모달의 열기/닫기, 게시글 CRUD 동작을 연결
 const GroupPage = () => {
   const params = useParams();
-  const groupId = String(params.id!);
+  const groupId = params.id?.toString() ?? '';
   const [activeTab, setActiveTab] = useState('자유게시판');
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [editPostId, setEditPostId] = useState<number | null>(null);
