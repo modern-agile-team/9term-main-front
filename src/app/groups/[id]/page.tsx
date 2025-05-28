@@ -116,7 +116,7 @@ const GroupPage = () => {
             onEdit={(post: Post) => setEditPostId(post.id)}
             onDelete={(post: Post) => setDeletePostId(post.id)}
             onSetNotice={handleSetNotice}
-            currentUserId={user?.id}
+            currentUserId={user?.id?.toString()}
           />
         );
     }
