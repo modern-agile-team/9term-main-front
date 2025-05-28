@@ -1,5 +1,7 @@
 export interface User {
   id: number;
-  username: string;
   name: string;
+  role: 'USER' | 'ADMIN';
+  createdAt: string;
+  updatedAt: string;
 }
