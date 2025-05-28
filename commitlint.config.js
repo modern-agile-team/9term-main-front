@@ -3,7 +3,7 @@ module.exports = {
   rules: {
     'subject-case': [0], // 대소문자 검사 끔
     'type-empty': [0], // type 비워도 OK
-    'subject-empty': [0], // subject 비워도 OK
+    'subject-empty': [0],
     'type-enum': [
       2,
       'always',
