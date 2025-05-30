@@ -1,7 +1,7 @@
 import axios, { AxiosInstance, AxiosResponse } from 'axios';
 import { User } from '@/app/_types/user.types';
 
-const baseURL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+const baseURL = process.env.NEXT_PUBLIC_API_URL;
 
 // API 클라이언트 기본 설정
 const defaultHeaders = {
@@ -14,13 +14,26 @@ export const apiClient: AxiosInstance = axios.create({
   headers: defaultHeaders,
 });
 
-export const request = async <T>(
-  config: Parameters<typeof apiClient.request>[0]
-): Promise<T> => {
-  try {
-    const response: AxiosResponse<T> = await apiClient.request(config);
-    return response.data;
-  } catch (error) {
+apiClient.interceptors.request.use(
+  (config) => {
+    const token =
+      typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+
+    // headers가 undefined일 수 있으므로 객체로 보장
+    config.headers = config.headers ?? {};
+
+    if (token) {
+      config.headers['Authorization'] = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+apiClient.interceptors.response.use(
+  (response) => response,
+  (error) => {
     if (axios.isAxiosError(error) && error.response?.status === 401) {
       // Handle unauthorized access
       if (typeof window !== 'undefined') {
@@ -28,6 +41,18 @@ export const request = async <T>(
         window.location.href = '/login';
       }
     }
+    return Promise.reject(error);
+  }
+);
+
+export const request = async <T>(
+  config: Parameters<typeof apiClient.request>[0]
+): Promise<T> => {
+  try {
+    const response: AxiosResponse<T> = await apiClient.request(config);
+    return response.data;
+  } catch (error) {
+    // 인터셉터에서 401 에러를 처리하므로 여기서는 단순히 에러를 던집니다
     throw error;
   }
 };
@@ -82,7 +107,12 @@ export const deleteRequest = async <T>(endpoint: string): Promise<T> => {
   return response.data;
 };
 
-export const getMyProfile = async (): Promise<User> => {
+export const getMyProfile = async (): Promise<User | null> => {
+  const token =
+    typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+  if (!token) {
+    return null;
+  }
   const response = await apiClient.get<{
     status: string;
     message: string;
