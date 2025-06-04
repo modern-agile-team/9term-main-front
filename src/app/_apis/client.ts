@@ -107,7 +107,7 @@ export const deleteRequest = async <T>(endpoint: string): Promise<T> => {
   return response.data;
 };
 
-export const getMyProfile = async (): Promise<User | null> => {
+export const getMyProfile = async (): Promise<User> => {
   const token =
     typeof window !== 'undefined' ? localStorage.getItem('token') : null;
   if (!token) {
