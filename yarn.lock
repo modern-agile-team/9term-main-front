@@ -9,6 +9,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "9term-main-front@workspace:."
   dependencies:
+    "@next/eslint-plugin-next": "npm:^15.3.3"
     "@tanstack/react-query": "npm:^5.76.0"
     "@tanstack/react-query-devtools": "npm:^5.75.0"
     "@testing-library/jest-dom": "npm:^6.4.2"
@@ -1240,6 +1241,15 @@ __metadata:
   dependencies:
     fast-glob: "npm:3.3.1"
   checksum: 10c0/b03e512c275d33f4159522a66d4aa56f60dbf8f2dbfca6db9dcb5ce4c51ab701d8b28d719499d5728913b1ed71f76a93d770797670d04ca525ea318a32aa8fab
+  languageName: node
+  linkType: hard
+
+"@next/eslint-plugin-next@npm:^15.3.3":
+  version: 15.3.3
+  resolution: "@next/eslint-plugin-next@npm:15.3.3"
+  dependencies:
+    fast-glob: "npm:3.3.1"
+  checksum: 10c0/d6c95d07d46b9369f27eb716e2f6c8df6d97e077b055e26eff8f1931fc3cd7a6af73461d318917e60b68561ea90e0b5f43a2c6eaf641c1f740aadd1d2b12919a
   languageName: node
   linkType: hard
 

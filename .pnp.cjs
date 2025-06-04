@@ -29,6 +29,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./",\
         "packageDependencies": [\
           ["9term-main-front", "workspace:."],\
+          ["@next/eslint-plugin-next", "npm:15.3.3"],\
           ["@tanstack/react-query", "virtual:b388a21453945b91ae5134a14cbdc94d8b01747d8d72120d98622f6fe372ea5e346e65acf41b04c235364c563bdc7622eea67c87847f2c6486482172783e669e#npm:5.77.2"],\
           ["@tanstack/react-query-devtools", "virtual:b388a21453945b91ae5134a14cbdc94d8b01747d8d72120d98622f6fe372ea5e346e65acf41b04c235364c563bdc7622eea67c87847f2c6486482172783e669e#npm:5.77.2"],\
           ["@testing-library/jest-dom", "npm:6.6.3"],\
@@ -70,6 +71,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./",\
         "packageDependencies": [\
           ["9term-main-front", "workspace:."],\
+          ["@next/eslint-plugin-next", "npm:15.3.3"],\
           ["@tanstack/react-query", "virtual:b388a21453945b91ae5134a14cbdc94d8b01747d8d72120d98622f6fe372ea5e346e65acf41b04c235364c563bdc7622eea67c87847f2c6486482172783e669e#npm:5.77.2"],\
           ["@tanstack/react-query-devtools", "virtual:b388a21453945b91ae5134a14cbdc94d8b01747d8d72120d98622f6fe372ea5e346e65acf41b04c235364c563bdc7622eea67c87847f2c6486482172783e669e#npm:5.77.2"],\
           ["@testing-library/jest-dom", "npm:6.6.3"],\
@@ -1880,6 +1882,14 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "../../.yarn/berry/cache/@next-eslint-plugin-next-npm-15.3.2-7806f7fcc4-10c0.zip/node_modules/@next/eslint-plugin-next/",\
         "packageDependencies": [\
           ["@next/eslint-plugin-next", "npm:15.3.2"],\
+          ["fast-glob", "npm:3.3.1"]\
+        ],\
+        "linkType": "HARD"\
+      }],\
+      ["npm:15.3.3", {\
+        "packageLocation": "../../.yarn/berry/cache/@next-eslint-plugin-next-npm-15.3.3-4cdfbdebc2-10c0.zip/node_modules/@next/eslint-plugin-next/",\
+        "packageDependencies": [\
+          ["@next/eslint-plugin-next", "npm:15.3.3"],\
           ["fast-glob", "npm:3.3.1"]\
         ],\
         "linkType": "HARD"\
