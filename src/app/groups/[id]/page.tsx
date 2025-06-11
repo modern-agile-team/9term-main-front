@@ -75,25 +75,16 @@ const GroupPage = () => {
 
   const handleCreatePost = (title: string, content: string) => {
     if (!user) return;
-    const newPost: Post = {
-      id: Date.now(),
-      userId: Number(user.id),
-      groupId: Number(groupId),
-      title,
-      content,
-      createdAt: new Date().toISOString(),
-      updatedAt: null,
-    };
     // refetch로 최신화 (실제 API 연동 시에는 post 요청 후 refetch)
     refetch();
   };
 
-  const handleEditPost = (id: number, title: string, content: string) => {
+  const handleEditPost = (_id: number, _title: string, _content: string) => {
     // 실제 API 연동 시에는 patch/put 요청 후 refetch
     refetch();
   };
 
-  const handleDeletePost = (id: number) => {
+  const handleDeletePost = (_id: number) => {
     // 실제 API 연동 시에는 delete 요청 후 refetch
     refetch();
   };
@@ -106,7 +97,7 @@ const GroupPage = () => {
     setIsCreateModalOpen(true);
   };
 
-  const handleSetNotice = (post: Post) => {
+  const handleSetNotice = (_post: Post) => {
     // 실제 API 연동 시에는 patch/put 요청 후 refetch
     refetch();
   };
