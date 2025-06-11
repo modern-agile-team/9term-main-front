@@ -3,7 +3,7 @@ import type { User } from '@/app/_types/user.types';
 export const mockUser: User = {
   id: 1,
   name: '홍길동',
-  email: 'user@example.com',
+  username: 'hong123',
   role: 'USER',
   createdAt: new Date().toISOString(),
   updatedAt: new Date().toISOString(),
