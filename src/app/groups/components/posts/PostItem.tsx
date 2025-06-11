@@ -9,6 +9,7 @@ interface PostItemProps {
   onDelete?: (post: Post) => void;
   onSetNotice?: (post: Post) => void;
   currentUserId?: string;
+  onPostClick?: (post: Post) => void;
 }
 
 export default function PostItem({
@@ -17,6 +18,7 @@ export default function PostItem({
   onDelete,
   onSetNotice,
   currentUserId,
+  onPostClick,
 }: PostItemProps) {
   const [formattedDate, setFormattedDate] = useState<string>('');
   const [menuOpen, setMenuOpen] = useState(false);
@@ -49,7 +51,13 @@ export default function PostItem({
       </div>
 
       {/* 게시글 제목 및 내용 */}
-      <h3 className="text-lg font-bold mb-2">{post.title || '게시글 제목'}</h3>
+      <h3
+        className="text-lg font-bold mb-2"
+        onClick={() => onPostClick && onPostClick(post)}
+        style={{ cursor: onPostClick ? 'pointer' : undefined }}
+      >
+        {post.title || '게시글 제목'}
+      </h3>
       <p className="text-gray-700 mb-3">{post.content || '게시글 내용'}</p>
 
       {/* 장소 및 시간 정보 */}
