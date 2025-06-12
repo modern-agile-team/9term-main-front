@@ -73,9 +73,8 @@ const GroupPage = () => {
     );
   }
 
-  const handleCreatePost = (title: string, content: string) => {
+  const handleCreatePost = (_title: string, _content: string) => {
     if (!user) return;
-    // refetch로 최신화 (실제 API 연동 시에는 post 요청 후 refetch)
     refetch();
   };
 
