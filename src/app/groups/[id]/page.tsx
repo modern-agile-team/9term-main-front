@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useParams } from 'next/navigation';
+import { useQuery } from '@tanstack/react-query';
 import { mockGroups } from '@/app/groups/[id]/mocks/data';
 import BoardHeader from '@/app/groups/components/BoardHeader';
 import Sidebar from '@/app/groups/components/Sidebar';
@@ -13,6 +14,7 @@ import PostEditModal from '@/app/groups/components/posts/PostEditModal';
 import DeletePostModal from '@/app/groups/components/posts/DeletePostModal';
 import type { Post } from '@/app/_types/post.types';
 import { useAuth } from '@/app/_services/auth-provider';
+import { getGroupPosts } from '@/app/_apis/client';
 
 // 그룹 상세 페이지 컴포넌트
 // - 게시글 목록, 게시글 생성/수정/삭제 모달 상태 관리
@@ -25,11 +27,17 @@ const GroupPage = () => {
   const [editPostId, setEditPostId] = useState<number | null>(null);
   const [deletePostId, setDeletePostId] = useState<number | null>(null);
 
-  const [groupPosts, setGroupPosts] = useState<{ [groupId: string]: Post[] }>(
-    {}
-  );
-
-  const posts = groupPosts[groupId] || [];
+  // React Query로 게시글 목록 조회
+  const {
+    data: posts = [],
+    isLoading,
+    isError,
+    refetch,
+  } = useQuery({
+    queryKey: ['groupPosts', groupId],
+    queryFn: () => getGroupPosts(groupId),
+    enabled: !!groupId,
+  });
 
   const group = mockGroups.find((g) => g.id === Number(groupId));
 
@@ -49,41 +57,35 @@ const GroupPage = () => {
     );
   }
 
-  const handleCreatePost = (title: string, content: string) => {
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-full">
+        게시글을 불러오는 중...
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="flex items-center justify-center h-full text-red-500">
+        게시글을 불러오지 못했습니다.
+      </div>
+    );
+  }
+
+  const handleCreatePost = (_title: string, _content: string) => {
     if (!user) return;
-    const newPost: Post = {
-      id: Date.now(),
-      title,
-      content,
-      author: { id: String(user.id), username: user.name || '익명' },
-      createdAt: new Date().toISOString(),
-      category: activeTab as any,
-      tags: [],
-      likes: 0,
-      comments: 0,
-      saved: false,
-      isNotice: false,
-    };
-    setGroupPosts((prev) => ({
-      ...prev,
-      [groupId]: [newPost, ...(prev[groupId] || [])],
-    }));
+    refetch();
   };
 
-  const handleEditPost = (id: number, title: string, content: string) => {
-    setGroupPosts((prev) => ({
-      ...prev,
-      [groupId]: (prev[groupId] || []).map((post) =>
-        post.id === id ? { ...post, title, content } : post
-      ),
-    }));
+  const handleEditPost = (_id: number, _title: string, _content: string) => {
+    // 실제 API 연동 시에는 patch/put 요청 후 refetch
+    refetch();
   };
 
-  const handleDeletePost = (id: number) => {
-    setGroupPosts((prev) => ({
-      ...prev,
-      [groupId]: (prev[groupId] || []).filter((post) => post.id !== id),
-    }));
+  const handleDeletePost = (_id: number) => {
+    // 실제 API 연동 시에는 delete 요청 후 refetch
+    refetch();
   };
 
   const handleCreateButtonClick = () => {
@@ -94,13 +96,9 @@ const GroupPage = () => {
     setIsCreateModalOpen(true);
   };
 
-  const handleSetNotice = (post: Post) => {
-    setGroupPosts((prev) => ({
-      ...prev,
-      [groupId]: (prev[groupId] || []).map((p) =>
-        p.id === post.id ? { ...p, isNotice: true } : p
-      ),
-    }));
+  const handleSetNotice = (_post: Post) => {
+    // 실제 API 연동 시에는 patch/put 요청 후 refetch
+    refetch();
   };
 
   const renderContent = () => {
