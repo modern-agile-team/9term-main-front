@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useParams } from 'next/navigation';
+import { useQuery } from '@tanstack/react-query';
 import { mockGroups } from '@/app/groups/[id]/mocks/data';
 import BoardHeader from '@/app/groups/components/BoardHeader';
 import Sidebar from '@/app/groups/components/Sidebar';
@@ -74,6 +75,7 @@ const GroupPage = () => {
       </div>
     );
   }
+
 
   const handleCreatePost = (title: string, content: string) => {
     createPostMutation.mutate({ groupId, title, content });
