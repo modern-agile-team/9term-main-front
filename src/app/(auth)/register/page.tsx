@@ -18,9 +18,13 @@ const registerUser = async (userData: {
       withCredentials: true,
     });
     return response.data;
-  } catch (error: any) {
-    if (error.response && error.response.data && error.response.data.message) {
-      throw new Error(error.response.data.message);
+  } catch (error: unknown) {
+    if (
+      (error as any).response &&
+      (error as any).response.data &&
+      (error as any).response.data.message
+    ) {
+      throw new Error((error as any).response.data.message);
     }
     throw new Error('회원가입 실패');
   }

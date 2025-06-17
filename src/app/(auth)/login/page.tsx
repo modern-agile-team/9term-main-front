@@ -19,9 +19,13 @@ const loginUser = async (credentials: {
       withCredentials: true,
     });
     return response.data;
-  } catch (error: any) {
-    if (error.response && error.response.data && error.response.data.message) {
-      throw new Error(error.response.data.message);
+  } catch (error: unknown) {
+    if (
+      (error as any).response &&
+      (error as any).response.data &&
+      (error as any).response.data.message
+    ) {
+      throw new Error((error as any).response.data.message);
     }
     throw new Error('로그인 실패');
   }
@@ -46,10 +50,10 @@ export default function LoginPage() {
       login(data.data.accessToken);
       setShowSuccessModal(true);
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
       // axios error 객체에서 백엔드 메시지 추출
       const msg =
-        error?.response?.data?.message ||
+        (error as any)?.response?.data?.message ||
         '로그인에 실패했습니다. 다시 시도해주세요.';
       setErrorMessage(msg);
       setShowErrorModal(true);

@@ -9,7 +9,7 @@ interface PostSettingsModalProps {
 }
 
 const PostSettingsModal: React.FC<PostSettingsModalProps> = ({
-  post,
+  post: _post,
   onEdit,
   onDelete,
   onClose,

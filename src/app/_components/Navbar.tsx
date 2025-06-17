@@ -65,7 +65,7 @@ export default function TopNavigation() {
 
   const handleViewAllNotifications = () => {
     // 모든 알림 페이지로 이동
-    console.log('모든 알림 보기');
+    console.info('모든 알림 보기');
   };
 
   // 로그아웃 핸들러 추가
