@@ -85,7 +85,7 @@ export function useAuth() {
   return context;
 }
 
-export function useMyProfile(token?: string) {
+export function useMyProfile(token?: string | null) {
   return useQuery<User>({
     queryKey: ['myProfile', token],
     queryFn: getMyProfile,
