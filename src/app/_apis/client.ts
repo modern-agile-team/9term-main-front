@@ -1,6 +1,7 @@
 import axios, { AxiosInstance, AxiosResponse } from 'axios';
 import { User } from '@/app/_types/user.types';
-import type { Post, GetPostsResponse } from '@/app/_types/post.types';
+import type { Post } from '@/app/_types/post.types';
+import type { GetGroupPostsResponse } from '@/app/_types/postcreate.types';
 
 const baseURL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -125,14 +126,17 @@ export const getMyProfile = async (): Promise<User> => {
   return response.data.data;
 };
 
-// 게시물 리스트 가져오기
-export const getPosts = async () => {
-  return get('/api/posts');
+export const createPost = async (
+  groupId: string,
+  postData: { title: string; content: string }
+): Promise<Post | undefined> => {
+  const res = await post<Post>(`/groups/${groupId}/posts`, postData);
+  return res;
 };
 
 export const getGroupPosts = async (groupId: string): Promise<Post[]> => {
-  const res = await get<GetPostsResponse>(`/groups/${groupId}/posts`);
-  return res.data;
+  const res = await get<GetGroupPostsResponse>(`/groups/${groupId}/posts`);
+  return res.data ?? [];
 };
 
 export default apiClient;

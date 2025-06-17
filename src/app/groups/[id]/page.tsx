@@ -12,9 +12,11 @@ import ActivityStats from '@/app/groups/components/ActivityStats';
 import PostCreateModal from '@/app/groups/components/posts/PostCreateModal';
 import PostEditModal from '@/app/groups/components/posts/PostEditModal';
 import DeletePostModal from '@/app/groups/components/posts/DeletePostModal';
+import PostDetailModal from '@/app/groups/components/posts/PostDetailModal';
 import type { Post } from '@/app/_types/post.types';
 import { useAuth } from '@/app/_services/auth-provider';
-import { getGroupPosts } from '@/app/_apis/client';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { createPost, getGroupPosts } from '@/app/_apis/client';
 
 // 그룹 상세 페이지 컴포넌트
 // - 게시글 목록, 게시글 생성/수정/삭제 모달 상태 관리
@@ -26,20 +28,39 @@ const GroupPage = () => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [editPostId, setEditPostId] = useState<number | null>(null);
   const [deletePostId, setDeletePostId] = useState<number | null>(null);
+  const [selectedPost, setSelectedPost] = useState<Post | null>(null);
 
-  // React Query로 게시글 목록 조회
+  const { user, isLoggedIn } = useAuth();
+  const queryClient = useQueryClient();
+
+  // 게시글 목록 패칭
   const {
     data: posts = [],
     isLoading,
     isError,
-    refetch,
-  } = useQuery({
+  } = useQuery<Post[], Error>({
     queryKey: ['groupPosts', groupId],
     queryFn: () => getGroupPosts(groupId),
-    enabled: !!groupId,
   });
 
-  const group = mockGroups.find((g) => g.id === Number(groupId));
+  const createPostMutation = useMutation({
+    mutationFn: ({
+      groupId,
+      title,
+      content,
+    }: {
+      groupId: string;
+      title: string;
+      content: string;
+    }) => createPost(groupId, { title, content }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['groupPosts', groupId] });
+      setIsCreateModalOpen(false);
+    },
+    onError: (error: any) => {
+      alert(error?.response?.data?.message || '게시글 작성에 실패했습니다.');
+    },
+  });
 
   const filteredPosts = posts.filter((post) =>
     activeTab === '공지' ? post.isNotice : !post.isNotice
@@ -47,9 +68,7 @@ const GroupPage = () => {
   const editingPost = posts.find((p) => p.id === editPostId);
   const deletingPost = posts.find((p) => p.id === deletePostId);
 
-  const { user, isLoggedIn } = useAuth();
-
-  if (!group) {
+  if (!mockGroups.find((g) => g.id === Number(groupId))) {
     return (
       <div className="flex items-center justify-center h-full">
         <p>존재하지 않는 그룹입니다.</p>
@@ -57,35 +76,8 @@ const GroupPage = () => {
     );
   }
 
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center h-full">
-        게시글을 불러오는 중...
-      </div>
-    );
-  }
-
-  if (isError) {
-    return (
-      <div className="flex items-center justify-center h-full text-red-500">
-        게시글을 불러오지 못했습니다.
-      </div>
-    );
-  }
-
-  const handleCreatePost = (_title: string, _content: string) => {
-    if (!user) return;
-    refetch();
-  };
-
-  const handleEditPost = (_id: number, _title: string, _content: string) => {
-    // 실제 API 연동 시에는 patch/put 요청 후 refetch
-    refetch();
-  };
-
-  const handleDeletePost = (_id: number) => {
-    // 실제 API 연동 시에는 delete 요청 후 refetch
-    refetch();
+  const handleCreatePost = (title: string, content: string) => {
+    createPostMutation.mutate({ groupId, title, content });
   };
 
   const handleCreateButtonClick = () => {
@@ -96,11 +88,6 @@ const GroupPage = () => {
     setIsCreateModalOpen(true);
   };
 
-  const handleSetNotice = (_post: Post) => {
-    // 실제 API 연동 시에는 patch/put 요청 후 refetch
-    refetch();
-  };
-
   const renderContent = () => {
     switch (activeTab) {
       case '일정':
@@ -108,13 +95,15 @@ const GroupPage = () => {
       case '통계':
         return <ActivityStats />;
       default:
+        if (isLoading) return <div>로딩 중...</div>;
+        if (isError) return <div>게시글을 불러오지 못했습니다.</div>;
         return (
           <PostList
             posts={filteredPosts}
             onEdit={(post: Post) => setEditPostId(post.id)}
             onDelete={(post: Post) => setDeletePostId(post.id)}
-            onSetNotice={handleSetNotice}
             currentUserId={user?.id?.toString()}
+            onPostClick={setSelectedPost}
           />
         );
     }
@@ -145,16 +134,21 @@ const GroupPage = () => {
         <PostEditModal
           post={editingPost}
           onClose={() => setEditPostId(null)}
-          onEdit={handleEditPost}
+          onEdit={() => {}}
         />
       )}
       {deletePostId && deletingPost && (
         <DeletePostModal
           onConfirm={() => {
-            handleDeletePost(deletePostId);
             setDeletePostId(null);
           }}
           onClose={() => setDeletePostId(null)}
+        />
+      )}
+      {selectedPost && (
+        <PostDetailModal
+          post={selectedPost}
+          onClose={() => setSelectedPost(null)}
         />
       )}
     </div>
