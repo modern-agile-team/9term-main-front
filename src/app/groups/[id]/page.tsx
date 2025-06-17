@@ -62,11 +62,11 @@ const GroupPage = () => {
     },
   });
 
-  const filteredPosts = posts.filter((post: Post) =>
+  const filteredPosts = posts.filter((post) =>
     activeTab === '공지' ? post.isNotice : !post.isNotice
   );
-  const editingPost = posts.find((p: Post) => p.id === editPostId);
-  const deletingPost = posts.find((p: Post) => p.id === deletePostId);
+  const editingPost = posts.find((p) => p.id === editPostId);
+  const deletingPost = posts.find((p) => p.id === deletePostId);
 
   if (!mockGroups.find((g) => g.id === Number(groupId))) {
     return (
