@@ -44,7 +44,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   // 내 정보 쿼리
-  const { data: user } = useMyProfile();
+  const { data: user } = useMyProfile(token);
 
   // 로그인 함수
   const login = (newToken: string) => {
@@ -85,10 +85,11 @@ export function useAuth() {
   return context;
 }
 
-export function useMyProfile() {
+export function useMyProfile(token?: string | null) {
   return useQuery<User>({
-    queryKey: ['myProfile'],
+    queryKey: ['myProfile', token],
     queryFn: getMyProfile,
+    enabled: !!token,
     staleTime: 5 * 60 * 1000,
   });
 }
