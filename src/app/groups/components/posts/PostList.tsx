@@ -16,13 +16,11 @@ export default function PostList({
   onEdit,
   onDelete,
   onSetNotice,
-  currentUserId,
 }: PostListProps) {
   if (posts.length === 0) {
-    // 게시글이 없으면 아무것도 렌더링하지 않음
-    return null;
-    // 또는 안내문구를 원하면 아래처럼:
-    // return <div className="text-center text-gray-400 py-8">게시글이 없습니다.</div>;
+    return (
+      <div className="text-center text-gray-400 py-8">게시글이 없습니다.</div>
+    );
   }
   return (
     <div className="space-y-4">
@@ -33,7 +31,6 @@ export default function PostList({
           onEdit={onEdit}
           onDelete={onDelete}
           onSetNotice={onSetNotice}
-          currentUserId={currentUserId}
         />
       ))}
     </div>

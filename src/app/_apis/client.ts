@@ -12,21 +12,17 @@ const defaultHeaders = {
 };
 
 // API 요청 래퍼 함수
-export const apiClient: AxiosInstance = axios.create({
+const apiClient: AxiosInstance = axios.create({
   baseURL,
   headers: defaultHeaders,
 });
 
 apiClient.interceptors.request.use(
   (config) => {
-    const token =
-      typeof window !== 'undefined' ? localStorage.getItem('token') : null;
-
-    // headers가 undefined일 수 있으므로 객체로 보장
-    config.headers = config.headers ?? {};
-
+    const token = localStorage.getItem('token');
     if (token) {
-      config.headers['Authorization'] = `Bearer ${token}`;
+      // eslint-disable-next-line no-param-reassign
+      config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
   },
@@ -34,8 +30,11 @@ apiClient.interceptors.request.use(
     return Promise.reject(error);
   }
 );
+
 apiClient.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    return response;
+  },
   (error) => {
     if (axios.isAxiosError(error) && error.response?.status === 401) {
       // Handle unauthorized access

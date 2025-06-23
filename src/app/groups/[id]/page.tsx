@@ -12,7 +12,7 @@ import ActivityStats from '@/app/groups/components/ActivityStats';
 import PostCreateModal from '@/app/groups/components/posts/PostCreateModal';
 import PostEditModal from '@/app/groups/components/posts/PostEditModal';
 import DeletePostModal from '@/app/groups/components/posts/DeletePostModal';
-import PostDetailModal from '@/app/groups/components/posts/PostDetailModal';
+
 import type { Post } from '@/app/_types/post.types';
 import { useAuth } from '@/app/_services/auth-provider';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -28,7 +28,6 @@ const GroupPage = () => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [editPostId, setEditPostId] = useState<number | null>(null);
   const [deletePostId, setDeletePostId] = useState<number | null>(null);
-  const [selectedPost, setSelectedPost] = useState<Post | null>(null);
 
   const { user, isLoggedIn } = useAuth();
   const queryClient = useQueryClient();
@@ -142,12 +141,6 @@ const GroupPage = () => {
             setDeletePostId(null);
           }}
           onClose={() => setDeletePostId(null)}
-        />
-      )}
-      {selectedPost && (
-        <PostDetailModal
-          post={selectedPost}
-          onClose={() => setSelectedPost(null)}
         />
       )}
     </div>

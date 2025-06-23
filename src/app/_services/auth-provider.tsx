@@ -7,7 +7,7 @@ import {
   useEffect,
   useState,
 } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { getMyProfile } from '@/app/_apis/client';
 import { User } from '@/app/_types/user.types';
 
@@ -25,21 +25,14 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 // 인증 Provider 컴포넌트
 export function AuthProvider({ children }: { children: ReactNode }) {
-  // 로컬 스토리지에서 토큰 가져오기
+  const queryClient = useQueryClient();
   const [token, setToken] = useState<string | null>(null);
-  const [_userId, setUserId] = useState<string | null>(null);
 
   // 초기 로드 시 로컬 스토리지에서 토큰 가져오기
   useEffect(() => {
     const storedToken = localStorage.getItem('token');
-    const storedUserId = localStorage.getItem('userId');
-
     if (storedToken) {
       setToken(storedToken);
-    }
-
-    if (storedUserId) {
-      setUserId(storedUserId);
     }
   }, []);
 
@@ -50,14 +43,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = (newToken: string) => {
     localStorage.setItem('token', newToken);
     setToken(newToken);
+    queryClient.invalidateQueries({ queryKey: ['myProfile'] });
   };
 
   // 로그아웃 함수
   const logout = () => {
     localStorage.removeItem('token');
-    localStorage.removeItem('userId');
     setToken(null);
-    setUserId(null);
+    queryClient.removeQueries({ queryKey: ['myProfile'] });
   };
 
   // 로그인 상태 확인

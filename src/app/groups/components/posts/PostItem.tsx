@@ -6,13 +6,13 @@ import { useQuery } from '@tanstack/react-query';
 import { getComments } from '@/app/_apis/client';
 import CommentList from '@/app/groups/components/comments/CommentList';
 import CommentForm from '@/app/groups/components/comments/CommentForm';
+import { useMyProfile } from '@/app/_services/auth-provider';
 
 interface PostItemProps {
   post: Post;
   onEdit?: (post: Post) => void;
   onDelete?: (post: Post) => void;
   onSetNotice?: (post: Post) => void;
-  currentUserId?: string;
 }
 
 export default function PostItem({
@@ -20,7 +20,6 @@ export default function PostItem({
   onEdit,
   onDelete,
   onSetNotice,
-  currentUserId,
 }: PostItemProps) {
   const [formattedDate, setFormattedDate] = useState<string>('');
   const [menuOpen, setMenuOpen] = useState(false);
@@ -31,6 +30,9 @@ export default function PostItem({
     queryFn: () => getComments(String(post.groupId), String(post.id)),
     enabled: isCommentOpen,
   });
+
+  const { data: me } = useMyProfile();
+  const currentUserId = me?.id;
 
   useEffect(() => {
     const date = new Date(post.createdAt);
@@ -51,10 +53,10 @@ export default function PostItem({
       {/* 작성자 정보 */}
       <div className="flex items-center mb-3">
         <div className="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold mr-3">
-          {post.author?.username.charAt(0) || '?'}
+          {post.user.name.charAt(0) || '?'}
         </div>
         <div>
-          <div className="font-medium">{post.author?.username || '사용자'}</div>
+          <div className="font-medium">{post.user.name || '사용자'}</div>
           <div className="text-sm text-gray-500">{formattedDate}</div>
         </div>
       </div>
@@ -99,11 +101,14 @@ export default function PostItem({
           <span className="mr-1">💬</span> 댓글{' '}
           {comments ? comments.length : post.comments || 0}
         </button>
-        <button className="flex items-center mr-4">
+        <button
+          className="mr-4 text-sm flex items-center"
+          onClick={() => console.log('save')}
+        >
           <span className="mr-1">{post.saved ? '⭐' : '☆'}</span> 저장
         </button>
 
-        {currentUserId && post.author?.id === currentUserId && (
+        {currentUserId && post.userId === currentUserId && (
           <div className="ml-auto relative">
             <button
               className="flex items-center px-2 py-1 text-gray-600 hover:text-gray-900"

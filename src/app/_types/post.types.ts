@@ -4,10 +4,10 @@ export interface Post {
   groupId: number;
   title: string;
   content: string;
-  author?: {
-    id: string;
-    username: string;
+  user: {
+    name: string;
   };
+ 
   createdAt: string;
   updatedAt: string | null;
   category?: '공지' | '자유게시판' | '일정' | '통계'; // 게시글 카테고리(탭)
