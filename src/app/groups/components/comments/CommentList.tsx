@@ -1,27 +1,80 @@
 'use client';
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { getComments } from '@/app/_apis/client';
 import { useParams } from 'next/navigation';
+import { Comment } from '@/app/_types/comment.types';
 
 interface CommentListProps {
   postId: number;
 }
+
+const listToTree = (list: Comment[]): Comment[] => {
+  const map: { [key: number]: number } = {};
+  const roots: Comment[] = [];
+
+  list.forEach((node, index) => {
+    map[node.id] = index;
+    node.children = [];
+  });
+
+  list.forEach((node) => {
+    if (node.parentId !== null && list[map[node.parentId]]) {
+      list[map[node.parentId]].children?.push(node);
+    } else {
+      roots.push(node);
+    }
+  });
+
+  return roots;
+};
+
+const CommentItem: React.FC<{ comment: Comment }> = ({ comment }) => {
+  return (
+    <li className="mb-2">
+      <div className="flex items-start rounded-md p-2 hover:bg-gray-50">
+        <img
+          src={comment.user.profileImageUrl || '/default-profile.png'}
+          alt={comment.user.name}
+          className="w-8 h-8 rounded-full mr-3 mt-1"
+        />
+        <div className="flex-grow">
+          <p className="text-sm">
+            <span className="font-semibold">{comment.user.name}</span>
+            <span className="text-gray-500 ml-2">
+              {new Date(comment.createdAt).toLocaleString()}
+            </span>
+          </p>
+          <p className="text-gray-800 mt-1">{comment.content}</p>
+        </div>
+      </div>
+      {comment.children && comment.children.length > 0 && (
+        <ul className="pl-8 mt-2 border-l-2 ml-4">
+          {comment.children.map((reply) => (
+            <CommentItem key={reply.id} comment={reply} />
+          ))}
+        </ul>
+      )}
+    </li>
+  );
+};
 
 const CommentList: React.FC<CommentListProps> = ({ postId }) => {
   const params = useParams();
   const { id: groupId } = params as { id: string };
 
   const {
-    data: comments,
+    data: comments = [],
     isLoading,
     isError,
   } = useQuery({
     queryKey: ['comments', groupId, postId],
-    queryFn: () => getComments(groupId, String(postId)),
+    queryFn: () => getComments(String(groupId), String(postId)),
     enabled: !!groupId && !!postId,
   });
+
+  const commentTree = useMemo(() => listToTree(comments), [comments]);
 
   if (isLoading) {
     return <div>댓글을 불러오는 중...</div>;
@@ -33,32 +86,16 @@ const CommentList: React.FC<CommentListProps> = ({ postId }) => {
 
   return (
     <div>
-      <h2 className="text-xl font-bold mb-4">댓글</h2>
-      {comments && comments.length > 0 ? (
+      {commentTree.length > 0 ? (
         <ul>
-          {comments.map((comment) => (
-            <li key={comment.id} className="mb-4">
-              <div className="flex items-start">
-                <div className="flex-shrink-0">
-                  <img
-                    src={comment.user.profileImageUrl || '/default-profile.png'}
-                    alt={comment.user.name}
-                    className="w-8 h-8 rounded-full"
-                  />
-                </div>
-                <div className="ml-3">
-                  <p className="text-sm font-semibold">{comment.user.name}</p>
-                  <p className="text-gray-700">{comment.content}</p>
-                  <p className="text-xs text-gray-500">
-                    {new Date(comment.createdAt).toLocaleString()}
-                  </p>
-                </div>
-              </div>
-            </li>
+          {commentTree.map((comment) => (
+            <CommentItem key={comment.id} comment={comment} />
           ))}
         </ul>
       ) : (
-        <p>아직 댓글이 없습니다.</p>
+        <p className="text-sm text-gray-500 text-center py-4">
+          아직 댓글이 없습니다.
+        </p>
       )}
     </div>
   );

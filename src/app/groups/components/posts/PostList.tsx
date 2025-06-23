@@ -9,7 +9,6 @@ interface PostListProps {
   onDelete?: (post: Post) => void;
   onSetNotice?: (post: Post) => void;
   currentUserId?: string;
-  onPostClick?: (post: Post) => void;
 }
 
 export default function PostList({
@@ -18,7 +17,6 @@ export default function PostList({
   onDelete,
   onSetNotice,
   currentUserId,
-  onPostClick,
 }: PostListProps) {
   if (posts.length === 0) {
     // 게시글이 없으면 아무것도 렌더링하지 않음
@@ -36,7 +34,6 @@ export default function PostList({
           onDelete={onDelete}
           onSetNotice={onSetNotice}
           currentUserId={currentUserId}
-          onPostClick={onPostClick}
         />
       ))}
     </div>
