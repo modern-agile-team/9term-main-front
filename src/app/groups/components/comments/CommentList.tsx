@@ -41,17 +41,13 @@ const CommentList: React.FC<CommentListProps> = ({ postId }) => {
               <div className="flex items-start">
                 <div className="flex-shrink-0">
                   <img
-                    src={
-                      comment.author.profileImageUrl || '/default-profile.png'
-                    }
-                    alt={comment.author.nickname}
+                    src={comment.user.profileImageUrl || '/default-profile.png'}
+                    alt={comment.user.name}
                     className="w-8 h-8 rounded-full"
                   />
                 </div>
                 <div className="ml-3">
-                  <p className="text-sm font-semibold">
-                    {comment.author.nickname}
-                  </p>
+                  <p className="text-sm font-semibold">{comment.user.name}</p>
                   <p className="text-gray-700">{comment.content}</p>
                   <p className="text-xs text-gray-500">
                     {new Date(comment.createdAt).toLocaleString()}
