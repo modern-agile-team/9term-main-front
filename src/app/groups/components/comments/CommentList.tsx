@@ -1,13 +1,10 @@
 'use client';
 
 import React, { useMemo } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { getComments } from '@/app/_apis/client';
-import { useParams } from 'next/navigation';
 import { Comment } from '@/app/_types/comment.types';
 
 interface CommentListProps {
-  postId: number;
+  comments: Comment[];
 }
 
 const listToTree = (list: Comment[]): Comment[] => {
@@ -55,43 +52,24 @@ const CommentItem: React.FC<{ comment: Comment }> = ({ comment }) => {
   );
 };
 
-const CommentList: React.FC<CommentListProps> = ({ postId }) => {
-  const params = useParams();
-  const { id: groupId } = params as { id: string };
-
-  const {
-    data: comments = [],
-    isLoading,
-    isError,
-  } = useQuery({
-    queryKey: ['comments', groupId, postId],
-    queryFn: () => getComments(String(groupId), String(postId)),
-    enabled: !!groupId && !!postId,
-  });
-
+const CommentList: React.FC<CommentListProps> = ({ comments }) => {
   const commentTree = useMemo(() => listToTree(comments), [comments]);
 
-  if (isLoading) {
-    return <div>댓글을 불러오는 중...</div>;
-  }
-
-  if (isError) {
-    return <div>댓글을 불러오는 중 오류가 발생했습니다.</div>;
+  if (comments.length === 0) {
+    return (
+      <p className="text-sm text-gray-500 text-center py-4">
+        아직 댓글이 없습니다.
+      </p>
+    );
   }
 
   return (
     <div>
-      {commentTree.length > 0 ? (
-        <ul>
-          {commentTree.map((comment) => (
-            <CommentItem key={comment.id} comment={comment} />
-          ))}
-        </ul>
-      ) : (
-        <p className="text-sm text-gray-500 text-center py-4">
-          아직 댓글이 없습니다.
-        </p>
-      )}
+      <ul>
+        {commentTree.map((comment) => (
+          <CommentItem key={comment.id} comment={comment} />
+        ))}
+      </ul>
     </div>
   );
 };

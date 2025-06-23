@@ -2,6 +2,8 @@
 
 import { Post } from '@/app/_types/post.types';
 import { useEffect, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { getComments } from '@/app/_apis/client';
 import CommentList from '@/app/groups/components/comments/CommentList';
 import CommentForm from '@/app/groups/components/comments/CommentForm';
 
@@ -23,6 +25,12 @@ export default function PostItem({
   const [formattedDate, setFormattedDate] = useState<string>('');
   const [menuOpen, setMenuOpen] = useState(false);
   const [isCommentOpen, setIsCommentOpen] = useState(false);
+
+  const { data: comments, isLoading: isCommentsLoading } = useQuery({
+    queryKey: ['comments', post.groupId, post.id],
+    queryFn: () => getComments(String(post.groupId), String(post.id)),
+    enabled: isCommentOpen,
+  });
 
   useEffect(() => {
     const date = new Date(post.createdAt);
@@ -88,7 +96,8 @@ export default function PostItem({
           className="flex items-center mr-4"
           onClick={() => setIsCommentOpen((prev) => !prev)}
         >
-          <span className="mr-1">💬</span> 댓글 {post.comments || 0}
+          <span className="mr-1">💬</span> 댓글{' '}
+          {comments ? comments.length : post.comments || 0}
         </button>
         <button className="flex items-center mr-4">
           <span className="mr-1">{post.saved ? '⭐' : '☆'}</span> 저장
@@ -152,7 +161,13 @@ export default function PostItem({
       </div>
       {isCommentOpen && (
         <div className="mt-4 pt-4 border-t border-gray-100">
-          <CommentList postId={post.id} />
+          {isCommentsLoading ? (
+            <p className="text-sm text-gray-500 text-center py-4">
+              댓글을 불러오는 중...
+            </p>
+          ) : (
+            <CommentList comments={comments || []} />
+          )}
           <CommentForm postId={post.id} />
         </div>
       )}
