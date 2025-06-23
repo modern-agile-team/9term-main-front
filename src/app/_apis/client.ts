@@ -2,6 +2,7 @@ import axios, { AxiosInstance, AxiosResponse } from 'axios';
 import { User } from '@/app/_types/user.types';
 import type { Post } from '@/app/_types/post.types';
 import type { GetGroupPostsResponse } from '@/app/_types/postcreate.types';
+import { Comment, GetCommentsResponse } from '@/app/_types/comment.types';
 
 const baseURL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -137,6 +138,29 @@ export const createPost = async (
 export const getGroupPosts = async (groupId: string): Promise<Post[]> => {
   const res = await get<GetGroupPostsResponse>(`/groups/${groupId}/posts`);
   return res.data ?? [];
+};
+
+export const getPost = async (
+  groupId: string,
+  postId: string
+): Promise<Post> => {
+  return await get<Post>(`/groups/${groupId}/posts/${postId}`);
+};
+
+export const getComments = async (
+  groupId: string,
+  postId: string,
+  parentId?: number
+): Promise<Comment[]> => {
+  const params: Record<string, string | number> = {};
+  if (parentId) {
+    params.parentId = parentId;
+  }
+  const res = await get<GetCommentsResponse>(
+    `/groups/${groupId}/posts/${postId}/comments`,
+    params
+  );
+  return res.data;
 };
 
 export default apiClient;

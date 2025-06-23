@@ -103,7 +103,6 @@ const GroupPage = () => {
             onEdit={(post: Post) => setEditPostId(post.id)}
             onDelete={(post: Post) => setDeletePostId(post.id)}
             currentUserId={user?.id?.toString()}
-            onPostClick={setSelectedPost}
           />
         );
     }

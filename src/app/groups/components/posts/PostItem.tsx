@@ -2,6 +2,10 @@
 
 import { Post } from '@/app/_types/post.types';
 import { useEffect, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { getComments } from '@/app/_apis/client';
+import CommentList from '@/app/groups/components/comments/CommentList';
+import CommentForm from '@/app/groups/components/comments/CommentForm';
 
 interface PostItemProps {
   post: Post;
@@ -9,7 +13,6 @@ interface PostItemProps {
   onDelete?: (post: Post) => void;
   onSetNotice?: (post: Post) => void;
   currentUserId?: string;
-  onPostClick?: (post: Post) => void;
 }
 
 export default function PostItem({
@@ -18,10 +21,16 @@ export default function PostItem({
   onDelete,
   onSetNotice,
   currentUserId,
-  onPostClick,
 }: PostItemProps) {
   const [formattedDate, setFormattedDate] = useState<string>('');
   const [menuOpen, setMenuOpen] = useState(false);
+  const [isCommentOpen, setIsCommentOpen] = useState(false);
+
+  const { data: comments, isLoading: isCommentsLoading } = useQuery({
+    queryKey: ['comments', post.groupId, post.id],
+    queryFn: () => getComments(String(post.groupId), String(post.id)),
+    enabled: isCommentOpen,
+  });
 
   useEffect(() => {
     const date = new Date(post.createdAt);
@@ -51,13 +60,7 @@ export default function PostItem({
       </div>
 
       {/* 게시글 제목 및 내용 */}
-      <h3
-        className="text-lg font-bold mb-2"
-        onClick={() => onPostClick && onPostClick(post)}
-        style={{ cursor: onPostClick ? 'pointer' : undefined }}
-      >
-        {post.title || '게시글 제목'}
-      </h3>
+      <h3 className="text-lg font-bold mb-2">{post.title || '게시글 제목'}</h3>
       <p className="text-gray-700 mb-3">{post.content || '게시글 내용'}</p>
 
       {/* 장소 및 시간 정보 */}
@@ -89,8 +92,12 @@ export default function PostItem({
         <button className="flex items-center mr-4">
           <span className="mr-1">👍</span> 좋아요 {post.likes || 0}
         </button>
-        <button className="flex items-center mr-4">
-          <span className="mr-1">💬</span> 댓글 {post.comments || 0}
+        <button
+          className="flex items-center mr-4"
+          onClick={() => setIsCommentOpen((prev) => !prev)}
+        >
+          <span className="mr-1">💬</span> 댓글{' '}
+          {comments ? comments.length : post.comments || 0}
         </button>
         <button className="flex items-center mr-4">
           <span className="mr-1">{post.saved ? '⭐' : '☆'}</span> 저장
@@ -152,6 +159,18 @@ export default function PostItem({
           </div>
         )}
       </div>
+      {isCommentOpen && (
+        <div className="mt-4 pt-4 border-t border-gray-100">
+          {isCommentsLoading ? (
+            <p className="text-sm text-gray-500 text-center py-4">
+              댓글을 불러오는 중...
+            </p>
+          ) : (
+            <CommentList comments={comments || []} />
+          )}
+          <CommentForm postId={post.id} />
+        </div>
+      )}
     </div>
   );
 }
