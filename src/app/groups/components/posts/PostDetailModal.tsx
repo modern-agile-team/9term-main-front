@@ -1,8 +1,12 @@
+'use client';
+
 import React, { useState } from 'react';
 import type { Post } from '@/app/_types/post.types';
-import CommentList from '../comments/CommentList';
-import CommentForm from '../comments/CommentForm';
+import CommentList from '@/app/groups/components/comments/CommentList';
+import CommentForm from '@/app/groups/components/comments/CommentForm';
 import PostSettingsModal from './PostSettingsModal';
+import { useQuery } from '@tanstack/react-query';
+import { getComments } from '@/app/_apis/client';
 
 interface PostDetailModalProps {
   post: Post;
@@ -11,6 +15,11 @@ interface PostDetailModalProps {
 
 const PostDetailModal: React.FC<PostDetailModalProps> = ({ post, onClose }) => {
   const [settingsOpen, setSettingsOpen] = useState(false);
+
+  const { data: comments, isLoading: isCommentsLoading } = useQuery({
+    queryKey: ['comments', post.groupId, post.id],
+    queryFn: () => getComments(String(post.groupId), String(post.id)),
+  });
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
@@ -29,17 +38,27 @@ const PostDetailModal: React.FC<PostDetailModalProps> = ({ post, onClose }) => {
             className="text-xl bg-transparent border-none cursor-pointer"
             aria-label="설정"
           >
-            <span role="img" aria-label="설정">⚙️</span>
+            <span role="img" aria-label="설정">
+              ⚙️
+            </span>
           </button>
         </div>
         {/* 본문 */}
         <h2 className="text-2xl font-bold mb-2 break-words">{post.title}</h2>
-        <div className="mb-4 text-gray-600 whitespace-pre-line break-words">{post.content}</div>
-        <div className="mb-6 text-sm text-gray-400">작성자: {post.author?.username}</div>
+        <div className="mb-4 text-gray-600 whitespace-pre-line break-words">
+          {post.content}
+        </div>
+        <div className="mb-6 text-sm text-gray-400">
+          작성자: {post.author?.username}
+        </div>
         {/* 댓글 */}
         <div className="border-t pt-6 mt-6">
           <h3 className="text-lg font-semibold mb-2">댓글</h3>
-          <CommentList postId={post.id} />
+          {isCommentsLoading ? (
+            <p>댓글을 불러오는 중...</p>
+          ) : (
+            <CommentList comments={comments || []} />
+          )}
           <CommentForm postId={post.id} />
         </div>
         {/* 설정 모달 */}
