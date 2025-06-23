@@ -1,7 +1,7 @@
 'use client';
 import { useParams } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
-import { getPost } from '@/app/_apis/client';
+import { getPost, getComments } from '@/app/_apis/client';
 import CommentList from '@/app/groups/components/comments/CommentList';
 import CommentForm from '@/app/groups/components/comments/CommentForm';
 
@@ -16,6 +16,12 @@ export default function PostDetailPage() {
   } = useQuery({
     queryKey: ['post', groupId, postId],
     queryFn: () => getPost(groupId, postId),
+    enabled: !!groupId && !!postId,
+  });
+
+  const { data: comments, isLoading: isCommentsLoading } = useQuery({
+    queryKey: ['comments', groupId, postId],
+    queryFn: () => getComments(groupId, postId),
     enabled: !!groupId && !!postId,
   });
 
@@ -74,7 +80,11 @@ export default function PostDetailPage() {
       </div>
       <hr className="my-6" />
       <CommentForm postId={Number(postId)} />
-      <CommentList postId={Number(postId)} />
+      {isCommentsLoading ? (
+        <p>댓글을 불러오는 중...</p>
+      ) : (
+        <CommentList comments={comments || []} />
+      )}
     </div>
   );
 }
