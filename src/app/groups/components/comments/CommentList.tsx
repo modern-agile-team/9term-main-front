@@ -33,12 +33,7 @@ const listToTree = (list: Comment[]): Comment[] => {
 const CommentItem: React.FC<{ comment: Comment }> = ({ comment }) => {
   return (
     <li className="mb-2">
-      <div className="flex items-start rounded-md p-2 hover:bg-gray-50">
-        <img
-          src={comment.user.profileImageUrl || '/default-profile.png'}
-          alt={comment.user.name}
-          className="w-8 h-8 rounded-full mr-3 mt-1"
-        />
+      <div className="rounded-md p-2 hover:bg-gray-50">
         <div className="flex-grow">
           <p className="text-sm">
             <span className="font-semibold">{comment.user.name}</span>

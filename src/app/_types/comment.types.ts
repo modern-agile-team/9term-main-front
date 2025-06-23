@@ -4,7 +4,6 @@ export interface Comment {
   content: string;
   user: {
     name: string;
-    profileImageUrl?: string;
   };
   createdAt: string;
   updatedAt: string;
