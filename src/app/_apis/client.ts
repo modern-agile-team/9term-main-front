@@ -19,11 +19,13 @@ const apiClient: AxiosInstance = axios.create({
 
 apiClient.interceptors.request.use(
   (config) => {
+    if (typeof window !== 'undefined') {
     const token = localStorage.getItem('token');
     if (token) {
       // eslint-disable-next-line no-param-reassign
       config.headers.Authorization = `Bearer ${token}`;
     }
+  }
     return config;
   },
   (error) => {
