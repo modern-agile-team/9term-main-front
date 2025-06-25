@@ -3,7 +3,8 @@
 import { useMyProfile } from '@/app/_services/auth-provider';
 
 export default function ProfilePage() {
-  const { data: user, isLoading, isError } = useMyProfile();
+  const token = localStorage.getItem('token');
+  const { data: user, isLoading, isError } = useMyProfile(token);
   if (isLoading) return <div>로딩 중...</div>;
   if (isError || !user) return <div>내 정보를 불러올 수 없습니다.</div>;
   return (

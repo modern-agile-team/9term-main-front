@@ -20,12 +20,12 @@ const apiClient: AxiosInstance = axios.create({
 apiClient.interceptors.request.use(
   (config) => {
     if (typeof window !== 'undefined') {
-    const token = localStorage.getItem('token');
-    if (token) {
-      // eslint-disable-next-line no-param-reassign
-      config.headers.Authorization = `Bearer ${token}`;
+      const token = localStorage.getItem('token');
+      if (token) {
+        // eslint-disable-next-line no-param-reassign
+        config.headers.Authorization = `Bearer ${token}`;
+      }
     }
-  }
     return config;
   },
   (error) => {
@@ -111,11 +111,11 @@ export const deleteRequest = async <T>(endpoint: string): Promise<T> => {
   return response.data;
 };
 
-export const getMyProfile = async (): Promise<User> => {
-  const token =
-    typeof window !== 'undefined' ? localStorage.getItem('token') : null;
-
-  if (!token) {
+export const getMyProfile = async (token?: string | null): Promise<User> => {
+  const finaltoken =
+    token ??
+    (typeof window !== 'undefined' ? localStorage.getItem('token') : null);
+  if (!finaltoken) {
     throw new Error('No token');
   }
 

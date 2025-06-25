@@ -10,6 +10,7 @@ import {
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { getMyProfile } from '@/app/_apis/client';
 import { User } from '@/app/_types/user.types';
+import { profileQueries } from '@/app/queries/profile';
 
 // 인증 컨텍스트 타입 정의
 interface AuthContextType {
@@ -43,7 +44,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = (newToken: string) => {
     localStorage.setItem('token', newToken);
     setToken(newToken);
-    queryClient.invalidateQueries({ queryKey: ['myProfile'] });
+    queryClient.invalidateQueries(profileQueries.myProfile());
   };
 
   // 로그아웃 함수
@@ -81,7 +82,7 @@ export function useAuth() {
 export function useMyProfile(token?: string | null) {
   return useQuery<User>({
     queryKey: ['myProfile', token],
-    queryFn: getMyProfile,
+    queryFn: () => getMyProfile(token),
     enabled: !!token,
     staleTime: 5 * 60 * 1000,
   });
