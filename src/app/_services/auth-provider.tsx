@@ -7,14 +7,13 @@ import {
   useEffect,
   useState,
 } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { getMyProfile } from '@/app/_apis/client';
-import { User } from '@/app/_types/user.types';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+
+import { profileQueries } from '@/app/queries/profile';
 
 // 인증 컨텍스트 타입 정의
 interface AuthContextType {
   isLoggedIn: boolean;
-  user: User | null;
   login: (token: string) => void;
   logout: () => void;
   token: string | null;
@@ -25,47 +24,36 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 // 인증 Provider 컴포넌트
 export function AuthProvider({ children }: { children: ReactNode }) {
-  // 로컬 스토리지에서 토큰 가져오기
+  const queryClient = useQueryClient();
   const [token, setToken] = useState<string | null>(null);
-  const [_userId, setUserId] = useState<string | null>(null);
 
   // 초기 로드 시 로컬 스토리지에서 토큰 가져오기
   useEffect(() => {
     const storedToken = localStorage.getItem('token');
-    const storedUserId = localStorage.getItem('userId');
-
     if (storedToken) {
       setToken(storedToken);
     }
-
-    if (storedUserId) {
-      setUserId(storedUserId);
-    }
   }, []);
 
-  // 내 정보 쿼리
-  const { data: user } = useMyProfile(token);
 
   // 로그인 함수
   const login = (newToken: string) => {
     localStorage.setItem('token', newToken);
     setToken(newToken);
+    queryClient.invalidateQueries(profileQueries.myProfile());
   };
 
   // 로그아웃 함수
   const logout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('userId');
     setToken(null);
-    setUserId(null);
+    localStorage.removeItem('token');
+    queryClient.removeQueries({ queryKey: ['myProfile'] });
+    window.location.href = '/login';
   };
 
-  // 로그인 상태 확인
-  const isLoggedIn = !!token && !!user;
 
   const value = {
-    isLoggedIn,
-    user: user || null,
+    isLoggedIn: !!token,
     login,
     logout,
     token,
@@ -85,11 +73,10 @@ export function useAuth() {
   return context;
 }
 
-export function useMyProfile(token?: string | null) {
-  return useQuery<User>({
-    queryKey: ['myProfile', token],
-    queryFn: getMyProfile,
-    enabled: !!token,
-    staleTime: 5 * 60 * 1000,
+export function useMyProfile() {
+  const { token } = useAuth();
+  return useQuery({
+    ...profileQueries.myProfile(),
+    enabled: !!token, // 토큰이 있을 때만 쿼리 실행
   });
 }

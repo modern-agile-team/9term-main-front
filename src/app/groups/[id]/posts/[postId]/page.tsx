@@ -45,7 +45,7 @@ export default function PostDetailPage() {
     <div className="max-w-2xl mx-auto mt-10 bg-white p-8 rounded-lg shadow-md">
       <h1 className="text-2xl font-bold mb-4">{post.title}</h1>
       <div className="mb-2 text-gray-500 text-sm">
-        작성자: {post.author?.username} | 작성일:{' '}
+        작성자: {post.user.name} | 작성일:{' '}
         {new Date(post.createdAt).toLocaleString()}
       </div>
       <div className="mb-6 text-gray-700 whitespace-pre-line">

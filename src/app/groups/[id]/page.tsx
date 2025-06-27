@@ -12,9 +12,9 @@ import ActivityStats from '@/app/groups/components/ActivityStats';
 import PostCreateModal from '@/app/groups/components/posts/PostCreateModal';
 import PostEditModal from '@/app/groups/components/posts/PostEditModal';
 import DeletePostModal from '@/app/groups/components/posts/DeletePostModal';
-import PostDetailModal from '@/app/groups/components/posts/PostDetailModal';
+
 import type { Post } from '@/app/_types/post.types';
-import { useAuth } from '@/app/_services/auth-provider';
+import { useAuth, useMyProfile } from '@/app/_services/auth-provider';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { createPost, getGroupPosts } from '@/app/_apis/client';
 
@@ -28,9 +28,8 @@ const GroupPage = () => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [editPostId, setEditPostId] = useState<number | null>(null);
   const [deletePostId, setDeletePostId] = useState<number | null>(null);
-  const [selectedPost, setSelectedPost] = useState<Post | null>(null);
-
-  const { user, isLoggedIn } = useAuth();
+  const {data: me } = useMyProfile();
+  const { isLoggedIn } = useAuth();
   const queryClient = useQueryClient();
 
   // 게시글 목록 패칭
@@ -102,7 +101,7 @@ const GroupPage = () => {
             posts={filteredPosts}
             onEdit={(post: Post) => setEditPostId(post.id)}
             onDelete={(post: Post) => setDeletePostId(post.id)}
-            currentUserId={user?.id?.toString()}
+            currentUserId={me?.name}
           />
         );
     }
@@ -142,12 +141,6 @@ const GroupPage = () => {
             setDeletePostId(null);
           }}
           onClose={() => setDeletePostId(null)}
-        />
-      )}
-      {selectedPost && (
-        <PostDetailModal
-          post={selectedPost}
-          onClose={() => setSelectedPost(null)}
         />
       )}
     </div>
