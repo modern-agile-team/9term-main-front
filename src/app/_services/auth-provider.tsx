@@ -8,14 +8,12 @@ import {
   useState,
 } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { getMyProfile } from '@/app/_apis/client';
-import { User } from '@/app/_types/user.types';
+
 import { profileQueries } from '@/app/queries/profile';
 
 // 인증 컨텍스트 타입 정의
 interface AuthContextType {
   isLoggedIn: boolean;
-  user: User | null;
   login: (token: string) => void;
   logout: () => void;
   token: string | null;
@@ -37,8 +35,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  // 내 정보 쿼리
-  const { data: user } = useMyProfile(token);
 
   // 로그인 함수
   const login = (newToken: string) => {
@@ -49,17 +45,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   // 로그아웃 함수
   const logout = () => {
-    localStorage.removeItem('token');
     setToken(null);
+    localStorage.removeItem('token');
     queryClient.removeQueries({ queryKey: ['myProfile'] });
+    window.location.href = '/login';
   };
 
-  // 로그인 상태 확인
-  const isLoggedIn = !!token && !!user;
 
   const value = {
-    isLoggedIn,
-    user: user || null,
+    isLoggedIn: !!token,
     login,
     logout,
     token,
@@ -79,11 +73,10 @@ export function useAuth() {
   return context;
 }
 
-export function useMyProfile(token?: string | null) {
-  return useQuery<User>({
-    queryKey: ['myProfile', token],
-    queryFn: () => getMyProfile(token),
-    enabled: !!token,
-    staleTime: 5 * 60 * 1000,
+export function useMyProfile() {
+  const { token } = useAuth();
+  return useQuery({
+    ...profileQueries.myProfile(),
+    enabled: !!token, // 토큰이 있을 때만 쿼리 실행
   });
 }

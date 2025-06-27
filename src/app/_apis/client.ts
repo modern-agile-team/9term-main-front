@@ -111,14 +111,7 @@ export const deleteRequest = async <T>(endpoint: string): Promise<T> => {
   return response.data;
 };
 
-export const getMyProfile = async (token?: string | null): Promise<User> => {
-  const finaltoken =
-    token ??
-    (typeof window !== 'undefined' ? localStorage.getItem('token') : null);
-  if (!finaltoken) {
-    throw new Error('No token');
-  }
-
+export const getMyProfile = async (): Promise<User> => {
   const response = await apiClient.get<{
     status: string;
     message: string;

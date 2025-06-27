@@ -32,7 +32,7 @@ export default function PostItem({
   });
 
   const { data: me } = useMyProfile();
-  const currentUserId = me?.id;
+  const currentUserId = me?.name;
 
   useEffect(() => {
     const date = new Date(post.createdAt);
@@ -72,7 +72,8 @@ export default function PostItem({
             <span className="mr-2">📍</span> {post.location}
           </p>
           <p className="text-sm flex items-center">
-            <span className="mr-2">🕒</span> {post.time}
+            <span className="mr-2">🕒</span> {post.time?.slice(0, 5)}
+            
           </p>
         </div>
       )}
@@ -108,7 +109,7 @@ export default function PostItem({
           <span className="mr-1">{post.saved ? '⭐' : '☆'}</span> 저장
         </button>
 
-        {currentUserId && post.userId === currentUserId && (
+        {currentUserId && post.user.name === currentUserId && (
           <div className="ml-auto relative">
             <button
               className="flex items-center px-2 py-1 text-gray-600 hover:text-gray-900"
