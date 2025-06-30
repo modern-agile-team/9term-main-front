@@ -104,17 +104,9 @@ const CommentForm: React.FC<CommentFormProps> = ({ postId }) => {
 
   return (
     <div className="bg-white border rounded-lg p-6 shadow-sm">
-      <h3 className="text-lg font-semibold mb-4">댓글 작성</h3>
-
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* 댓글 내용 입력 */}
         <div>
-          <label
-            htmlFor="content"
-            className="block text-sm font-medium text-gray-700 mb-1"
-          >
-            댓글 *
-          </label>
           <textarea
             id="content"
             name="content"
