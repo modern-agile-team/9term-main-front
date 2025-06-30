@@ -19,7 +19,6 @@ export interface GetCommentsResponse {
 export interface CreateCommentRequest {
   groupId: string;
   authorId: string;
-  title: string;
   content: string;
 }
 

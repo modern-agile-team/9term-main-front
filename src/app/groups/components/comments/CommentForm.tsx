@@ -21,7 +21,6 @@ const CommentForm: React.FC<CommentFormProps> = ({ postId }) => {
 
   // 폼 상태 관리
   const [formData, setFormData] = useState({
-    title: '',
     content: '',
   });
 
@@ -35,7 +34,7 @@ const CommentForm: React.FC<CommentFormProps> = ({ postId }) => {
         queryKey: ['comments', groupId, postId],
       });
       // 폼 초기화
-      setFormData({ title: '', content: '' });
+      setFormData({ content: '' });
     },
     onError: (error) => {
       console.error('댓글 작성 실패:', error);
@@ -43,9 +42,7 @@ const CommentForm: React.FC<CommentFormProps> = ({ postId }) => {
     },
   });
 
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
@@ -61,7 +58,7 @@ const CommentForm: React.FC<CommentFormProps> = ({ postId }) => {
       return;
     }
 
-    // id가 없으면 name을 사용 (임시 해결책)
+    // id가 없으면 name을 사용 (백엔드에서 id 추가될 때까지 임시)
     const authorId = currentUser.id
       ? currentUser.id.toString()
       : currentUser.name;
@@ -71,15 +68,14 @@ const CommentForm: React.FC<CommentFormProps> = ({ postId }) => {
       return;
     }
 
-    if (!formData.title.trim() || !formData.content.trim()) {
-      alert('제목과 내용을 모두 입력해주세요.');
+    if (!formData.content.trim()) {
+      alert('댓글 내용을 입력해주세요.');
       return;
     }
 
     const commentData: CreateCommentRequest = {
       groupId,
       authorId: authorId,
-      title: formData.title.trim(),
       content: formData.content.trim(),
     };
 
@@ -111,33 +107,13 @@ const CommentForm: React.FC<CommentFormProps> = ({ postId }) => {
       <h3 className="text-lg font-semibold mb-4">댓글 작성</h3>
 
       <form onSubmit={handleSubmit} className="space-y-4">
-        {/* 제목 입력 */}
-        <div>
-          <label
-            htmlFor="title"
-            className="block text-sm font-medium text-gray-700 mb-1"
-          >
-            제목
-          </label>
-          <input
-            type="text"
-            id="title"
-            name="title"
-            value={formData.title}
-            onChange={handleInputChange}
-            placeholder="댓글 제목을 입력하세요"
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            disabled={createCommentMutation.isPending}
-          />
-        </div>
-
-        {/* 내용 입력 */}
+        {/* 댓글 내용 입력 */}
         <div>
           <label
             htmlFor="content"
             className="block text-sm font-medium text-gray-700 mb-1"
           >
-            내용
+            댓글 *
           </label>
           <textarea
             id="content"
@@ -145,7 +121,7 @@ const CommentForm: React.FC<CommentFormProps> = ({ postId }) => {
             rows={4}
             value={formData.content}
             onChange={handleInputChange}
-            placeholder="댓글 내용을 입력하세요"
+            placeholder="댓글을 입력하세요"
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-vertical"
             disabled={createCommentMutation.isPending}
           />
@@ -161,9 +137,7 @@ const CommentForm: React.FC<CommentFormProps> = ({ postId }) => {
           <button
             type="submit"
             disabled={
-              createCommentMutation.isPending ||
-              !formData.title.trim() ||
-              !formData.content.trim()
+              createCommentMutation.isPending || !formData.content.trim()
             }
             className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:bg-gray-400 disabled:cursor-not-allowed"
           >
