@@ -79,7 +79,7 @@ export default function PostDetailPage() {
         <span>{post.saved ? '⭐ 저장됨' : '☆ 저장 안 됨'}</span>
       </div>
       <hr className="my-6" />
-      <CommentForm postId={Number(postId)} />
+      <CommentForm postId={postId} />
       {isCommentsLoading ? (
         <p>댓글을 불러오는 중...</p>
       ) : (
