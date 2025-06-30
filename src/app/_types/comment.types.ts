@@ -15,3 +15,15 @@ export interface GetCommentsResponse {
   message: string;
   data: Comment[];
 }
+
+export interface CreateCommentRequest {
+  groupId: string;
+  authorId: string;
+  title: string;
+  content: string;
+}
+
+export interface CreateCommentResponse {
+  postId: string;
+  message: string;
+}
