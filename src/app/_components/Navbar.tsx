@@ -75,14 +75,41 @@ export default function TopNavigation() {
   };
 
   return (
-    <div className="bg-white shadow-sm border-b relative">
+    <div className="fixed top-0 left-0 w-full z-50  bg-blue-600 shadow-sm border-b">
       <div className="max-w-7xl mx-auto px-4 py-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
-            <Link href="/" className="text-2xl font-bold text-blue-600">
+            <Link href="/" className="text-2xl font-bold text-white">
               모동구
             </Link>
           </div>
+          <ul className="flex space-x-4">
+            <li>
+              <button
+                onClick={() => {
+                  document
+                    .getElementById('my-clubs')
+                    ?.scrollIntoView({ behavior: 'smooth' });
+                }}
+                className="text-white hover:text-blue-300"
+              >
+                내 동아리
+              </button>
+            </li>
+            <li>
+              <button
+                onClick={() => {
+                  document
+                    .getElementById('recommended-clubs')
+                    ?.scrollIntoView({ behavior: 'smooth' });
+                }}
+                className="text-white hover:text-blue-300"
+              >
+                인기 동아리
+              </button>
+            </li>
+          </ul>
+
           <div className="flex items-center space-x-6">
             {/* 알림 버튼 - 로그인 시에만 표시 */}
             {isLoggedIn && (
@@ -125,7 +152,7 @@ export default function TopNavigation() {
               <div className="flex items-center space-x-4">
                 <Link
                   href="/profile"
-                  className="flex items-center space-x-2 text-gray-700 hover:text-blue-600"
+                  className="flex items-center space-x-2 text-white hover:text-blue-300"
                 >
                   <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
                     <span className="text-blue-600 font-medium">
@@ -137,13 +164,13 @@ export default function TopNavigation() {
                 {/* 로그아웃 버튼 추가 */}
                 <button
                   onClick={handleLogout}
-                  className="text-gray-700 hover:text-blue-600 text-sm"
+                  className="text-white hover:text-blue-300 text-sm"
                 >
                   로그아웃
                 </button>
               </div>
             ) : (
-              <Link href="/login" className="text-gray-700 hover:text-blue-600">
+              <Link href="/login" className="text-white hover:text-blue-300">
                 로그인
               </Link>
             )}
