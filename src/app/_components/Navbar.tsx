@@ -83,32 +83,16 @@ export default function TopNavigation() {
               모동구
             </Link>
           </div>
-          <ul className="flex space-x-4">
-            <li>
-              <button
-                onClick={() => {
-                  document
-                    .getElementById('my-clubs')
-                    ?.scrollIntoView({ behavior: 'smooth' });
-                }}
-                className="text-white hover:text-blue-300"
-              >
-                내 동아리
-              </button>
+          {isLoggedIn && (
+          <ul className="flex space-x-4 ">
+             <li>
+              <a href="#my-clubs" className="text-white hover:text-blue-300">내 동아리</a>
             </li>
             <li>
-              <button
-                onClick={() => {
-                  document
-                    .getElementById('recommended-clubs')
-                    ?.scrollIntoView({ behavior: 'smooth' });
-                }}
-                className="text-white hover:text-blue-300"
-              >
-                인기 동아리
-              </button>
+              <a href="#recommended-clubs" className="text-white hover:text-blue-300">인기 동아리</a>
             </li>
           </ul>
+          )}
 
           <div className="flex items-center space-x-6">
             {/* 알림 버튼 - 로그인 시에만 표시 */}

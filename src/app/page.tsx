@@ -14,11 +14,11 @@ interface Club {
   imageUrl?: string;
 }
 const heroImages = [
-  '/main_img/cartoon.jpg',
-  '/main_img/hangang.jpg',
-  '/main_img/happy.jpg',
-  '/main_img/coding.jpg',
-  '/main_img/Orientation.jpg',
+  '/main_img/cartoon.webp',
+  '/main_img/hangang.webp',
+  '/main_img/ttabong.webp',
+  '/main_img/coding.webp',
+  '/main_img/Orientation.webp',
 ];
 
 export default function HomePage() {
