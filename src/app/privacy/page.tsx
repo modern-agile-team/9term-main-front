@@ -72,7 +72,7 @@ export default function PrivacyPage() {
       </h2>
       <ul className="list-disc pl-6 mb-4">
         <li>
-          정보 주체는 “회사”의 코코 홈페이지(modonggu.site)에서 언제든지 다음
+          정보 주체는 “회사”의 모동구 홈페이지(modonggu.site)에서 언제든지 다음
           각호의 개인정보 보호 관련 권리를 행사할 수 있습니다.
         </li>
         <li>회원 탈퇴: 담당자에게 요청</li>
@@ -82,9 +82,7 @@ export default function PrivacyPage() {
         제 6조 처리하는 개인정보 항목
       </h2>
       <ul className="list-disc pl-6 mb-4">
-        <li>
-          개인 회원: 회원 가입(필수 항목: 성명, 이미지(프로필 사진), 이메일)
-        </li>
+        <li>개인 회원: 회원 가입(필수 항목: 성명, 이메일)</li>
         <li>
           인터넷 서비스 이용과정에서 수집되는 개인정보 항목: 쿠키, 서비스 이용
           기록, 불량 이용 기록 등
@@ -149,9 +147,9 @@ export default function PrivacyPage() {
       <h1 className="text-2xl font-bold mb-6">이용약관</h1>
       <h2 className="text-xl font-semibold mt-8 mb-2">제1조 (목적)</h2>
       <p className="mb-4">
-        본 약관은 모던애자일(이하 “회사”)가 제공하는 코코(이하 “서비스”) 및 관련
-        제반 서비스의 이용에 관한 회사와 회원의 권리, 의무 및 책임 사항 등을
-        규정하는 것을 목적으로 합니다.
+        본 약관은 모던애자일(이하 “회사”)가 제공하는 모동구(이하 “서비스”) 및
+        관련 제반 서비스의 이용에 관한 회사와 회원의 권리, 의무 및 책임 사항
+        등을 규정하는 것을 목적으로 합니다.
       </p>
       <h2 className="text-xl font-semibold mt-8 mb-2">제2조 (용어의 정의)</h2>
       <ul className="list-disc pl-6 mb-4">

@@ -39,15 +39,15 @@ export default function HomePage() {
       description: '함께 성장하는 개발자 모임',
       memberCount: 15,
       category: '학술',
-      imageUrl: 'https://placehold.co/600x400?text=개발자+스터디',
+      imageUrl: '/main_img/coding.webp',
     },
     {
       id: '2',
-      name: '축구 동아리',
-      description: '주 2회 축구하는 모임',
+      name: '밥 한끼',
+      description: '주 2회 밥먹는 모임',
       memberCount: 22,
-      category: '운동',
-      imageUrl: 'https://placehold.co/600x400?text=축구+동아리',
+      category: '식사',
+      imageUrl: '/main_img/ttabong.webp',
     },
     {
       id: '3',
@@ -182,10 +182,18 @@ export default function HomePage() {
             내 동아리
             <span className="block absolute left-0 bottom-0 w-[60px] h-[3px] bg-blue-600" />
           </h2>
-          <div className="carousel-viewport overflow-hidden" ref={myClubsRef}>
-            <div className="carousel-container flex gap-4">
+          <div
+            className="carousel-viewport overflow-x-auto scrollbar-hide"
+            ref={myClubsRef}
+          >
+            <div className="flex gap-2 md:gap-4">
               {myClubs.map((club) => (
-                <ClubCard key={club.id} club={club} />
+                <div
+                  key={club.id}
+                  className="min-w-[70vw] max-w-xs sm:min-w-[40vw] md:min-w-[220px] md:max-w-xs"
+                >
+                  <ClubCard club={club} />
+                </div>
               ))}
             </div>
           </div>
@@ -197,12 +205,17 @@ export default function HomePage() {
             <span className="block absolute left-0 bottom-0 w-[60px] h-[3px] bg-blue-600" />
           </h2>
           <div
-            className="carousel-viewport overflow-hidden"
+            className="carousel-viewport overflow-x-auto scrollbar-hide"
             ref={recommendedRef}
           >
-            <div className="carousel-container flex gap-4">
+            <div className="flex gap-2 md:gap-4">
               {recommendedClubs.map((club) => (
-                <ClubCard key={club.id} club={club} />
+                <div
+                  key={club.id}
+                  className="min-w-[70vw] max-w-xs sm:min-w-[40vw] md:min-w-[220px] md:max-w-xs"
+                >
+                  <ClubCard club={club} />
+                </div>
               ))}
             </div>
           </div>

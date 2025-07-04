@@ -28,7 +28,7 @@ const GroupPage = () => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [editPostId, setEditPostId] = useState<number | null>(null);
   const [deletePostId, setDeletePostId] = useState<number | null>(null);
-  const {data: me } = useMyProfile();
+  const { data: me } = useMyProfile();
   const { isLoggedIn } = useAuth();
   const queryClient = useQueryClient();
 
@@ -108,7 +108,7 @@ const GroupPage = () => {
   };
 
   return (
-    <div className="flex min-h-[calc(100vh-4rem)] relative">
+    <div className="flex min-h-[calc(100vh-4rem)] relative mt-16">
       {/* 데스크톱 사이드바 */}
       <div className="hidden lg:block w-64 min-w-64">
         <Sidebar onCreatePost={handleCreateButtonClick} />
