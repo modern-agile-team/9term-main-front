@@ -56,6 +56,14 @@ const CommentForm: React.FC<CommentFormProps> = ({ postId, groupId }) => {
         queryKey: ['comments', groupId, postId],
       });
 
+      // 게시글 정보도 새로고침 (댓글 수 업데이트를 위해)
+      queryClient.invalidateQueries({
+        queryKey: ['post', groupId, postId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ['groupPosts', groupId],
+      });
+
       // 폼 초기화
       setFormData({ content: '' });
       setErrorMessage('');
