@@ -162,12 +162,6 @@ const CommentForm: React.FC<CommentFormProps> = ({ postId, groupId }) => {
           />
         </div>
 
-        {/* 작성자 정보 */}
-        <div className="text-sm text-gray-600">
-          작성자: {currentUser.name} (
-          {currentUser.userName || currentUser.username})
-        </div>
-
         {/* 제출 버튼 */}
         <div className="flex justify-end">
           <button
