@@ -5,7 +5,11 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useParams } from 'next/navigation';
 import { useMyProfile } from '@/app/_services/auth-provider';
 import { createComment } from '@/app/_apis/client';
-import type { CreateCommentRequest } from '@/app/_types/comment.types';
+import type {
+  CreateCommentRequest,
+  ApiErrorResponse,
+} from '@/app/_types/comment.types';
+import { AxiosError } from 'axios';
 
 interface CommentFormProps {
   postId: string;
@@ -24,6 +28,9 @@ const CommentForm: React.FC<CommentFormProps> = ({ postId }) => {
     content: '',
   });
 
+  // 에러 상태 관리
+  const [errorMessage, setErrorMessage] = useState<string>('');
+
   // 댓글 작성 mutation
   const createCommentMutation = useMutation({
     mutationFn: (commentData: CreateCommentRequest) =>
@@ -35,10 +42,36 @@ const CommentForm: React.FC<CommentFormProps> = ({ postId }) => {
       });
       // 폼 초기화
       setFormData({ content: '' });
+      setErrorMessage('');
     },
-    onError: (error) => {
+    onError: (error: AxiosError<ApiErrorResponse>) => {
       console.error('댓글 작성 실패:', error);
-      alert('댓글 작성에 실패했습니다. 다시 시도해주세요.');
+
+      // 에러 메시지 처리
+      if (error.response?.data) {
+        const errorData = error.response.data;
+
+        if (errorData.statusCode === 400) {
+          // 400: 잘못된 요청 데이터
+          const messages = Array.isArray(errorData.message)
+            ? errorData.message.join(', ')
+            : errorData.message;
+          setErrorMessage(`입력 오류: ${messages}`);
+        } else if (errorData.statusCode === 401) {
+          // 401: 인증 오류
+          setErrorMessage('로그인이 만료되었습니다. 다시 로그인해주세요.');
+        } else if (errorData.statusCode === 404) {
+          // 404: 리소스 없음
+          setErrorMessage('게시글을 찾을 수 없습니다.');
+        } else {
+          const errorMsg = Array.isArray(errorData.message)
+            ? errorData.message.join(', ')
+            : errorData.message;
+          setErrorMessage(errorMsg || '댓글 작성에 실패했습니다.');
+        }
+      } else {
+        setErrorMessage('네트워크 오류가 발생했습니다. 다시 시도해주세요.');
+      }
     },
   });
 
@@ -48,35 +81,30 @@ const CommentForm: React.FC<CommentFormProps> = ({ postId }) => {
       ...prev,
       [name]: value,
     }));
+
+    // 입력할 때 에러 메시지 초기화
+    if (errorMessage) {
+      setErrorMessage('');
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!currentUser) {
-      alert('로그인이 필요합니다.');
-      return;
-    }
-
-    // id가 없으면 name을 사용 (백엔드에서 id 추가될 때까지 임시)
-    const authorId = currentUser.id
-      ? currentUser.id.toString()
-      : currentUser.name;
-
-    if (!authorId) {
-      alert('사용자 정보를 불러올 수 없습니다. 다시 로그인해주세요.');
+      setErrorMessage('로그인이 필요합니다.');
       return;
     }
 
     if (!formData.content.trim()) {
-      alert('댓글 내용을 입력해주세요.');
+      setErrorMessage('댓글 내용을 입력해주세요.');
       return;
     }
 
+    // 실제 API 스펙에 맞는 요청 데이터
     const commentData: CreateCommentRequest = {
-      groupId,
-      authorId: authorId,
       content: formData.content.trim(),
+      parentId: null, // 최상위 댓글이므로 null, 대댓글 구현 시 부모 댓글 ID 전달
     };
 
     createCommentMutation.mutate(commentData);
@@ -121,7 +149,8 @@ const CommentForm: React.FC<CommentFormProps> = ({ postId }) => {
 
         {/* 작성자 정보 */}
         <div className="text-sm text-gray-600">
-          작성자: {currentUser.name} ({currentUser.username})
+          작성자: {currentUser.name} (
+          {currentUser.userName || currentUser.username})
         </div>
 
         {/* 제출 버튼 */}
@@ -139,11 +168,9 @@ const CommentForm: React.FC<CommentFormProps> = ({ postId }) => {
       </form>
 
       {/* 에러 메시지 */}
-      {createCommentMutation.isError && (
+      {errorMessage && (
         <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-md">
-          <p className="text-red-600 text-sm">
-            댓글 작성에 실패했습니다. 다시 시도해주세요.
-          </p>
+          <p className="text-red-600 text-sm">{errorMessage}</p>
         </div>
       )}
     </div>

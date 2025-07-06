@@ -17,12 +17,18 @@ export interface GetCommentsResponse {
 }
 
 export interface CreateCommentRequest {
-  groupId: string;
-  authorId: string;
   content: string;
+  parentId?: number | null;
 }
 
 export interface CreateCommentResponse {
-  postId: string;
+  status: string;
   message: string;
+  data: object;
+}
+
+export interface ApiErrorResponse {
+  message: string | string[];
+  error: string;
+  statusCode: number;
 }
