@@ -167,8 +167,24 @@ export const createComment = async (
   postId: string,
   commentData: CreateCommentRequest
 ): Promise<CreateCommentResponse> => {
+  // 입력값 유효성 검사
+  if (!groupId || !postId) {
+    throw new Error('groupId와 postId가 필요합니다.');
+  }
+
+  // 안전한 숫자 변환
+  const numericGroupId = parseInt(groupId, 10);
+  const numericPostId = parseInt(postId, 10);
+
+  // 숫자 변환 검증
+  if (isNaN(numericGroupId) || isNaN(numericPostId)) {
+    throw new Error(
+      `유효하지 않은 ID입니다. groupId: ${groupId}, postId: ${postId}`
+    );
+  }
+
   return await post<CreateCommentResponse>(
-    `/groups/${groupId}/posts/${postId}/comments`,
+    `/groups/${numericGroupId}/posts/${numericPostId}/comments`,
     commentData
   );
 };

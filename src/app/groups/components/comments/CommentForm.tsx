@@ -2,7 +2,6 @@
 
 import React, { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useParams } from 'next/navigation';
 import { useMyProfile } from '@/app/_services/auth-provider';
 import { createComment } from '@/app/_apis/client';
 import type {
@@ -13,12 +12,22 @@ import { AxiosError } from 'axios';
 
 interface CommentFormProps {
   postId: string;
+  groupId: string;
 }
 
-const CommentForm: React.FC<CommentFormProps> = ({ postId }) => {
-  const params = useParams();
-  const groupId = params.id as string;
+const CommentForm: React.FC<CommentFormProps> = ({ postId, groupId }) => {
   const queryClient = useQueryClient();
+
+  // groupId가 없으면 에러 처리
+  if (!groupId) {
+    return (
+      <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
+        <p className="text-red-600 text-sm">
+          그룹 정보를 불러올 수 없습니다. 페이지를 새로고침해주세요.
+        </p>
+      </div>
+    );
+  }
 
   // 현재 사용자 정보 가져오기
   const { data: currentUser, isLoading: isUserLoading } = useMyProfile();
@@ -40,6 +49,13 @@ const CommentForm: React.FC<CommentFormProps> = ({ postId }) => {
       queryClient.invalidateQueries({
         queryKey: ['comments', groupId, postId],
       });
+      queryClient.invalidateQueries({
+        queryKey: ['comments'],
+      });
+      queryClient.refetchQueries({
+        queryKey: ['comments', groupId, postId],
+      });
+
       // 폼 초기화
       setFormData({ content: '' });
       setErrorMessage('');
@@ -104,7 +120,6 @@ const CommentForm: React.FC<CommentFormProps> = ({ postId }) => {
     // 실제 API 스펙에 맞는 요청 데이터
     const commentData: CreateCommentRequest = {
       content: formData.content.trim(),
-      parentId: null, // 최상위 댓글이므로 null, 대댓글 구현 시 부모 댓글 ID 전달
     };
 
     createCommentMutation.mutate(commentData);
