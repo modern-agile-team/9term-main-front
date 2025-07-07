@@ -149,6 +149,7 @@ const GroupPage = () => {
       )}
       {deletePostId && deletingPost && (
         <DeletePostModal
+          isOpen={!!deletePostId}
           onConfirm={() => {
             deletePostMutation.mutate({ groupId, postId: deletePostId });
           }}
