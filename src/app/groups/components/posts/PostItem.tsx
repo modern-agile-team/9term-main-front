@@ -103,7 +103,7 @@ export default function PostItem({
           onClick={() => setIsCommentOpen((prev) => !prev)}
         >
           <span className="mr-1">💬</span> 댓글{' '}
-          {comments ? comments.length : post.comments || 0}
+          {comments ? comments.length : post.commentsCount || 0}
         </button>
         <button
           className="mr-4 text-sm flex items-center"
