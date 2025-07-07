@@ -1,6 +1,7 @@
 // Next.js 클라이언트 컴포넌트임을 명시
 'use client';
 
+
 // 게시글 삭제 확인 모달에 필요한 props 타입 정의
 interface DeletePostModalProps {
   onConfirm: () => void; // 삭제 확정 시 실행되는 함수
