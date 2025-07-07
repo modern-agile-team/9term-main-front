@@ -150,9 +150,9 @@ export default function HomePage() {
             당신의 취미와 열정을 함께할 동아리를 찾아보세요
           </h1>
           <p className="text-base md:text-lg mb-6 max-w-xl mx-auto drop-shadow">
-            학교, 직장, 지역 동아리까지 다양한 모임을 한 곳에서 만나보세요!
+            인덕대학교의 다양한 동아리를 한 곳에서 만나보세요!
           </p>
-          <div className="bg-white rounded-lg shadow flex w-2/5 mx-auto ">
+          <div className="hidden md:flex bg-white rounded-lg shadow  w-2/5 mx-auto ">
             <input
               type="text"
               placeholder="관심있는 동아리나 활동을 검색해보세요"
