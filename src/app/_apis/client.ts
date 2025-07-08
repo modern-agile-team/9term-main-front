@@ -3,7 +3,7 @@ import { User } from '@/app/_types/user.types';
 import type { Post } from '@/app/_types/post.types';
 import type { GetGroupPostsResponse } from '@/app/_types/postcreate.types';
 import { Comment, GetCommentsResponse } from '@/app/_types/comment.types';
-import { DeletePostResponse } from '../_types/postdelete.types';
+import { DeletePostResponse } from '../_types/deletePostResponse';
 
 const baseURL = process.env.NEXT_PUBLIC_API_URL;
 
