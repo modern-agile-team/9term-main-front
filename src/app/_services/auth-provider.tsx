@@ -9,7 +9,7 @@ import {
 } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 
-import { profileQueries } from '@/app/queries/profile';
+import { profileQueries } from '@/app/queries/queryKeys';
 
 // 인증 컨텍스트 타입 정의
 interface AuthContextType {

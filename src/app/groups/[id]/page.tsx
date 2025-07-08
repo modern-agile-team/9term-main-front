@@ -18,6 +18,7 @@ import { useAuth, useMyProfile } from '@/app/_services/auth-provider';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { createPost, getGroupPosts } from '@/app/_apis/client';
 import { deletePost } from '@/app/_apis/client';
+import { groupQueries } from '@/app/queries/queryKeys';
 
 // 그룹 상세 페이지 컴포넌트
 // - 게시글 목록, 게시글 생성/수정/삭제 모달 상태 관리
@@ -54,7 +55,7 @@ const GroupPage = () => {
       content: string;
     }) => createPost(groupId, { title, content }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['groupPosts', groupId] });
+      queryClient.invalidateQueries({ queryKey: groupQueries.groupPosts (groupId) });
       setIsCreateModalOpen(false);
     },
     onError: (error: any) => {
@@ -65,7 +66,7 @@ const GroupPage = () => {
     mutationFn: ({ groupId, postId }: { groupId: string; postId: number }) =>
       deletePost(groupId, postId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['groupPosts', groupId] });
+      queryClient.invalidateQueries({ queryKey: groupQueries.groupPosts(groupId) });
       setDeletePostId(null);
     },
     onError: () => {
