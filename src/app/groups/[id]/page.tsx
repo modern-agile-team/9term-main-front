@@ -18,7 +18,7 @@ import { useAuth, useMyProfile } from '@/app/_services/auth-provider';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { createPost, deletePost } from '@/app/_apis/client';
 
-import { groupsQueries } from '../queries';
+import { groupsQueries } from '../_queries';
 
 // 그룹 상세 페이지 컴포넌트
 // - 게시글 목록, 게시글 생성/수정/삭제 모달 상태 관리
