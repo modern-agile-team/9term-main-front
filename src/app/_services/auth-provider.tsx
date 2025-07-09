@@ -9,7 +9,7 @@ import {
 } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 
-import { profileQueries } from '@/app/queries/queryKeys';
+import { profileQueries } from '@/app/profile/queries';
 
 // 인증 컨텍스트 타입 정의
 interface AuthContextType {
@@ -34,23 +34,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setToken(storedToken);
     }
   }, []);
-
-
-  // 로그인 함수
   const login = (newToken: string) => {
     localStorage.setItem('token', newToken);
     setToken(newToken);
     queryClient.invalidateQueries(profileQueries.myProfile());
   };
 
-  // 로그아웃 함수
   const logout = () => {
     setToken(null);
     localStorage.removeItem('token');
-    queryClient.removeQueries({ queryKey: ['myProfile'] });
+    queryClient.removeQueries(profileQueries.myProfile());
     window.location.href = '/login';
   };
-
 
   const value = {
     isLoggedIn: !!token,
@@ -61,8 +56,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
-
-// 인증 컨텍스트 사용을 위한 커스텀 훅
 export function useAuth() {
   const context = useContext(AuthContext);
 

@@ -8,6 +8,3 @@ export const profileQueries = {
       queryFn: () => getMyProfile(),
     }),
 };
-export const groupQueries = {
-  groupPosts: (groupId: string) => ['groupPosts', groupId] as const,
-};
