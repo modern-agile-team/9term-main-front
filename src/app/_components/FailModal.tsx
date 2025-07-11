@@ -46,16 +46,16 @@ export const FailModal: React.FC<FailModalProps> = ({
             <div className="rounded-full h-20 w-20 flex items-center justify-center mx-auto bg-red-100 text-red-500">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="h-10 w-10"
                 fill="none"
                 viewBox="0 0 24 24"
+                strokeWidth="1.5"
                 stroke="currentColor"
+                className="size-12"
               >
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M6 18L18 6M6 6l12 12"
+                  d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z"
                 />
               </svg>
             </div>
@@ -70,7 +70,9 @@ export const FailModal: React.FC<FailModalProps> = ({
             <button
               type="button"
               onClick={onButtonClick || onClose}
-              className={`w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-gray-600 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 mb-2 sm:mb-0 ${onRetry ? 'sm:w-1/2' : 'sm:w-full'}`}
+              className={`w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-gray-600 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 mb-2 sm:mb-0 ${
+                onRetry ? 'sm:w-1/2' : 'sm:w-full'
+              }`}
             >
               {buttonText}
             </button>

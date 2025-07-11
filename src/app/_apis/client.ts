@@ -3,6 +3,7 @@ import { User } from '@/app/_types/user.types';
 import type { Post } from '@/app/_types/post.types';
 import type { GetGroupPostsResponse } from '@/app/_types/postcreate.types';
 import { Comment, GetCommentsResponse } from '@/app/_types/comment.types';
+import { DeletePostResponse } from '../_types/deletePostResponse';
 
 const baseURL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -119,6 +120,14 @@ export const getMyProfile = async (): Promise<User> => {
   }>('/users/me');
 
   return response.data.data;
+};
+
+export const deletePost = async (
+  groupId: string,
+  postId: number
+): Promise<DeletePostResponse> => {
+  const res = await deleteRequest<DeletePostResponse>(`/groups/${groupId}/posts/${postId}`);
+  return res;
 };
 
 export const createPost = async (
