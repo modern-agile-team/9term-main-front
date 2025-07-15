@@ -1,12 +1,13 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Card } from '@/app/_components/Card';
 import Link from 'next/link';
 import useEmblaCarousel from 'embla-carousel-react';
 import { GetGroupsResponse } from './_types/group.types';
 import { useQuery } from '@tanstack/react-query';
-import { groupsQueries } from '@/app/groups/_queries'; 
+import { groupsQueries } from '@/app/groups/_queries';
+import ClubCard from '@/app/_components/ClubCard';
+
 const heroImages = [
   '/main_img/cartoon.webp',
   '/main_img/hangang.webp',
@@ -27,48 +28,13 @@ export default function HomePage() {
     return () => clearInterval(timer);
   }, []);
   const { data, isLoading, isError } = useQuery(groupsQueries.groups());
-  const clubs : GetGroupsResponse['data'] = data?.data??[];
+  const clubs: GetGroupsResponse['data'] = data?.data ?? [];
   const recommendedClubs = [...clubs]
-  .sort((a, b) => Number(b.memberCount) - Number(a.memberCount))
-  .slice(0, 5);
+    .sort((a, b) => Number(b.memberCount) - Number(a.memberCount))
+    .slice(0, 5);
   const allClubs = clubs;
-  
 
-  const ClubCard = ({ club }: { club: GetGroupsResponse['data'][0] }) => (
-    <div className="carousel-slide">
-      <Link href={`/groups/${club.id}`}>
-        <Card className="w-[300px] h-[300px] hover:shadow-lg hover:border-blue-500 transition-shadow flex flex-col">
-          <div className="aspect-video w-full bg-gray-100 rounded-t-lg overflow-hidden">
-            {club.imageUrl ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={club.imageUrl}
-                alt={club.name}
-                className="w-full h-full object-cover"
-              />
-            ) : (
-              <div className="w-full h-full flex items-center justify-center text-gray-400">
-                No Image
-              </div>
-            )}
-          </div>
-          <div className="p-4 flex-1 flex-col justify-between">
-            <h3 className="text-blue-600 font-bold text-lg mb-2">
-              {club.name}
-            </h3>
-            <p className="text-gray-600 text-sm mb-4">{club.description}</p>
-              <h2 className="rounded-full w-[260px] h-[3px] bg-gray-200" />
-            <div className="flex justify-between items-center text-sm text-gray-500">
-              {/* <span className="px-2 py-1 bg-gray-100 rounded-full">
-                {club.category || '카테고리 없음'}
-              </span> */}
-              <span>{club.memberCount}명</span>
-            </div>
-          </div>
-        </Card>
-      </Link>
-    </div>
-  );
+ 
   if (isLoading) return <div>로딩 중...</div>;
   if (isError) return <div>동아리 목록을 불러오지 못했습니다.</div>;
 
@@ -121,7 +87,7 @@ export default function HomePage() {
       </section>
 
       <div className="space-y-12 py-8">
-        <section id="my-clubs">
+        <section id="recommended-clubs">
           <h2 className="section-title font-bold text-[24px] text-[#424242] font-['Noto_Sans_KR',_sans-serif] pb-[5px] mb-[20px] relative inline-block">
             인기 동아리
             <span className="block absolute left-0 bottom-0 w-[60px] h-[3px] bg-blue-600" />
@@ -134,7 +100,7 @@ export default function HomePage() {
               {recommendedClubs.map((club: any) => (
                 <div
                   key={club.id}
-                  className="min-w-[70vw] max-w-xs sm:min-w-[40vw] md:min-w-[220px] md:max-w-xs"
+                  className="w-[300px] flex-shrink-0"
                 >
                   <ClubCard club={club} />
                 </div>
@@ -143,11 +109,17 @@ export default function HomePage() {
           </div>
         </section>
 
-        <section id="recommended-clubs">
+        <section id="all-clubs">
           <h2 className="section-title font-bold text-[24px] text-[#424242] font-['Noto_Sans_KR',_sans-serif] pb-[5px] mb-[20px] relative inline-block">
-           전체 동아리
+            전체 동아리
             <span className="block absolute left-0 bottom-0 w-[60px] h-[3px] bg-blue-600" />
           </h2>
+          <Link
+            href="/groups"
+            className="text-blue-200  hover:text-blue-600 text-sm font-medium hover:underline ml-1"
+          >
+          ...더보기
+          </Link>
           <div
             className="carousel-viewport overflow-x-auto scrollbar-hide"
             ref={allClubsRef}
@@ -156,7 +128,7 @@ export default function HomePage() {
               {allClubs.map((club: any) => (
                 <div
                   key={club.id}
-                  className="min-w-[70vw] max-w-xs sm:min-w-[40vw] md:min-w-[220px] md:max-w-xs"
+                  className="w-[300px] flex-shrink-0"
                 >
                   <ClubCard club={club} />
                 </div>
