@@ -91,7 +91,7 @@ export default function TopNavigation() {
                     href="#my-clubs"
                     className="text-white hover:text-blue-300"
                   >
-                    내 동아리
+                    인기 동아리
                   </a>
                 </li>
                 <li>
@@ -99,7 +99,7 @@ export default function TopNavigation() {
                     href="#recommended-clubs"
                     className="text-white hover:text-blue-300"
                   >
-                    인기 동아리
+                  전체 동아리
                   </a>
                 </li>
               </ul>

@@ -4,15 +4,9 @@ import { useEffect, useState } from 'react';
 import { Card } from '@/app/_components/Card';
 import Link from 'next/link';
 import useEmblaCarousel from 'embla-carousel-react';
-
-interface Club {
-  id: string;
-  name: string;
-  description: string;
-  memberCount: number;
-  category: string;
-  imageUrl?: string;
-}
+import { GetGroupsResponse } from './_types/group.types';
+import { useQuery } from '@tanstack/react-query';
+import { groupsQueries } from '@/app/groups/_queries'; 
 const heroImages = [
   '/main_img/cartoon.webp',
   '/main_img/hangang.webp',
@@ -22,7 +16,7 @@ const heroImages = [
 ];
 
 export default function HomePage() {
-  const [myClubsRef] = useEmblaCarousel();
+  const [allClubsRef] = useEmblaCarousel();
   const [recommendedRef] = useEmblaCarousel();
   const [current, setCurrent] = useState(0);
 
@@ -32,72 +26,18 @@ export default function HomePage() {
     }, 5000);
     return () => clearInterval(timer);
   }, []);
-  const [myClubs] = useState<Club[]>([
-    {
-      id: '1',
-      name: '개발자 스터디',
-      description: '함께 성장하는 개발자 모임',
-      memberCount: 15,
-      category: '학술',
-      imageUrl: '/main_img/coding.webp',
-    },
-    {
-      id: '2',
-      name: '밥 한끼',
-      description: '주 2회 밥먹는 모임',
-      memberCount: 22,
-      category: '식사',
-      imageUrl: '/main_img/ttabong.webp',
-    },
-    {
-      id: '3',
-      name: '영화 감상 모임',
-      description: '매주 금요일 영화 감상 및 토론',
-      memberCount: 18,
-      category: '문화',
-      imageUrl: 'https://placehold.co/600x400?text=영화+감상+모임',
-    },
-  ]);
+  const { data, isLoading, isError } = useQuery(groupsQueries.groups());
+  const clubs : GetGroupsResponse['data'] = data?.data??[];
+  const recommendedClubs = [...clubs]
+  .sort((a, b) => Number(b.memberCount) - Number(a.memberCount))
+  .slice(0, 5);
+  const allClubs = clubs;
+  
 
-  const [recommendedClubs] = useState<Club[]>([
-    {
-      id: '4',
-      name: '독서 토론',
-      description: '매주 한 권의 책을 읽고 토론하는 모임',
-      memberCount: 12,
-      category: '교양',
-      imageUrl: 'https://placehold.co/600x400?text=독서+토론',
-    },
-    {
-      id: '5',
-      name: '기타 연주반',
-      description: '초보자도 환영하는 기타 연주 모임',
-      memberCount: 8,
-      category: '음악',
-      imageUrl: 'https://placehold.co/600x400?text=기타+연주반',
-    },
-    {
-      id: '6',
-      name: '사진 촬영반',
-      description: '사진 촬영 및 편집 기술 공유',
-      memberCount: 20,
-      category: '예술',
-      imageUrl: 'https://placehold.co/600x400?text=사진+촬영반',
-    },
-    {
-      id: '7',
-      name: '요리 연구회',
-      description: '함께 요리하고 레시피 공유하는 모임',
-      memberCount: 15,
-      category: '취미',
-      imageUrl: 'https://placehold.co/600x400?text=요리+연구회',
-    },
-  ]);
-
-  const ClubCard = ({ club }: { club: Club }) => (
+  const ClubCard = ({ club }: { club: GetGroupsResponse['data'][0] }) => (
     <div className="carousel-slide">
       <Link href={`/groups/${club.id}`}>
-        <Card className="h-full hover:shadow-lg hover:border-blue-500 transition-shadow ">
+        <Card className="w-[300px] h-[300px] hover:shadow-lg hover:border-blue-500 transition-shadow flex flex-col">
           <div className="aspect-video w-full bg-gray-100 rounded-t-lg overflow-hidden">
             {club.imageUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
@@ -112,15 +52,16 @@ export default function HomePage() {
               </div>
             )}
           </div>
-          <div className="p-4">
+          <div className="p-4 flex-1 flex-col justify-between">
             <h3 className="text-blue-600 font-bold text-lg mb-2">
               {club.name}
             </h3>
             <p className="text-gray-600 text-sm mb-4">{club.description}</p>
+              <h2 className="rounded-full w-[260px] h-[3px] bg-gray-200" />
             <div className="flex justify-between items-center text-sm text-gray-500">
-              <span className="px-2 py-1 bg-gray-100 rounded-full">
-                {club.category}
-              </span>
+              {/* <span className="px-2 py-1 bg-gray-100 rounded-full">
+                {club.category || '카테고리 없음'}
+              </span> */}
               <span>{club.memberCount}명</span>
             </div>
           </div>
@@ -128,6 +69,9 @@ export default function HomePage() {
       </Link>
     </div>
   );
+  if (isLoading) return <div>로딩 중...</div>;
+  if (isError) return <div>동아리 목록을 불러오지 못했습니다.</div>;
+
   return (
     <div className="max-w-6xl mx-auto px-1 pt-16">
       <section className="relative rounded-2xl h-[340px] md:h-[400px] flex flex-col justify-center items-center text-white text-center shadow-lg mb-8 overflow-hidden">
@@ -179,15 +123,15 @@ export default function HomePage() {
       <div className="space-y-12 py-8">
         <section id="my-clubs">
           <h2 className="section-title font-bold text-[24px] text-[#424242] font-['Noto_Sans_KR',_sans-serif] pb-[5px] mb-[20px] relative inline-block">
-            내 동아리
+            인기 동아리
             <span className="block absolute left-0 bottom-0 w-[60px] h-[3px] bg-blue-600" />
           </h2>
           <div
             className="carousel-viewport overflow-x-auto scrollbar-hide"
-            ref={myClubsRef}
+            ref={recommendedRef}
           >
             <div className="flex gap-2 md:gap-4">
-              {myClubs.map((club) => (
+              {recommendedClubs.map((club: any) => (
                 <div
                   key={club.id}
                   className="min-w-[70vw] max-w-xs sm:min-w-[40vw] md:min-w-[220px] md:max-w-xs"
@@ -201,15 +145,15 @@ export default function HomePage() {
 
         <section id="recommended-clubs">
           <h2 className="section-title font-bold text-[24px] text-[#424242] font-['Noto_Sans_KR',_sans-serif] pb-[5px] mb-[20px] relative inline-block">
-            인기 동아리
+           전체 동아리
             <span className="block absolute left-0 bottom-0 w-[60px] h-[3px] bg-blue-600" />
           </h2>
           <div
             className="carousel-viewport overflow-x-auto scrollbar-hide"
-            ref={recommendedRef}
+            ref={allClubsRef}
           >
             <div className="flex gap-2 md:gap-4">
-              {recommendedClubs.map((club) => (
+              {allClubs.map((club: any) => (
                 <div
                   key={club.id}
                   className="min-w-[70vw] max-w-xs sm:min-w-[40vw] md:min-w-[220px] md:max-w-xs"

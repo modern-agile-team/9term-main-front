@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { useParams } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
-import { mockGroups } from '@/app/groups/[id]/mocks/data';
 import BoardHeader from '@/app/groups/components/BoardHeader';
 import Sidebar from '@/app/groups/components/Sidebar';
 import PostList from '@/app/groups/components/posts/PostList';
@@ -81,14 +80,6 @@ const GroupPage = () => {
   const editingPost = posts.find((p) => p.id === editPostId);
   const deletingPost = posts.find((p) => p.id === deletePostId);
 
-  if (!mockGroups.find((g) => g.id === Number(groupId))) {
-    return (
-      <div className="flex items-center justify-center h-full">
-        <p>존재하지 않는 그룹입니다.</p>
-      </div>
-    );
-  }
-
   const handleCreatePost = (title: string, content: string) => {
     createPostMutation.mutate({ groupId, title, content });
   };
@@ -125,7 +116,7 @@ const GroupPage = () => {
     <div className="flex min-h-[calc(100vh-4rem)] relative mt-16">
       {/* 데스크톱 사이드바 */}
       <div className="hidden lg:block w-64 min-w-64">
-        <Sidebar onCreatePost={handleCreateButtonClick} />
+        <Sidebar onCreatePost={handleCreateButtonClick} groupId={groupId} />
       </div>
 
       {/* 메인 컨텐츠 */}
