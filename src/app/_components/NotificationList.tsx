@@ -1,4 +1,4 @@
-import { Notification } from '@/app/_types/notification.types';
+  import { Notification } from '@/app/_types/notification.types';
 
 interface NotificationListProps {
   notifications: Notification[];

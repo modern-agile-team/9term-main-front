@@ -1,12 +1,20 @@
 import Image from 'next/image';
 import Link from 'next/link';
+import { GetGroupsResponse } from '@/app/_types/group.types';
+import { useQuery } from '@tanstack/react-query';
+import { groupsQueries } from '../_queries';
 
-// Sidebar 컴포넌트에 prop 타입 추가
 interface SidebarProps {
   onCreatePost: () => void;
+  groupId: string;
 }
 
-export default function Sidebar({ onCreatePost }: SidebarProps) {
+export default function Sidebar({ onCreatePost, groupId }: SidebarProps) {
+  const { data, isLoading, isError } = useQuery(groupsQueries.groups());
+  const clubs: GetGroupsResponse['data'] = data?.data ?? [];
+  const club = clubs.find((club) => club.id === Number(groupId)); // groupId는 props나 params 등에서 받아옴
+  if (isLoading) return <div>로딩 중...</div>;
+  if (isError) return <div>그룹을 불러오지 못했습니다.</div>;
   return (
     <div className="h-full bg-white p-6 flex flex-col">
       {/* 동아리 프로필 섹션 */}
@@ -21,8 +29,8 @@ export default function Sidebar({ onCreatePost }: SidebarProps) {
             />
           </div>
           <div>
-            <h2 className="text-xl font-bold">개발자 스터디 모임</h2>
-            <p className="text-gray-600 text-sm">회원 32명</p>
+            <h2 className="text-xl font-bold">{club?.name}</h2>
+            <p className="text-gray-600 text-sm">회원 {club?.memberCount}명</p>
           </div>
         </div>
 
