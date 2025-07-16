@@ -7,6 +7,7 @@ import { GetGroupsResponse } from './_types/group.types';
 import { useQuery } from '@tanstack/react-query';
 import { groupsQueries } from '@/app/groups/_queries';
 import ClubCard from '@/app/_components/ClubCard';
+import CreateClubCard from '@/app/_components/CreateClubCard';
 
 const heroImages = [
   '/main_img/cartoon.webp',
@@ -34,7 +35,6 @@ export default function HomePage() {
     .slice(0, 5);
   const allClubs = clubs;
 
- 
   if (isLoading) return <div>로딩 중...</div>;
   if (isError) return <div>동아리 목록을 불러오지 못했습니다.</div>;
 
@@ -98,10 +98,7 @@ export default function HomePage() {
           >
             <div className="flex gap-2 md:gap-4">
               {recommendedClubs.map((club: any) => (
-                <div
-                  key={club.id}
-                  className="w-[300px] flex-shrink-0"
-                >
+                <div key={club.id} className="w-[300px] flex-shrink-0">
                   <ClubCard club={club} />
                 </div>
               ))}
@@ -118,18 +115,18 @@ export default function HomePage() {
             href="/groups"
             className="text-blue-200  hover:text-blue-600 text-sm font-medium hover:underline ml-1"
           >
-          ...더보기
+            ...더보기
           </Link>
           <div
             className="carousel-viewport overflow-x-auto scrollbar-hide"
             ref={allClubsRef}
           >
             <div className="flex gap-2 md:gap-4">
+              <div className="w-[300px] flex-shrink-0">
+                <CreateClubCard />
+              </div>
               {allClubs.map((club: any) => (
-                <div
-                  key={club.id}
-                  className="w-[300px] flex-shrink-0"
-                >
+                <div key={club.id} className="w-[300px] flex-shrink-0">
                   <ClubCard club={club} />
                 </div>
               ))}
