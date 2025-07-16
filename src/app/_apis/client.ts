@@ -11,7 +11,7 @@ import {
 } from '@/app/_types/comment.types';
 
 // import { Comment, GetCommentsResponse } from '@/app/_types/comment.types';
-// import { DeletePostResponse } from '../_types/deletePostResponse';
+ import { DeletePostResponse } from '../_types/deletePostResponse';
 
 
 const baseURL = process.env.NEXT_PUBLIC_API_URL;
