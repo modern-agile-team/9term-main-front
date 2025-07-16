@@ -88,19 +88,19 @@ export default function TopNavigation() {
               <ul className="flex space-x-4">
                 <li>
                   <a
-                    href="#my-clubs"
-                    className="text-white hover:text-blue-300"
-                  >
-                    내 동아리
-                  </a>
-                </li>
-                <li>
-                  <a
                     href="#recommended-clubs"
                     className="text-white hover:text-blue-300"
                   >
                     인기 동아리
                   </a>
+                </li>
+                <li>
+                  <Link
+                    href="/groups"  
+                    className="text-white hover:text-blue-300"
+                  >
+                  전체 동아리
+                  </Link>
                 </li>
               </ul>
             )}
