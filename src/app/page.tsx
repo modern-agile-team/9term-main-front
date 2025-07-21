@@ -7,7 +7,7 @@ import { GetGroupsResponse } from './_types/group.types';
 import { useQuery } from '@tanstack/react-query';
 import { groupsQueries } from '@/app/groups/_queries';
 import ClubCard from '@/app/_components/ClubCard';
-import CreateClubCard from '@/app/_components/CreateClubCard';
+import CreateClubCard from '@/app/_components/CreateClub';
 
 const heroImages = [
   '/main_img/cartoon.webp',
@@ -93,7 +93,7 @@ export default function HomePage() {
             <span className="block absolute left-0 bottom-0 w-[60px] h-[3px] bg-blue-600" />
           </h2>
           <div
-            className="carousel-viewport overflow-x-auto scrollbar-hide"
+            className="carousel-viewport overflow-x-auto overflow-hidden"
             ref={recommendedRef}
           >
             <div className="flex gap-2 md:gap-4">
@@ -118,7 +118,7 @@ export default function HomePage() {
             ...더보기
           </Link>
           <div
-            className="carousel-viewport overflow-x-auto scrollbar-hide"
+            className="carousel-viewport overflow-x-auto overflow-hidden"
             ref={allClubsRef}
           >
             <div className="flex gap-2 md:gap-4">

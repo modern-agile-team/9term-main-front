@@ -144,6 +144,17 @@ export const getGroups = async (): Promise<GetGroupsResponse> => {
   return res;
 };
 
+export const createGroup = async (name: string, description: string, groupImage: File): Promise<GetGroupsResponse | undefined> => {
+  try {
+    const res = await post<GetGroupsResponse>(`/groups`, { name, description, groupImage });
+    return res;
+  } catch (error :any) {
+    if (error.response.data.message) {
+      throw new Error(error.response.data.message);
+    }
+  }
+};
+
 export const getGroupPosts = async (groupId: string): Promise<Post[]> => {
   const res = await get<GetGroupPostsResponse>(`/groups/${groupId}/posts`);
   return res.data ?? [];
