@@ -82,11 +82,6 @@ const CommentForm: React.FC<CommentFormProps> = ({ postId, groupId }) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!currentUser) {
-      setErrorMessage('로그인이 필요합니다.');
-      return;
-    }
-
     if (!formData.content.trim()) {
       setErrorMessage('댓글 내용을 입력해주세요.');
       return;
