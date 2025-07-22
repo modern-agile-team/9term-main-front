@@ -17,6 +17,7 @@ import { useAuth, useMyProfile } from '@/app/_services/auth-provider';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { createPost, deletePost } from '@/app/_apis/client';
 import { invalidatePostRelatedQueries } from '@/app/_utils/query-utils';
+import { handleGeneralError } from '@/app/_utils/error-utils';
 
 import { groupsQueries } from '../_queries';
 
@@ -56,7 +57,7 @@ const GroupPage = () => {
       setIsCreateModalOpen(false);
     },
     onError: (error: any) => {
-      alert(error?.response?.data?.message || '게시글 작성에 실패했습니다.');
+      alert(handleGeneralError(error));
     },
   });
   const deletePostMutation = useMutation({
@@ -66,8 +67,8 @@ const GroupPage = () => {
       invalidatePostRelatedQueries(queryClient, groupId);
       setDeletePostId(null);
     },
-    onError: () => {
-      alert('게시글 삭제에 실패했습니다.');
+    onError: (error: any) => {
+      alert(handleGeneralError(error));
     },
   });
 

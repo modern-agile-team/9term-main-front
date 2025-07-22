@@ -10,6 +10,7 @@ import type {
 } from '@/app/_types/comment.types';
 import { AxiosError } from 'axios';
 import { invalidateCommentRelatedQueries } from '@/app/_utils/query-utils';
+import { handleApiError, handleNetworkError } from '@/app/_utils/error-utils';
 
 interface CommentFormProps {
   postId: number;
@@ -56,30 +57,11 @@ const CommentForm: React.FC<CommentFormProps> = ({ postId, groupId }) => {
     onError: (error: AxiosError<ApiErrorResponse>) => {
       console.error('댓글 작성 실패:', error);
 
-      // 에러 메시지 처리
+      // 공통 에러 처리 유틸리티 사용
       if (error.response?.data) {
-        const errorData = error.response.data;
-
-        if (errorData.statusCode === 400) {
-          // 400: 잘못된 요청 데이터
-          const messages = Array.isArray(errorData.message)
-            ? errorData.message.join(', ')
-            : errorData.message;
-          setErrorMessage(`입력 오류: ${messages}`);
-        } else if (errorData.statusCode === 401) {
-          // 401: 인증 오류
-          setErrorMessage('로그인이 만료되었습니다. 다시 로그인해주세요.');
-        } else if (errorData.statusCode === 404) {
-          // 404: 리소스 없음
-          setErrorMessage('게시글을 찾을 수 없습니다.');
-        } else {
-          const errorMsg = Array.isArray(errorData.message)
-            ? errorData.message.join(', ')
-            : errorData.message;
-          setErrorMessage(errorMsg || '댓글 작성에 실패했습니다.');
-        }
+        setErrorMessage(handleApiError(error.response.data));
       } else {
-        setErrorMessage('네트워크 오류가 발생했습니다. 다시 시도해주세요.');
+        setErrorMessage(handleNetworkError());
       }
     },
   });
