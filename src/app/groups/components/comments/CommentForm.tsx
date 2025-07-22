@@ -10,7 +10,7 @@ import type {
 } from '@/app/_types/comment.types';
 import { AxiosError } from 'axios';
 import { invalidateCommentRelatedQueries } from '@/app/_utils/query-utils';
-import { handleApiError, handleNetworkError } from '@/app/_utils/error-utils';
+import { handleGeneralError } from '@/app/_utils/error-utils';
 
 interface CommentFormProps {
   postId: number;
@@ -42,27 +42,23 @@ const CommentForm: React.FC<CommentFormProps> = ({ postId, groupId }) => {
   // 에러 상태 관리
   const [errorMessage, setErrorMessage] = useState<string>('');
 
-  // 댓글 작성 mutation
+  // 폼 초기화 함수
+  const resetForm = () => {
+    setFormData({ content: '' });
+    setErrorMessage('');
+  };
+
+  // 댓글 작성 mutation 설정
   const createCommentMutation = useMutation({
     mutationFn: (commentData: CreateCommentRequest) =>
       createComment(groupId, postId, commentData),
     onSuccess: () => {
-      // 관련 쿼리들 무효화
       invalidateCommentRelatedQueries(queryClient, groupId, postId);
-
-      // 폼 초기화
-      setFormData({ content: '' });
-      setErrorMessage('');
+      resetForm();
     },
     onError: (error: AxiosError<ApiErrorResponse>) => {
       console.error('댓글 작성 실패:', error);
-
-      // 공통 에러 처리 유틸리티 사용
-      if (error.response?.data) {
-        setErrorMessage(handleApiError(error.response.data));
-      } else {
-        setErrorMessage(handleNetworkError());
-      }
+      setErrorMessage(handleGeneralError(error));
     },
   });
 
