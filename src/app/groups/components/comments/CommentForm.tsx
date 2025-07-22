@@ -11,8 +11,8 @@ import type {
 import { AxiosError } from 'axios';
 
 interface CommentFormProps {
-  postId: string;
-  groupId: string;
+  postId: number;
+  groupId: number;
 }
 
 const CommentForm: React.FC<CommentFormProps> = ({ postId, groupId }) => {

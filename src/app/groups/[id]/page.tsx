@@ -24,7 +24,7 @@ import { groupsQueries } from '../_queries';
 // - 각 모달의 열기/닫기, 게시글 CRUD 동작을 연결
 const GroupPage = () => {
   const params = useParams();
-  const groupId = params.id as string;
+  const groupId = parseInt(params.id as string, 10);
   const [activeTab, setActiveTab] = useState('자유게시판');
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [editPostId, setEditPostId] = useState<number | null>(null);
@@ -46,7 +46,7 @@ const GroupPage = () => {
       title,
       content,
     }: {
-      groupId: string;
+      groupId: number;
       title: string;
       content: string;
     }) => createPost(groupId, { title, content }),
@@ -61,7 +61,7 @@ const GroupPage = () => {
     },
   });
   const deletePostMutation = useMutation({
-    mutationFn: ({ groupId, postId }: { groupId: string; postId: number }) =>
+    mutationFn: ({ groupId, postId }: { groupId: number; postId: number }) =>
       deletePost(groupId, postId),
     onSuccess: () => {
       queryClient.invalidateQueries({

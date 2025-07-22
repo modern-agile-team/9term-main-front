@@ -7,7 +7,12 @@ import CommentForm from '@/app/groups/components/comments/CommentForm';
 
 export default function PostDetailPage() {
   const params = useParams();
-  const { id: groupId, postId } = params as { id: string; postId: string };
+  const { id: groupIdParam, postId: postIdParam } = params as {
+    id: string;
+    postId: string;
+  };
+  const groupId = parseInt(groupIdParam, 10);
+  const postId = parseInt(postIdParam, 10);
 
   const {
     data: post,

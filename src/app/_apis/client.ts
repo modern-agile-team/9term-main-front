@@ -10,8 +10,7 @@ import {
   CreateCommentResponse,
 } from '@/app/_types/comment.types';
 
- import { DeletePostResponse } from '../_types/deletePostResponse';
-
+import { DeletePostResponse } from '../_types/deletePostResponse';
 
 const baseURL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -131,15 +130,17 @@ export const getMyProfile = async (): Promise<User> => {
 };
 
 export const deletePost = async (
-  groupId: string,
+  groupId: number,
   postId: number
 ): Promise<DeletePostResponse> => {
-  const res = await deleteRequest<DeletePostResponse>(`/groups/${groupId}/posts/${postId}`);
+  const res = await deleteRequest<DeletePostResponse>(
+    `/groups/${groupId}/posts/${postId}`
+  );
   return res;
 };
 
 export const createPost = async (
-  groupId: string,
+  groupId: number,
   postData: { title: string; content: string }
 ): Promise<Post | undefined> => {
   const res = await post<Post>(`/groups/${groupId}/posts`, postData);
@@ -151,21 +152,21 @@ export const getGroups = async (): Promise<GetGroupsResponse> => {
   return res;
 };
 
-export const getGroupPosts = async (groupId: string): Promise<Post[]> => {
+export const getGroupPosts = async (groupId: number): Promise<Post[]> => {
   const res = await get<GetGroupPostsResponse>(`/groups/${groupId}/posts`);
   return res.data ?? [];
 };
 
 export const getPost = async (
-  groupId: string,
-  postId: string
+  groupId: number,
+  postId: number
 ): Promise<Post> => {
   return await get<Post>(`/groups/${groupId}/posts/${postId}`);
 };
 
 export const getComments = async (
-  groupId: string,
-  postId: string,
+  groupId: number,
+  postId: number,
   parentId?: number
 ): Promise<Comment[]> => {
   const params: Record<string, string | number> = {};
@@ -180,8 +181,8 @@ export const getComments = async (
 };
 
 export const createComment = async (
-  groupId: string,
-  postId: string,
+  groupId: number,
+  postId: number,
   commentData: CreateCommentRequest
 ): Promise<CreateCommentResponse> => {
   // 입력값 유효성 검사
@@ -189,19 +190,8 @@ export const createComment = async (
     throw new Error('groupId와 postId가 필요합니다.');
   }
 
-  // 안전한 숫자 변환
-  const numericGroupId = parseInt(groupId, 10);
-  const numericPostId = parseInt(postId, 10);
-
-  // 숫자 변환 검증
-  if (isNaN(numericGroupId) || isNaN(numericPostId)) {
-    throw new Error(
-      `유효하지 않은 ID입니다. groupId: ${groupId}, postId: ${postId}`
-    );
-  }
-
   return await post<CreateCommentResponse>(
-    `/groups/${numericGroupId}/posts/${numericPostId}/comments`,
+    `/groups/${groupId}/posts/${postId}/comments`,
     commentData
   );
 };

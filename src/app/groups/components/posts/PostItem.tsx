@@ -23,7 +23,7 @@ export default function PostItem({
   onSetNotice,
 }: PostItemProps) {
   const params = useParams();
-  const groupId = params.id as string;
+  const groupId = parseInt(params.id as string, 10);
 
   const [formattedDate, setFormattedDate] = useState<string>('');
   const [menuOpen, setMenuOpen] = useState(false);
@@ -31,7 +31,7 @@ export default function PostItem({
 
   const { data: comments, isLoading: isCommentsLoading } = useQuery({
     queryKey: ['comments', groupId, post.id],
-    queryFn: () => getComments(groupId, String(post.id)),
+    queryFn: () => getComments(groupId, post.id),
     enabled: isCommentOpen && !!groupId,
   });
 
@@ -177,7 +177,7 @@ export default function PostItem({
           ) : (
             <CommentList comments={comments || []} />
           )}
-          <CommentForm postId={String(post.id)} groupId={groupId} />
+          <CommentForm postId={post.id} groupId={groupId} />
         </div>
       )}
     </div>
