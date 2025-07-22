@@ -17,7 +17,7 @@ interface CommentFormProps {
   groupId: number;
 }
 
-const CommentForm: React.FC<CommentFormProps> = ({ postId, groupId }) => {
+const CommentForm = ({ postId, groupId }: CommentFormProps) => {
   const queryClient = useQueryClient();
 
   // 현재 사용자 정보 가져오기

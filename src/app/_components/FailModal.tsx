@@ -26,7 +26,7 @@ interface FailModalProps {
  * @param retryButtonText 재시도 버튼 텍스트 (기본값: "다시 시도")
  * @param onRetry 재시도 버튼 클릭 시 실행할 함수 (지정하지 않으면 재시도 버튼 표시 안함)
  */
-export const FailModal: React.FC<FailModalProps> = ({
+export const FailModal = ({
   isOpen,
   onClose,
   title,
@@ -35,7 +35,7 @@ export const FailModal: React.FC<FailModalProps> = ({
   onButtonClick,
   retryButtonText = '다시 시도',
   onRetry,
-}) => {
+}: FailModalProps) => {
   if (!isOpen) return null;
 
   return (
