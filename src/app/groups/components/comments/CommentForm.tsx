@@ -9,6 +9,7 @@ import type {
   ApiErrorResponse,
 } from '@/app/_types/comment.types';
 import { AxiosError } from 'axios';
+import { invalidateCommentRelatedQueries } from '@/app/_utils/query-utils';
 
 interface CommentFormProps {
   postId: number;
@@ -45,24 +46,8 @@ const CommentForm: React.FC<CommentFormProps> = ({ postId, groupId }) => {
     mutationFn: (commentData: CreateCommentRequest) =>
       createComment(groupId, postId, commentData),
     onSuccess: () => {
-      // 댓글 목록 새로고침
-      queryClient.invalidateQueries({
-        queryKey: ['comments', groupId, postId],
-      });
-      queryClient.invalidateQueries({
-        queryKey: ['comments'],
-      });
-      queryClient.refetchQueries({
-        queryKey: ['comments', groupId, postId],
-      });
-
-      // 게시글 정보도 새로고침 (댓글 수 업데이트를 위해)
-      queryClient.invalidateQueries({
-        queryKey: ['post', groupId, postId],
-      });
-      queryClient.invalidateQueries({
-        queryKey: ['groupPosts', groupId],
-      });
+      // 관련 쿼리들 무효화
+      invalidateCommentRelatedQueries(queryClient, groupId, postId);
 
       // 폼 초기화
       setFormData({ content: '' });

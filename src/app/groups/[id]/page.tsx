@@ -16,6 +16,7 @@ import type { Post } from '@/app/_types/post.types';
 import { useAuth, useMyProfile } from '@/app/_services/auth-provider';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { createPost, deletePost } from '@/app/_apis/client';
+import { invalidatePostRelatedQueries } from '@/app/_utils/query-utils';
 
 import { groupsQueries } from '../_queries';
 
@@ -51,9 +52,7 @@ const GroupPage = () => {
       content: string;
     }) => createPost(groupId, { title, content }),
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: groupsQueries.groupPosts(groupId).queryKey,
-      });
+      invalidatePostRelatedQueries(queryClient, groupId);
       setIsCreateModalOpen(false);
     },
     onError: (error: any) => {
@@ -64,9 +63,7 @@ const GroupPage = () => {
     mutationFn: ({ groupId, postId }: { groupId: number; postId: number }) =>
       deletePost(groupId, postId),
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: groupsQueries.groupPosts(groupId).queryKey,
-      });
+      invalidatePostRelatedQueries(queryClient, groupId);
       setDeletePostId(null);
     },
     onError: () => {
