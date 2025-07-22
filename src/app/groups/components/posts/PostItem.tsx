@@ -8,6 +8,7 @@ import { getComments } from '@/app/_apis/client';
 import CommentList from '@/app/groups/components/comments/CommentList';
 import CommentForm from '@/app/groups/components/comments/CommentForm';
 import { useMyProfile } from '@/app/_services/auth-provider';
+import { QUERY_KEYS } from '@/app/_utils/query-utils';
 
 interface PostItemProps {
   post: Post;
@@ -30,7 +31,7 @@ export default function PostItem({
   const [isCommentOpen, setIsCommentOpen] = useState(false);
 
   const { data: comments, isLoading: isCommentsLoading } = useQuery({
-    queryKey: ['comments', groupId, post.id],
+    queryKey: QUERY_KEYS.comments(groupId, post.id),
     queryFn: () => getComments(groupId, post.id),
     enabled: isCommentOpen && !!groupId,
   });

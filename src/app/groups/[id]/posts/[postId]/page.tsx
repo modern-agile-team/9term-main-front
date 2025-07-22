@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { getPost, getComments } from '@/app/_apis/client';
 import CommentList from '@/app/groups/components/comments/CommentList';
 import CommentForm from '@/app/groups/components/comments/CommentForm';
+import { QUERY_KEYS } from '@/app/_utils/query-utils';
 
 export default function PostDetailPage() {
   const params = useParams();
@@ -19,13 +20,13 @@ export default function PostDetailPage() {
     isLoading,
     isError,
   } = useQuery({
-    queryKey: ['post', groupId, postId],
+    queryKey: QUERY_KEYS.post(groupId, postId),
     queryFn: () => getPost(groupId, postId),
     enabled: !!groupId && !!postId,
   });
 
   const { data: comments, isLoading: isCommentsLoading } = useQuery({
-    queryKey: ['comments', groupId, postId],
+    queryKey: QUERY_KEYS.comments(groupId, postId),
     queryFn: () => getComments(groupId, postId),
     enabled: !!groupId && !!postId,
   });
