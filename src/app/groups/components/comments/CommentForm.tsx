@@ -20,17 +20,6 @@ interface CommentFormProps {
 const CommentForm: React.FC<CommentFormProps> = ({ postId, groupId }) => {
   const queryClient = useQueryClient();
 
-  // groupId가 없으면 에러 처리
-  if (!groupId) {
-    return (
-      <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
-        <p className="text-red-600 text-sm">
-          그룹 정보를 불러올 수 없습니다. 페이지를 새로고침해주세요.
-        </p>
-      </div>
-    );
-  }
-
   // 현재 사용자 정보 가져오기
   const { data: currentUser, isLoading: isUserLoading } = useMyProfile();
 
@@ -90,6 +79,17 @@ const CommentForm: React.FC<CommentFormProps> = ({ postId, groupId }) => {
 
     createCommentMutation.mutate(commentData);
   };
+
+  // groupId가 없으면 에러 처리
+  if (!groupId) {
+    return (
+      <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
+        <p className="text-red-600 text-sm">
+          그룹 정보를 불러올 수 없습니다. 페이지를 새로고침해주세요.
+        </p>
+      </div>
+    );
+  }
 
   // 로딩 상태 처리
   if (isUserLoading) {
