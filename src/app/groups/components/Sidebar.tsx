@@ -6,7 +6,7 @@ import { groupsQueries } from '../_queries';
 
 interface SidebarProps {
   onCreatePost: () => void;
-  groupId: string;
+  groupId: number;
 }
 
 export default function Sidebar({ onCreatePost, groupId }: SidebarProps) {

@@ -8,12 +8,12 @@ interface PostSettingsModalProps {
   onClose: () => void;
 }
 
-const PostSettingsModal: React.FC<PostSettingsModalProps> = ({
+const PostSettingsModal = ({
   post: _post,
   onEdit,
   onDelete,
   onClose,
-}) => {
+}: PostSettingsModalProps) => {
   return (
     <div className="modal-backdrop">
       <div className="modal-content">

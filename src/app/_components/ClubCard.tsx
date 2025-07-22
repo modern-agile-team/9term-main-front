@@ -8,7 +8,7 @@ interface ClubCardProps {
   className?: string;
 }
 
-const ClubCard: React.FC<ClubCardProps> = ({ club, className }) => {
+const ClubCard = ({ club, className }: ClubCardProps) => {
   const [isFlipped, setIsFlipped] = useState(false);
 
   return (
