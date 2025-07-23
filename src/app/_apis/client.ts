@@ -11,8 +11,6 @@ import {
 } from '@/app/_types/comment.types';
 
 import { DeletePostResponse } from '../_types/deletePostResponse';
-
-import { GetGroupsResponse } from '../_types/group.types';
 import { CreategroupFormData } from '../_types/creategroup.types';
 
 
