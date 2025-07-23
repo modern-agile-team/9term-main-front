@@ -1,6 +1,6 @@
 import { queryOptions } from '@tanstack/react-query';
 import { getGroupPosts, getGroups } from '../_apis/client';
-
+import { QUERY_KEYS } from '../_utils/query-utils';
 
 export const groupsQueries = {
   all: ['groups'] as const,

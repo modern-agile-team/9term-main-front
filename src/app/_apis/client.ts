@@ -162,7 +162,7 @@ export const createGroup = async (
   return res;
 };
 
-export const getGroupPosts = async (groupId: string): Promise<Post[]> => {
+export const getGroupPosts = async (groupId: number): Promise<Post[]> => {
 
   const res = await get<GetGroupPostsResponse>(`/groups/${groupId}/posts`);
   return res.data ?? [];
