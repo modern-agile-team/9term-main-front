@@ -31,10 +31,10 @@ const ClubCard = ({ club, className }: ClubCardProps) => {
         <Link href={`/groups/${club.id}`}>
           <Card className="flex flex-col cursor-pointer hover:shadow-lg hover:border-blue-500 transition-shadow absolute top-0 left-0 w-full h-full z-[2] [backface-visibility:hidden]">
             <div className="aspect-video w-full bg-gray-100 rounded-t-lg overflow-hidden">
-              {club.imageUrl ? (
+              {club.groupImage ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
-                  src={club.imageUrl}
+                  src={club.groupImage}
                   alt={club.name}
                   className="w-full h-full object-cover"
                 />
@@ -57,18 +57,15 @@ const ClubCard = ({ club, className }: ClubCardProps) => {
             </div>
           </Card>
         </Link>
-        {/* 뒷면: 흰색 배경 레이어 추가 */}
         <Card className="flex flex-col items-center justify-center absolute top-0 left-0 w-full h-full z-[3] [transform:rotateY(180deg)] [backface-visibility:hidden]">
-          {/* 흰색 배경 레이어 */}
           <div
             className="absolute inset-0 w-full h-full rounded-lg bg-white"
             style={{ zIndex: 1 }}
           />
-          {/* 설명 텍스트 */}
           <p className="text-gray-600 text-base text-center px-6 relative z-10 mb-16">
             {club.description}
           </p>
-          {/* 더 알아보기 버튼 */}
+
           <Link
             href={`/groups/${club.id}`}
             className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10"
