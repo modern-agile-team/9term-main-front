@@ -5,6 +5,7 @@ import type { GetGroupPostsResponse } from '@/app/_types/postcreate.types';
 import { Comment, GetCommentsResponse } from '@/app/_types/comment.types';
 import { DeletePostResponse } from '../_types/deletePostResponse';
 import { GetGroupsResponse } from '../_types/group.types';
+import { CreategroupFormData } from '../_types/creategroup.types';
 
 const baseURL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -127,7 +128,9 @@ export const deletePost = async (
   groupId: string,
   postId: number
 ): Promise<DeletePostResponse> => {
-  const res = await deleteRequest<DeletePostResponse>(`/groups/${groupId}/posts/${postId}`);
+  const res = await deleteRequest<DeletePostResponse>(
+    `/groups/${groupId}/posts/${postId}`
+  );
   return res;
 };
 
@@ -144,15 +147,11 @@ export const getGroups = async (): Promise<GetGroupsResponse> => {
   return res;
 };
 
-export const createGroup = async (name: string, description: string, groupImage: File): Promise<GetGroupsResponse | undefined> => {
-  try {
-    const res = await post<GetGroupsResponse>(`/groups`, { name, description, groupImage });
-    return res;
-  } catch (error :any) {
-    if (error.response.data.message) {
-      throw new Error(error.response.data.message);
-    }
-  }
+export const createGroup = async (
+  formData: CreategroupFormData
+): Promise<GetGroupsResponse | undefined> => {
+  const res = await post<GetGroupsResponse>(`/groups`, formData);
+  return res;
 };
 
 export const getGroupPosts = async (groupId: string): Promise<Post[]> => {

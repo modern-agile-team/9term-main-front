@@ -7,6 +7,6 @@ export interface GetGroupsResponse {
     description: string;
     createdAt: string;
     memberCount: string;
-    groupImage: string;
+    groupImage: File | null;
   }[];
 }

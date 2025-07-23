@@ -3,6 +3,7 @@ import { createGroup } from '@/app/_apis/client';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { groupsQueries } from '@/app/groups/_queries';
 import { createPortal } from 'react-dom';
+import { CreategroupFormData } from '@/app/_types/creategroup.types';
 
 const ClubCreateModal = ({
   isOpen,
@@ -11,27 +12,19 @@ const ClubCreateModal = ({
   isOpen: boolean;
   onClose: () => void;
 }) => {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<CreategroupFormData>({
     name: '',
     description: '',
-    groupImage: null as File | null,
+    groupImage : null,
   });
   const queryClient = useQueryClient();
 
   const createGroupMutation = useMutation({
-    mutationFn: ({
-      name,
-      description,
-      groupImage,
-    }: {
-      name: string;
-      description: string;
-      groupImage: File | null;
-    }) => {
-      if (!groupImage) {
+    mutationFn: (formData: CreategroupFormData) => {
+      if (!formData.groupImage) {
         throw new Error('이미지를 선택해주세요.');
       }
-      return createGroup(name, description, groupImage);
+      return createGroup(formData);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
