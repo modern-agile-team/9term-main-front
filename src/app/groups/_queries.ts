@@ -4,7 +4,7 @@ import { getGroupPosts, getGroups } from '../_apis/client';
 export const groupsQueries = {
   all: ['groups'] as const,
 
-  groups: () => {
+  groups: () => { 
     return queryOptions({
       queryKey: [...groupsQueries.all, 'list'] as const,
       queryFn: () => getGroups(),

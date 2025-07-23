@@ -7,6 +7,6 @@ export interface GetGroupsResponse {
     description: string;
     createdAt: string;
     memberCount: string;
-    groupImage: File | null;
+    groupImage: string | null; // API 응답에서는 URL 문자열
   }[];
 }
