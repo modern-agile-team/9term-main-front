@@ -15,3 +15,20 @@ export interface GetCommentsResponse {
   message: string;
   data: Comment[];
 }
+
+export interface CreateCommentRequest {
+  content: string;
+  parentId?: number | null;
+}
+
+export interface CreateCommentResponse {
+  status: string;
+  message: string;
+  data: object;
+}
+
+export interface ApiErrorResponse {
+  message: string | string[];
+  error: string;
+  statusCode: number;
+}

@@ -22,14 +22,14 @@ interface SuccessModalProps {
  * @param buttonText 버튼 텍스트 (기본값: "확인")
  * @param onButtonClick 버튼 클릭 시 실행할 함수 (기본값: onClose)
  */
-export const SuccessModal: React.FC<SuccessModalProps> = ({
+export const SuccessModal = ({
   isOpen,
   onClose,
   title,
   message,
   buttonText = '확인',
   onButtonClick,
-}) => {
+}: SuccessModalProps) => {
   if (!isOpen) return null;
 
   return (
