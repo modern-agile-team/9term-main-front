@@ -3,10 +3,12 @@
 import { Post } from '@/app/_types/post.types';
 import { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { useParams } from 'next/navigation';
 import { getComments } from '@/app/_apis/client';
 import CommentList from '@/app/groups/components/comments/CommentList';
 import CommentForm from '@/app/groups/components/comments/CommentForm';
 import { useMyProfile } from '@/app/_services/auth-provider';
+import { QUERY_KEYS } from '@/app/_utils/query-utils';
 
 interface PostItemProps {
   post: Post;
@@ -21,14 +23,17 @@ export default function PostItem({
   onDelete,
   onSetNotice,
 }: PostItemProps) {
+  const params = useParams();
+  const groupId = parseInt(params.id as string, 10);
+
   const [formattedDate, setFormattedDate] = useState<string>('');
   const [menuOpen, setMenuOpen] = useState(false);
   const [isCommentOpen, setIsCommentOpen] = useState(false);
 
   const { data: comments, isLoading: isCommentsLoading } = useQuery({
-    queryKey: ['comments', post.groupId, post.id],
-    queryFn: () => getComments(String(post.groupId), String(post.id)),
-    enabled: isCommentOpen,
+    queryKey: QUERY_KEYS.comments(groupId, post.id),
+    queryFn: () => getComments(groupId, post.id),
+    enabled: isCommentOpen && !!groupId,
   });
 
   const { data: me } = useMyProfile();
@@ -73,7 +78,6 @@ export default function PostItem({
           </p>
           <p className="text-sm flex items-center">
             <span className="mr-2">🕒</span> {post.time?.slice(0, 5)}
-            
           </p>
         </div>
       )}
@@ -100,7 +104,7 @@ export default function PostItem({
           onClick={() => setIsCommentOpen((prev) => !prev)}
         >
           <span className="mr-1">💬</span> 댓글{' '}
-          {comments ? comments.length : post.comments || 0}
+          {comments ? comments.length : post.commentsCount || 0}
         </button>
         <button
           className="mr-4 text-sm flex items-center"
@@ -174,7 +178,7 @@ export default function PostItem({
           ) : (
             <CommentList comments={comments || []} />
           )}
-          <CommentForm postId={post.id} />
+          <CommentForm postId={post.id} groupId={groupId} />
         </div>
       )}
     </div>

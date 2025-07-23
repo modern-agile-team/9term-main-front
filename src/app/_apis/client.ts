@@ -2,10 +2,19 @@ import axios, { AxiosInstance, AxiosResponse } from 'axios';
 import { User } from '@/app/_types/user.types';
 import type { Post } from '@/app/_types/post.types';
 import type { GetGroupPostsResponse } from '@/app/_types/postcreate.types';
-import { Comment, GetCommentsResponse } from '@/app/_types/comment.types';
+import type { GetGroupsResponse } from '@/app/_types/group.types';
+import {
+  Comment,
+  GetCommentsResponse,
+  CreateCommentRequest,
+  CreateCommentResponse,
+} from '@/app/_types/comment.types';
+
 import { DeletePostResponse } from '../_types/deletePostResponse';
+
 import { GetGroupsResponse } from '../_types/group.types';
 import { CreategroupFormData } from '../_types/creategroup.types';
+
 
 const baseURL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -125,7 +134,7 @@ export const getMyProfile = async (): Promise<User> => {
 };
 
 export const deletePost = async (
-  groupId: string,
+  groupId: number,
   postId: number
 ): Promise<DeletePostResponse> => {
   const res = await deleteRequest<DeletePostResponse>(
@@ -135,7 +144,7 @@ export const deletePost = async (
 };
 
 export const createPost = async (
-  groupId: string,
+  groupId: number,
   postData: { title: string; content: string }
 ): Promise<Post | undefined> => {
   const res = await post<Post>(`/groups/${groupId}/posts`, postData);
@@ -147,6 +156,7 @@ export const getGroups = async (): Promise<GetGroupsResponse> => {
   return res;
 };
 
+
 export const createGroup = async (
   formData: CreategroupFormData
 ): Promise<GetGroupsResponse | undefined> => {
@@ -155,20 +165,21 @@ export const createGroup = async (
 };
 
 export const getGroupPosts = async (groupId: string): Promise<Post[]> => {
+
   const res = await get<GetGroupPostsResponse>(`/groups/${groupId}/posts`);
   return res.data ?? [];
 };
 
 export const getPost = async (
-  groupId: string,
-  postId: string
+  groupId: number,
+  postId: number
 ): Promise<Post> => {
   return await get<Post>(`/groups/${groupId}/posts/${postId}`);
 };
 
 export const getComments = async (
-  groupId: string,
-  postId: string,
+  groupId: number,
+  postId: number,
   parentId?: number
 ): Promise<Comment[]> => {
   const params: Record<string, string | number> = {};
@@ -180,6 +191,22 @@ export const getComments = async (
     params
   );
   return res.data;
+};
+
+export const createComment = async (
+  groupId: number,
+  postId: number,
+  commentData: CreateCommentRequest
+): Promise<CreateCommentResponse> => {
+  // 입력값 유효성 검사
+  if (!groupId || !postId) {
+    throw new Error('groupId와 postId가 필요합니다.');
+  }
+
+  return await post<CreateCommentResponse>(
+    `/groups/${groupId}/posts/${postId}/comments`,
+    commentData
+  );
 };
 
 export default apiClient;

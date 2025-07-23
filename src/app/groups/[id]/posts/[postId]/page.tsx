@@ -4,23 +4,29 @@ import { useQuery } from '@tanstack/react-query';
 import { getPost, getComments } from '@/app/_apis/client';
 import CommentList from '@/app/groups/components/comments/CommentList';
 import CommentForm from '@/app/groups/components/comments/CommentForm';
+import { QUERY_KEYS } from '@/app/_utils/query-utils';
 
 export default function PostDetailPage() {
   const params = useParams();
-  const { id: groupId, postId } = params as { id: string; postId: string };
+  const { id: groupIdParam, postId: postIdParam } = params as {
+    id: string;
+    postId: string;
+  };
+  const groupId = parseInt(groupIdParam, 10);
+  const postId = parseInt(postIdParam, 10);
 
   const {
     data: post,
     isLoading,
     isError,
   } = useQuery({
-    queryKey: ['post', groupId, postId],
+    queryKey: QUERY_KEYS.post(groupId, postId),
     queryFn: () => getPost(groupId, postId),
     enabled: !!groupId && !!postId,
   });
 
   const { data: comments, isLoading: isCommentsLoading } = useQuery({
-    queryKey: ['comments', groupId, postId],
+    queryKey: QUERY_KEYS.comments(groupId, postId),
     queryFn: () => getComments(groupId, postId),
     enabled: !!groupId && !!postId,
   });
@@ -75,11 +81,11 @@ export default function PostDetailPage() {
       </div>
       <div className="flex items-center text-sm text-gray-500 gap-4 mt-4">
         <span>👍 좋아요 {post.likes}</span>
-        <span>💬 댓글 {post.comments}</span>
+        <span>💬 댓글 {post.commentsCount}</span>
         <span>{post.saved ? '⭐ 저장됨' : '☆ 저장 안 됨'}</span>
       </div>
       <hr className="my-6" />
-      <CommentForm postId={Number(postId)} />
+      <CommentForm postId={postId} groupId={groupId} />
       {isCommentsLoading ? (
         <p>댓글을 불러오는 중...</p>
       ) : (

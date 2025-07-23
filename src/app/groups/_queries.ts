@@ -1,18 +1,19 @@
 import { queryOptions } from '@tanstack/react-query';
 import { getGroupPosts, getGroups } from '../_apis/client';
 
+
 export const groupsQueries = {
   all: ['groups'] as const,
 
   groups: () => {
     return queryOptions({
-      queryKey: [...groupsQueries.all, 'list'] as const,
+      queryKey: QUERY_KEYS.groups(),
       queryFn: () => getGroups(),
     });
   },
-  groupPosts: (groupId: string) => {
+  groupPosts: (groupId: number) => {
     return queryOptions({
-      queryKey: [...groupsQueries.all, 'groupPosts', groupId] as const,
+      queryKey: QUERY_KEYS.groupPosts(groupId),
       queryFn: () => getGroupPosts(groupId),
     });
   },

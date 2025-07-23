@@ -27,7 +27,7 @@ const listToTree = (list: Comment[]): Comment[] => {
   return roots;
 };
 
-const CommentItem: React.FC<{ comment: Comment }> = ({ comment }) => {
+const CommentItem = ({ comment }: { comment: Comment }) => {
   return (
     <li className="mb-2">
       <div className="rounded-md p-2 hover:bg-gray-50">
@@ -52,7 +52,7 @@ const CommentItem: React.FC<{ comment: Comment }> = ({ comment }) => {
   );
 };
 
-const CommentList: React.FC<CommentListProps> = ({ comments }) => {
+const CommentList = ({ comments }: CommentListProps) => {
   const commentTree = useMemo(() => listToTree(comments), [comments]);
 
   if (comments.length === 0) {

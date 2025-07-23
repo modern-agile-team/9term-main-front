@@ -1,3 +1,14 @@
+import type { User } from '@/app/_types/user.types';
+
+export const mockUser: User = {
+  id: 1,
+  name: '홍길동',
+  userName: 'hong123',
+  username: 'hong123',
+  role: 'USER',
+  createdAt: new Date().toISOString(),
+  updatedAt: new Date().toISOString(),
+};
 
 export interface Group {
   id: number;

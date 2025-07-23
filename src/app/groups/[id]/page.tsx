@@ -16,6 +16,8 @@ import type { Post } from '@/app/_types/post.types';
 import { useAuth, useMyProfile } from '@/app/_services/auth-provider';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { createPost, deletePost } from '@/app/_apis/client';
+import { invalidatePostRelatedQueries } from '@/app/_utils/query-utils';
+import { handleGeneralError } from '@/app/_utils/error-utils';
 
 import { groupsQueries } from '../_queries';
 
@@ -24,7 +26,7 @@ import { groupsQueries } from '../_queries';
 // - 각 모달의 열기/닫기, 게시글 CRUD 동작을 연결
 const GroupPage = () => {
   const params = useParams();
-  const groupId = params.id as string;
+  const groupId = parseInt(params.id as string, 10);
   const [activeTab, setActiveTab] = useState('자유게시판');
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [editPostId, setEditPostId] = useState<number | null>(null);
@@ -46,31 +48,27 @@ const GroupPage = () => {
       title,
       content,
     }: {
-      groupId: string;
+      groupId: number;
       title: string;
       content: string;
     }) => createPost(groupId, { title, content }),
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: groupsQueries.groupPosts(groupId).queryKey,
-      });
+      invalidatePostRelatedQueries(queryClient, groupId);
       setIsCreateModalOpen(false);
     },
     onError: (error: any) => {
-      alert(error?.response?.data?.message || '게시글 작성에 실패했습니다.');
+      alert(handleGeneralError(error));
     },
   });
   const deletePostMutation = useMutation({
-    mutationFn: ({ groupId, postId }: { groupId: string; postId: number }) =>
+    mutationFn: ({ groupId, postId }: { groupId: number; postId: number }) =>
       deletePost(groupId, postId),
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: groupsQueries.groupPosts(groupId).queryKey,
-      });
+      invalidatePostRelatedQueries(queryClient, groupId);
       setDeletePostId(null);
     },
-    onError: () => {
-      alert('게시글 삭제에 실패했습니다.');
+    onError: (error: any) => {
+      alert(handleGeneralError(error));
     },
   });
 
