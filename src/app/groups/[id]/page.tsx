@@ -15,15 +15,13 @@ import DeletePostModal from '@/app/groups/components/posts/DeletePostModal';
 import type { Post } from '@/app/_types/post.types';
 import { useAuth, useMyProfile } from '@/app/_services/auth-provider';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { createPost, deletePost } from '@/app/_apis/client';
+import { deletePost } from '@/app/_apis/client';
 import { invalidatePostRelatedQueries } from '@/app/_utils/query-utils';
 import { handleGeneralError } from '@/app/_utils/error-utils';
 
 import { groupsQueries } from '../_queries';
 
-// 그룹 상세 페이지 컴포넌트
-// - 게시글 목록, 게시글 생성/수정/삭제 모달 상태 관리
-// - 각 모달의 열기/닫기, 게시글 CRUD 동작을 연결
+
 const GroupPage = () => {
   const params = useParams();
   const groupId = parseInt(params.id as string, 10);
@@ -35,31 +33,12 @@ const GroupPage = () => {
   const { isLoggedIn } = useAuth();
   const queryClient = useQueryClient();
 
-  // 게시글 목록 패칭
   const {
     data: posts = [],
     isLoading,
     isError,
   } = useQuery(groupsQueries.groupPosts(groupId));
 
-  const createPostMutation = useMutation({
-    mutationFn: ({
-      groupId,
-      title,
-      content,
-    }: {
-      groupId: number;
-      title: string;
-      content: string;
-    }) => createPost(groupId, { title, content }),
-    onSuccess: () => {
-      invalidatePostRelatedQueries(queryClient, groupId);
-      setIsCreateModalOpen(false);
-    },
-    onError: (error: any) => {
-      alert(handleGeneralError(error));
-    },
-  });
   const deletePostMutation = useMutation({
     mutationFn: ({ groupId, postId }: { groupId: number; postId: number }) =>
       deletePost(groupId, postId),
@@ -77,10 +56,6 @@ const GroupPage = () => {
   );
   const editingPost = posts.find((p) => p.id === editPostId);
   const deletingPost = posts.find((p) => p.id === deletePostId);
-
-  const handleCreatePost = (title: string, content: string) => {
-    createPostMutation.mutate({ groupId, title, content });
-  };
 
   const handleCreateButtonClick = () => {
     if (!isLoggedIn) {
@@ -127,8 +102,9 @@ const GroupPage = () => {
 
       {isCreateModalOpen && (
         <PostCreateModal
+          isOpen={isCreateModalOpen}
           onClose={() => setIsCreateModalOpen(false)}
-          onCreate={handleCreatePost}
+          groupId={groupId}
         />
       )}
       {editPostId && editingPost && (

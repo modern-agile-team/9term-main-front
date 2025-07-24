@@ -1,23 +1,25 @@
+export interface PostCreateFormData {
+  groupId: number;
+  title: string;
+  content: string;
+  postImg: File | null;
+}
+
 export interface Post {
   id: number;
   userId: number;
   groupId: number;
   title: string;
   content: string;
+  postImg: string | null; // API 응답에서는 URL 문자열
   user: {
     name: string;
   };
-
   createdAt: string;
   updatedAt: string | null;
-  category?: '공지' | '자유게시판' | '일정' | '통계'; // 게시글 카테고리(탭)
-  location?: string;
-  time?: string;
-  tags?: string[];
-  likes?: number;
-  commentsCount?: number;
-  saved?: boolean;
-  isNotice?: boolean; // 공지 여부
+  likes: number;
+  commentsCount: number;
+  isNotice: boolean; // 공지 여부
 }
 
 export interface GetPostsResponse {

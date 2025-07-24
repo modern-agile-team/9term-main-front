@@ -57,32 +57,16 @@ export default function PostDetailPage() {
       <div className="mb-6 text-gray-700 whitespace-pre-line">
         {post.content}
       </div>
-      {post.location && (
+      {post.postImage && (
         <div className="mb-2 text-sm text-gray-600">
           <span className="mr-2">📍</span>
-          {post.location}
+          <img src={post.postImage} alt="게시물 이미지" className="w-full h-auto" />
         </div>
       )}
-      {post.time && (
-        <div className="mb-2 text-sm text-gray-600">
-          <span className="mr-2">🕒</span>
-          {post.time}
-        </div>
-      )}
-      <div className="flex flex-wrap gap-2 mb-3">
-        {(post.tags || []).map((tag: string) => (
-          <span
-            key={tag}
-            className="bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded-full"
-          >
-            {tag}
-          </span>
-        ))}
-      </div>
+  
       <div className="flex items-center text-sm text-gray-500 gap-4 mt-4">
         <span>👍 좋아요 {post.likes}</span>
         <span>💬 댓글 {post.commentsCount}</span>
-        <span>{post.saved ? '⭐ 저장됨' : '☆ 저장 안 됨'}</span>
       </div>
       <hr className="my-6" />
       <CommentForm postId={postId} groupId={groupId} />

@@ -34,7 +34,7 @@ export default function HomePage() {
     .sort((a, b) => Number(b.memberCount) - Number(a.memberCount))
     .slice(0, 5);
   const allClubs = clubs;
-
+  
   if (isLoading) return <div>로딩 중...</div>;
   if (isError) return <div>동아리 목록을 불러오지 못했습니다.</div>;
 
@@ -68,9 +68,11 @@ export default function HomePage() {
               placeholder="관심있는 동아리나 활동을 검색해보세요"
               className="flex-1 px-3 py-2 rounded-l-lg outline-none text-gray-700 text-base"
             />
-            <button className="bg-blue-500 hover:bg-blue-600 text-white font-bold px-5 py-2 rounded-r-lg transition">
-              검색
-            </button>
+            <Link href="/groups">
+              <button className="bg-blue-500 hover:bg-blue-600 text-white font-bold px-5 py-2 rounded-r-lg transition">
+                검색
+              </button>
+            </Link>
           </div>
         </div>
         <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2 z-30">

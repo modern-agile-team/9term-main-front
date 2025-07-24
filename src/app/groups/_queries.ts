@@ -14,7 +14,7 @@ export const groupsQueries = {
   groupPosts: (groupId: number) => {
     return queryOptions({
       queryKey: QUERY_KEYS.groupPosts(groupId),
-      queryFn: () => getGroupPosts(groupId),
+      queryFn: () => getGroupPosts(groupId.toString()),
     });
   },
 };

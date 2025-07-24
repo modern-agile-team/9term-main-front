@@ -13,7 +13,6 @@ import {
 import { DeletePostResponse } from '../_types/deletePostResponse';
 import { CreategroupFormData } from '../_types/creategroup.types';
 
-
 const baseURL = process.env.NEXT_PUBLIC_API_URL;
 
 // API 클라이언트 기본 설정
@@ -35,6 +34,9 @@ apiClient.interceptors.request.use(
         // eslint-disable-next-line no-param-reassign
         config.headers.Authorization = `Bearer ${token}`;
       }
+    }
+    if (config.data instanceof FormData) {
+      delete config.headers['Content-Type'];
     }
     return config;
   },
@@ -66,7 +68,6 @@ export const request = async <T>(
     const response: AxiosResponse<T> = await apiClient.request(config);
     return response.data;
   } catch (error) {
-    // 인터셉터에서 401 에러를 처리하므로 여기서는 단순히 에러를 던집니다
     throw error;
   }
 };
@@ -143,7 +144,9 @@ export const deletePost = async (
 
 export const createPost = async (
   groupId: number,
-  postData: { title: string; content: string }
+  postData:
+    | FormData
+    | { title: string; content: string; postImage: File | null }
 ): Promise<Post | undefined> => {
   const res = await post<Post>(`/groups/${groupId}/posts`, postData);
   return res;
@@ -154,7 +157,6 @@ export const getGroups = async (): Promise<GetGroupsResponse> => {
   return res;
 };
 
-
 export const createGroup = async (
   formData: CreategroupFormData
 ): Promise<GetGroupsResponse | undefined> => {
@@ -162,8 +164,7 @@ export const createGroup = async (
   return res;
 };
 
-export const getGroupPosts = async (groupId: number): Promise<Post[]> => {
-
+export const getGroupPosts = async (groupId: string): Promise<Post[]> => {
   const res = await get<GetGroupPostsResponse>(`/groups/${groupId}/posts`);
   return res.data ?? [];
 };

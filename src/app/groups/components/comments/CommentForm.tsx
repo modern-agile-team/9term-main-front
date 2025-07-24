@@ -114,6 +114,16 @@ const CommentForm = ({ postId, groupId }: CommentFormProps) => {
   return (
     <div className="bg-white border rounded-lg p-6 shadow-sm">
       <form onSubmit={handleSubmit} className="space-y-4">
+        {/* 작성자 정보 */}
+      <div className="flex items-center mb-3">
+        <div className="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold mr-3">
+          {currentUser.name.charAt(0) || '?'}
+        </div>
+        <div>
+          <div className="font-medium">{currentUser.name || '사용자'}</div>
+          <div className="text-sm text-gray-500">{new Date().toLocaleString()}</div>
+        </div>
+      </div>
         {/* 댓글 내용 입력 */}
         <div>
           <textarea
