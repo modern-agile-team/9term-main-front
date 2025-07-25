@@ -34,7 +34,7 @@ export default function HomePage() {
     .sort((a, b) => Number(b.memberCount) - Number(a.memberCount))
     .slice(0, 5);
   const allClubs = clubs;
-  
+
   if (isLoading) return <div>로딩 중...</div>;
   if (isError) return <div>동아리 목록을 불러오지 못했습니다.</div>;
 
@@ -136,6 +136,18 @@ export default function HomePage() {
           </div>
         </section>
       </div>
+      <ins
+        className="kakao_ad_area"
+        style={{ display: 'none' }}
+        data-ad-unit="DAN-NjV1yqePdLkoeUya"
+        data-ad-width="728"
+        data-ad-height="90"
+      ></ins>
+      <script
+        type="text/javascript"
+        src="//t1.daumcdn.net/kas/static/ba.min.js"
+        async
+      ></script>
     </div>
   );
 }
