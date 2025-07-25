@@ -61,7 +61,7 @@ export default function PostItem({
           {post.user.name.charAt(0) || '?'}
         </div>
         <div>
-          <div className="font-medium">{post.user.name || '사용자'}</div>
+          <div className="font-m  edium">{post.user.name || '사용자'}</div>
           <div className="text-sm text-gray-500">{formattedDate}</div>
         </div>
       </div>
@@ -70,29 +70,9 @@ export default function PostItem({
       <h3 className="text-lg font-bold mb-2">{post.title || '게시글 제목'}</h3>
       <p className="text-gray-700 mb-3">{post.content || '게시글 내용'}</p>
 
-      {/* 장소 및 시간 정보 */}
-      {post.location && (
-        <div className="bg-gray-50 p-3 rounded-md mb-3">
-          <p className="text-sm flex items-center mb-1">
-            <span className="mr-2">📍</span> {post.location}
-          </p>
-          <p className="text-sm flex items-center">
-            <span className="mr-2">🕒</span> {post.time?.slice(0, 5)}
-          </p>
-        </div>
-      )}
+      
 
-      {/* 태그 */}
-      <div className="flex flex-wrap gap-2 mb-3">
-        {(post.tags || []).map((tag: string) => (
-          <span
-            key={tag}
-            className="bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded-full"
-          >
-            {tag}
-          </span>
-        ))}
-      </div>
+   
 
       {/* 좋아요, 댓글, 저장 */}
       <div className="flex items-center text-sm text-gray-500 pt-3 border-t gap-2">
@@ -105,12 +85,6 @@ export default function PostItem({
         >
           <span className="mr-1">💬</span> 댓글{' '}
           {comments ? comments.length : post.commentsCount || 0}
-        </button>
-        <button
-          className="mr-4 text-sm flex items-center"
-          onClick={() => console.log('save')}
-        >
-          <span className="mr-1">{post.saved ? '⭐' : '☆'}</span> 저장
         </button>
 
         {currentUserId && post.user.name === currentUserId && (
