@@ -138,7 +138,6 @@ export default function HomePage() {
       </div>
       <ins
         className="kakao_ad_area"
-        style={{ display: 'none' }}
         data-ad-unit="DAN-NjV1yqePdLkoeUya"
         data-ad-width="728"
         data-ad-height="90"
