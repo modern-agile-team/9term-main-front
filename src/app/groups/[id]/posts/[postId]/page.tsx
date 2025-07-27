@@ -60,10 +60,14 @@ export default function PostDetailPage() {
       {post.postImg && (
         <div className="mb-2 text-sm text-gray-600">
           <span className="mr-2">📍</span>
-          <img src={post.postImg} alt="게시물 이미지" className="w-full h-auto" />
+          <img
+            src={post.postImg}
+            alt="게시물 이미지"
+            className="w-full h-auto"
+          />
         </div>
       )}
-  
+
       <div className="flex items-center text-sm text-gray-500 gap-4 mt-4">
         <span>👍 좋아요 {post.likes}</span>
         <span>💬 댓글 {post.commentsCount}</span>
@@ -73,7 +77,11 @@ export default function PostDetailPage() {
       {isCommentsLoading ? (
         <p>댓글을 불러오는 중...</p>
       ) : (
-        <CommentList comments={comments || []} />
+        <CommentList
+          comments={comments || []}
+          groupId={groupId}
+          postId={postId}
+        />
       )}
     </div>
   );
