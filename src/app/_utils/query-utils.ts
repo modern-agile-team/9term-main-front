@@ -50,3 +50,15 @@ export const invalidateCommentDeleteQueries = (
     queryKey: QUERY_KEYS.post(groupId, postId),
   });
 };
+
+// 댓글 수정 후 쿼리 무효화 유틸리티 함수
+export const invalidateCommentUpdateQueries = (
+  queryClient: QueryClient,
+  groupId: number,
+  postId: number
+) => {
+  // 계층적 구조로 인해 게시글 쿼리만 무효화하면 댓글도 자동으로 무효화됨
+  queryClient.invalidateQueries({
+    queryKey: QUERY_KEYS.post(groupId, postId),
+  });
+};

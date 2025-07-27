@@ -223,4 +223,21 @@ export const deleteComment = async (
   );
 };
 
+export const updateComment = async (
+  groupId: number,
+  postId: number,
+  commentId: number,
+  commentData: { content: string }
+): Promise<Comment> => {
+  // 입력값 유효성 검사
+  if (!groupId || !postId || !commentId) {
+    throw new Error('groupId, postId, commentId가 필요합니다.');
+  }
+
+  return await patch<Comment>(
+    `/groups/${groupId}/posts/${postId}/comments/${commentId}`,
+    commentData
+  );
+};
+
 export default apiClient;

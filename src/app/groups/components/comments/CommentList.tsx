@@ -3,8 +3,11 @@
 import React, { useMemo, useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Comment } from '@/app/_types/comment.types';
-import { deleteComment } from '@/app/_apis/client';
-import { invalidateCommentDeleteQueries } from '@/app/_utils/query-utils';
+import { deleteComment, updateComment } from '@/app/_apis/client';
+import {
+  invalidateCommentDeleteQueries,
+  invalidateCommentUpdateQueries,
+} from '@/app/_utils/query-utils';
 import { useMyProfile } from '@/app/_services/auth-provider';
 import { handleGeneralError } from '@/app/_utils/error-utils';
 
@@ -39,8 +42,10 @@ interface CommentItemProps {
   groupId: number;
   postId: number;
   onDelete: (commentId: number) => void;
+  onUpdate: (commentId: number, content: string) => void;
   currentUserId?: string;
   isDeleting: boolean;
+  isUpdating: boolean;
 }
 
 const CommentItem = ({
@@ -48,9 +53,31 @@ const CommentItem = ({
   groupId,
   postId,
   onDelete,
+  onUpdate,
   currentUserId,
   isDeleting,
+  isUpdating,
 }: CommentItemProps) => {
+  const [isEditing, setIsEditing] = useState(false);
+  const [editContent, setEditContent] = useState(comment.content);
+
+  const handleEdit = () => {
+    setIsEditing(true);
+    setEditContent(comment.content);
+  };
+
+  const handleSave = () => {
+    if (editContent.trim() && editContent !== comment.content) {
+      onUpdate(comment.id, editContent.trim());
+    }
+    setIsEditing(false);
+  };
+
+  const handleCancel = () => {
+    setIsEditing(false);
+    setEditContent(comment.content);
+  };
+
   return (
     <li className="mb-2">
       <div className="rounded-md p-2 hover:bg-gray-50">
@@ -62,16 +89,55 @@ const CommentItem = ({
                 {new Date(comment.createdAt).toLocaleString()}
               </span>
             </p>
-            <p className="text-gray-800 mt-1">{comment.content}</p>
+            {isEditing ? (
+              <div className="mt-2">
+                <textarea
+                  value={editContent}
+                  onChange={(e) => setEditContent(e.target.value)}
+                  className="w-full px-2 py-1 border border-gray-300 rounded text-sm resize-none"
+                  rows={2}
+                  disabled={isUpdating}
+                  placeholder="댓글을 수정하세요"
+                  aria-label="댓글 수정"
+                />
+                <div className="flex gap-2 mt-2">
+                  <button
+                    onClick={handleSave}
+                    disabled={isUpdating || !editContent.trim()}
+                    className="px-2 py-1 text-xs bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {isUpdating ? '저장 중...' : '저장'}
+                  </button>
+                  <button
+                    onClick={handleCancel}
+                    disabled={isUpdating}
+                    className="px-2 py-1 text-xs bg-gray-500 text-white rounded hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    취소
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <p className="text-gray-800 mt-1">{comment.content}</p>
+            )}
           </div>
-          {currentUserId === comment.user.name && (
-            <button
-              onClick={() => onDelete(comment.id)}
-              disabled={isDeleting}
-              className="ml-2 px-2 py-1 text-xs text-red-600 hover:text-red-800 hover:bg-red-50 rounded disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {isDeleting ? '삭제 중...' : '삭제'}
-            </button>
+          {currentUserId === comment.user.name && !isEditing && (
+            <div className="flex gap-1">
+              <button
+                onClick={handleEdit}
+                disabled={isDeleting || isUpdating}
+                className="px-2 py-1 text-xs text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                수정
+              </button>
+              <button
+                onClick={() => onDelete(comment.id)}
+                disabled={isDeleting || isUpdating}
+                className="px-2 py-1 text-xs text-red-600 hover:text-red-800 hover:bg-red-50 rounded disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isDeleting ? '삭제 중...' : '삭제'}
+              </button>
+            </div>
           )}
         </div>
       </div>
@@ -84,8 +150,10 @@ const CommentItem = ({
               groupId={groupId}
               postId={postId}
               onDelete={onDelete}
+              onUpdate={onUpdate}
               currentUserId={currentUserId}
               isDeleting={isDeleting}
+              isUpdating={isUpdating}
             />
           ))}
         </ul>
@@ -98,6 +166,9 @@ const CommentList = ({ comments, groupId, postId }: CommentListProps) => {
   const queryClient = useQueryClient();
   const { data: currentUser } = useMyProfile();
   const [deletingCommentId, setDeletingCommentId] = useState<number | null>(
+    null
+  );
+  const [updatingCommentId, setUpdatingCommentId] = useState<number | null>(
     null
   );
 
@@ -115,11 +186,35 @@ const CommentList = ({ comments, groupId, postId }: CommentListProps) => {
     },
   });
 
+  const updateCommentMutation = useMutation({
+    mutationFn: ({
+      commentId,
+      content,
+    }: {
+      commentId: number;
+      content: string;
+    }) => updateComment(groupId, postId, commentId, { content }),
+    onSuccess: () => {
+      invalidateCommentUpdateQueries(queryClient, groupId, postId);
+      setUpdatingCommentId(null);
+    },
+    onError: (error: any) => {
+      console.error('댓글 수정 실패:', error);
+      alert(handleGeneralError(error));
+      setUpdatingCommentId(null);
+    },
+  });
+
   const handleDeleteComment = (commentId: number) => {
     if (confirm('정말로 이 댓글을 삭제하시겠습니까?')) {
       setDeletingCommentId(commentId);
       deleteCommentMutation.mutate(commentId);
     }
+  };
+
+  const handleUpdateComment = (commentId: number, content: string) => {
+    setUpdatingCommentId(commentId);
+    updateCommentMutation.mutate({ commentId, content });
   };
 
   const commentTree = useMemo(() => listToTree(comments), [comments]);
@@ -142,8 +237,10 @@ const CommentList = ({ comments, groupId, postId }: CommentListProps) => {
             groupId={groupId}
             postId={postId}
             onDelete={handleDeleteComment}
+            onUpdate={handleUpdateComment}
             currentUserId={currentUser?.name}
             isDeleting={deletingCommentId === comment.id}
+            isUpdating={updatingCommentId === comment.id}
           />
         ))}
       </ul>
