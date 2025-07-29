@@ -72,11 +72,13 @@ export default function PostItem({
 
       {post.imageUrl && (
         <div className="mb-3">
-          <img src={post.imageUrl} alt="게시물 이미지" className="w-full h-auto" />
+          <img
+            src={post.imageUrl}
+            alt="게시물 이미지"
+            className="w-full max-h-96 object-contain rounded-lg bg-gray-50"
+          />
         </div>
       )}
-
-   
 
       {/* 좋아요, 댓글, 저장 */}
       <div className="flex items-center text-sm text-gray-500 pt-3 border-t gap-2">
