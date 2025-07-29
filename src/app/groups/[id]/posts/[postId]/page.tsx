@@ -61,7 +61,9 @@ export default function PostDetailPage() {
         <div className="mb-2 text-sm text-gray-600">
           <span className="mr-2">📍</span>
           <img
+
             src={post.imageUrl}
+
             alt="게시물 이미지"
             className="w-full h-auto"
           />
@@ -77,7 +79,11 @@ export default function PostDetailPage() {
       {isCommentsLoading ? (
         <p>댓글을 불러오는 중...</p>
       ) : (
-        <CommentList comments={comments || []} />
+        <CommentList
+          comments={comments || []}
+          groupId={groupId}
+          postId={postId}
+        />
       )}
     </div>
   );

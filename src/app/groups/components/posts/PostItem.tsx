@@ -70,6 +70,7 @@ export default function PostItem({
       <h3 className="text-lg font-bold mb-2">{post.title || '게시글 제목'}</h3>
       <p className="text-gray-700 mb-3">{post.content || '게시글 내용'}</p>
 
+
       {post.imageUrl && (
         <div className="mb-3">
           <img
@@ -79,6 +80,7 @@ export default function PostItem({
           />
         </div>
       )}
+
 
       {/* 좋아요, 댓글, 저장 */}
       <div className="flex items-center text-sm text-gray-500 pt-3 border-t gap-2">
@@ -156,7 +158,11 @@ export default function PostItem({
               댓글을 불러오는 중...
             </p>
           ) : (
-            <CommentList comments={comments || []} />
+            <CommentList
+              comments={comments || []}
+              groupId={groupId}
+              postId={post.id}
+            />
           )}
           <CommentForm postId={post.id} groupId={groupId} />
         </div>
