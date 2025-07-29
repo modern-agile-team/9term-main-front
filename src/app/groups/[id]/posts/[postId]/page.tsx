@@ -57,13 +57,17 @@ export default function PostDetailPage() {
       <div className="mb-6 text-gray-700 whitespace-pre-line">
         {post.content}
       </div>
-      {post.postImg && (
+      {post.imageUrl && (
         <div className="mb-2 text-sm text-gray-600">
           <span className="mr-2">📍</span>
-          <img src={post.postImg} alt="게시물 이미지" className="w-full h-auto" />
+          <img
+            src={post.imageUrl}
+            alt="게시물 이미지"
+            className="w-full h-auto"
+          />
         </div>
       )}
-  
+
       <div className="flex items-center text-sm text-gray-500 gap-4 mt-4">
         <span>👍 좋아요 {post.likes}</span>
         <span>💬 댓글 {post.commentsCount}</span>

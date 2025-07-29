@@ -2,7 +2,7 @@ export interface PostCreateFormData {
   groupId: number;
   title: string;
   content: string;
-  postImg: File | null;
+  postImage: File | null;
 }
 
 export interface Post {
@@ -11,7 +11,7 @@ export interface Post {
   groupId: number;
   title: string;
   content: string;
-  postImg: string | null; // API 응답에서는 URL 문자열
+  imageUrl: string | null; // API 응답에서는 URL 문자열
   user: {
     name: string;
   };

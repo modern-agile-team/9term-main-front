@@ -70,7 +70,11 @@ export default function PostItem({
       <h3 className="text-lg font-bold mb-2">{post.title || '게시글 제목'}</h3>
       <p className="text-gray-700 mb-3">{post.content || '게시글 내용'}</p>
 
-      
+      {post.imageUrl && (
+        <div className="mb-3">
+          <img src={post.imageUrl} alt="게시물 이미지" className="w-full h-auto" />
+        </div>
+      )}
 
    
 
