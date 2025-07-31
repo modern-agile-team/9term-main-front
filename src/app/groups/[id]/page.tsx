@@ -8,8 +8,7 @@ import Sidebar from '@/app/groups/components/Sidebar';
 import PostList from '@/app/groups/components/posts/PostList';
 import Calendar from '@/app/groups/components/Calendar';
 import ActivityStats from '@/app/groups/components/ActivityStats';
-import PostCreateModal from '@/app/groups/components/posts/PostCreateModal';
-import PostEditModal from '@/app/groups/components/posts/PostEditModal';
+import PostCreateModal from '@/app/groups/components/posts/PostModal'; // 통합 모달
 import DeletePostModal from '@/app/groups/components/posts/DeletePostModal';
 
 import type { Post } from '@/app/_types/post.types';
@@ -21,13 +20,22 @@ import { handleGeneralError } from '@/app/_utils/error-utils';
 
 import { groupsQueries } from '../_queries';
 
-
 const GroupPage = () => {
   const params = useParams();
   const groupId = parseInt(params.id as string, 10);
   const [activeTab, setActiveTab] = useState('자유게시판');
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const [editPostId, setEditPostId] = useState<number | null>(null);
+
+  // 통합 모달 상태 관리
+  const [postModalState, setPostModalState] = useState<{
+    isOpen: boolean;
+    mode: 'create' | 'edit';
+    postData: Post | null;
+  }>({
+    isOpen: false,
+    mode: 'create',
+    postData: null,
+  });
+
   const [deletePostId, setDeletePostId] = useState<number | null>(null);
   const { data: me } = useMyProfile();
   const { isLoggedIn } = useAuth();
@@ -54,15 +62,37 @@ const GroupPage = () => {
   const filteredPosts = posts.filter((post) =>
     activeTab === '공지' ? post.isNotice : !post.isNotice
   );
-  const editingPost = posts.find((p) => p.id === editPostId);
   const deletingPost = posts.find((p) => p.id === deletePostId);
 
+  // 게시물 생성 모달 열기
   const handleCreateButtonClick = () => {
     if (!isLoggedIn) {
       alert('로그인 후 이용해 주세요.');
       return;
     }
-    setIsCreateModalOpen(true);
+    setPostModalState({
+      isOpen: true,
+      mode: 'create',
+      postData: null,
+    });
+  };
+
+  // 게시물 수정 모달 열기
+  const handleEditPost = (post: Post) => {
+    setPostModalState({
+      isOpen: true,
+      mode: 'edit',
+      postData: post,
+    });
+  };
+
+  // 모달 닫기
+  const handleClosePostModal = () => {
+    setPostModalState({
+      isOpen: false,
+      mode: 'create',
+      postData: null,
+    });
   };
 
   const renderContent = () => {
@@ -77,7 +107,7 @@ const GroupPage = () => {
         return (
           <PostList
             posts={filteredPosts}
-            onEdit={(post: Post) => setEditPostId(post.id)}
+            onEdit={handleEditPost} // 수정된 핸들러
             onDelete={(post: Post) => setDeletePostId(post.id)}
             currentUserId={me?.name}
           />
@@ -100,20 +130,25 @@ const GroupPage = () => {
         </div>
       </div>
 
-      {isCreateModalOpen && (
-        <PostCreateModal
-          isOpen={isCreateModalOpen}
-          onClose={() => setIsCreateModalOpen(false)}
-          groupId={groupId}
-        />
-      )}
-      {editPostId && editingPost && (
-        <PostEditModal
-          post={editingPost}
-          onClose={() => setEditPostId(null)}
-          onEdit={() => {}}
-        />
-      )}
+      {/* 통합 게시물 모달 (생성/수정) */}
+      <PostCreateModal
+        isOpen={postModalState.isOpen}
+        onClose={handleClosePostModal}
+        groupId={groupId}
+        mode={postModalState.mode}
+        initialData={
+          postModalState.postData
+            ? {
+                id: postModalState.postData.id,
+                title: postModalState.postData.title,
+                content: postModalState.postData.content,
+                imageUrl: postModalState.postData.imageUrl || null,
+              }
+            : null
+        }
+      />
+
+      {/* 삭제 모달 */}
       {deletePostId && deletingPost && (
         <DeletePostModal
           isOpen={!!deletePostId}

@@ -148,7 +148,23 @@ export const createPost = async (
     | FormData
     | { title: string; content: string; postImage: File | null }
 ): Promise<Post | undefined> => {
+  if (postData instanceof FormData) {
+    console.log('✅ FormData로 보냄');
+  } else {
+    console.log('❌ 그냥 일반 객체 (JSON)');
+  }
   const res = await post<Post>(`/groups/${groupId}/posts`, postData);
+  return res;
+};
+
+export const editPost = async (
+  groupId: number,
+  postId: number,
+  postData:
+    | FormData
+    | { title: string; content: string; postImage: File | null }
+): Promise<Post | undefined> => {
+  const res = await patch<Post>(`/groups/${groupId}/posts/${postId}`, postData);
   return res;
 };
 

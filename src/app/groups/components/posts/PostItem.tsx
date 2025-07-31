@@ -70,6 +70,18 @@ export default function PostItem({
       <h3 className="text-lg font-bold mb-2">{post.title || '게시글 제목'}</h3>
       <p className="text-gray-700 mb-3">{post.content || '게시글 내용'}</p>
 
+
+      {post.imageUrl && (
+        <div className="mb-3">
+          <img
+            src={post.imageUrl}
+            alt="게시물 이미지"
+            className="w-full max-h-96 object-contain rounded-lg bg-gray-50"
+          />
+        </div>
+      )}
+
+
       {/* 좋아요, 댓글, 저장 */}
       <div className="flex items-center text-sm text-gray-500 pt-3 border-t gap-2">
         <button className="flex items-center mr-4">
