@@ -24,7 +24,7 @@ export default function ProfilePage() {
           </div>
           <div className="flex items-center justify-between text-gray-600">
             <span className="font-semibold">아이디</span>
-            <span>{user.userName}</span>
+            <span>{user.username}</span>
           </div>
         </div>
       </div>
