@@ -11,7 +11,7 @@ import { PATHS } from '@/app/(auth)/login/types/auth';
 import apiClient from '@/app/_apis/client';
 
 const loginUser = async (credentials: {
-  userName: string;
+  username: string;
   password: string;
 }) => {
   try {
@@ -36,7 +36,7 @@ export default function LoginPage() {
   const { login } = useAuth(); // 새 Provider에서 login 함수 가져오기
 
   const [formData, setFormData] = useState({
-    userName: '',
+    username: '',
     password: '',
   });
 
@@ -103,17 +103,17 @@ export default function LoginPage() {
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="rounded-md shadow-sm -space-y-px">
             <div>
-              <label htmlFor="userName" className="sr-only">
+              <label htmlFor="username" className="sr-only">
                 아이디
               </label>
               <input
-                id="userName"
-                name="userName"
+                id="username"
+                name="username"
                 type="text"
                 required
                 className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
                 placeholder="아이디"
-                value={formData.userName}
+                value={formData.username}
                 onChange={handleChange}
               />
             </div>

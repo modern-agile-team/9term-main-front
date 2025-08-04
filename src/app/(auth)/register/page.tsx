@@ -9,7 +9,7 @@ import FailModal from '@/app/_components/FailModal';
 import apiClient from '@/app/_apis/client';
 
 const registerUser = async (userData: {
-  userName: string;
+  username: string;
   name: string;
   password: string;
 }) => {
@@ -33,7 +33,7 @@ const registerUser = async (userData: {
 export default function RegisterPage() {
   const router = useRouter();
   const [formData, setFormData] = useState({
-    userName: '',
+    username: '',
     name: '',
     password: '',
     confirmPassword: '',
@@ -74,7 +74,7 @@ export default function RegisterPage() {
     }
 
     registerMutation.mutate({
-      userName: formData.userName,
+      username: formData.username,
       name: formData.name,
       password: formData.password,
     });
@@ -88,7 +88,7 @@ export default function RegisterPage() {
     }
 
     registerMutation.mutate({
-      userName: formData.userName,
+      username: formData.username,
       name: formData.name,
       password: formData.password,
     });
@@ -122,13 +122,13 @@ export default function RegisterPage() {
                 아이디
               </label>
               <input
-                id="userName"
-                name="userName"
+                id="username"
+                name="username"
                 type="text"
                 required
                 className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
                 placeholder="아이디"
-                value={formData.userName}
+                value={formData.username}
                 onChange={handleChange}
               />
             </div>
