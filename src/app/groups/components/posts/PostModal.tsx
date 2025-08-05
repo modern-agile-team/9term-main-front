@@ -14,7 +14,7 @@ interface PostModalProps {
     id: number;
     title: string;
     content: string;
-    imageUrl?: string | null;
+    postImageUrl?: string | null;
   } | null;
 }
 
@@ -141,8 +141,8 @@ const PostModal = ({
     if (formData.postImage) {
       return URL.createObjectURL(formData.postImage); // 새로 업로드한 파일
     }
-    if (isEditMode && initialData?.imageUrl) {
-      return initialData.imageUrl; // 기존 이미지 URL
+    if (isEditMode && initialData?.postImageUrl) {
+      return initialData.postImageUrl; // 기존 이미지 URL
     }
     return null;
   };

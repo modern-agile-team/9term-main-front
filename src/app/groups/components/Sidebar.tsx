@@ -1,4 +1,3 @@
-import Image from 'next/image';
 import Link from 'next/link';
 import { GetGroupsResponse } from '@/app/_types/group.types';
 import { useQuery } from '@tanstack/react-query';
@@ -21,11 +20,10 @@ export default function Sidebar({ onCreatePost, groupId }: SidebarProps) {
       <div className="border-b pb-6 mb-6">
         <div className="flex items-center space-x-4 mb-4">
           <div className="relative w-16 h-16 rounded-full overflow-hidden">
-            <Image
-              src="/club-profile.png"
+            <img
+              src={club?.groupImageUrl || ''}
               alt="동아리 프로필"
-              fill
-              className="object-cover"
+              className="w-full h-full object-cover"
             />
           </div>
           <div>
