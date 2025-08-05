@@ -15,7 +15,7 @@ const ClubCreateModal = ({
   const [formData, setFormData] = useState<CreategroupFormData>({
     name: '',
     description: '',
-    groupImage : null,
+    groupImage: null,
   });
   const queryClient = useQueryClient();
 
@@ -111,7 +111,6 @@ const ClubCreateModal = ({
   return createPortal(
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
       <div className="bg-white rounded-lg shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
-      
         {/* 헤더 */}
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
           <h2 className="text-xl font-semibold text-gray-900">동아리 생성</h2>
@@ -269,8 +268,7 @@ const ClubCreateModal = ({
           </div>
         </form>
       </div>
-    </div>
-    ,
+    </div>,
     document.body
   );
 };
