@@ -71,12 +71,12 @@ export default function PostItem({
       <p className="text-gray-700 mb-3">{post.content || '게시글 내용'}</p>
 
 
-      {post.imageUrl && (
+      {post.postImageUrl && (
         <div className="mb-3">
           <img
-            src={post.imageUrl}
+            src={post.postImageUrl}
             alt="게시물 이미지"
-            className="w-full max-h-96 object-contain rounded-lg bg-gray-50"
+            className="w-full max-h-96 object-contain rounded-lg bg-white"
           />
         </div>
       )}

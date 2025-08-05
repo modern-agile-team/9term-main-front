@@ -1,7 +1,7 @@
 import axios, { AxiosInstance, AxiosResponse } from 'axios';
 import { User } from '@/app/_types/user.types';
-import type { Post } from '@/app/_types/post.types';
-import type { GetGroupPostsResponse } from '@/app/_types/postcreate.types';
+import type { GetPostsResponse, Post } from '@/app/_types/post.types';
+//import type { GetGroupPostsResponse } from '@/app/_types/postcreate.types';
 import type { GetGroupsResponse } from '@/app/_types/group.types';
 import {
   Comment,
@@ -11,7 +11,7 @@ import {
 } from '@/app/_types/comment.types';
 
 import { DeletePostResponse } from '../_types/deletePostResponse';
-import { CreategroupFormData } from '../_types/creategroup.types';
+ //import { CreategroupFormData } from '../_types/creategroup.types';
 
 const baseURL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -159,7 +159,7 @@ export const editPost = async (
     | FormData
     | { title: string; content: string; postImage: File | null }
 ): Promise<Post | undefined> => {
-  const res = await post<Post>(`/groups/${groupId}/posts/${postId}`, postData);
+  const res = await put<Post>(`/groups/${groupId}/posts/${postId}`, postData);
   return res;
 };
 
@@ -169,14 +169,22 @@ export const getGroups = async (): Promise<GetGroupsResponse> => {
 };
 
 export const createGroup = async (
-  formData: CreategroupFormData
+  formData:
+    | FormData
+    | { name: string; description: string; groupImage: File | null }
 ): Promise<GetGroupsResponse | undefined> => {
   const res = await post<GetGroupsResponse>(`/groups`, formData);
   return res;
 };
+// export const createGroup = async (
+//   formData: CreategroupFormData
+// ): Promise<GetGroupsResponse | undefined> => {
+//   const res = await post<GetGroupsResponse>(`/groups`, formData);
+//   return res;
+// };
 
 export const getGroupPosts = async (groupId: string): Promise<Post[]> => {
-  const res = await get<GetGroupPostsResponse>(`/groups/${groupId}/posts`);
+  const res = await get<GetPostsResponse>(`/groups/${groupId}/posts`);
   return res.data ?? [];
 };
 

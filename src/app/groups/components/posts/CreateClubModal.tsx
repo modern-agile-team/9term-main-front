@@ -3,7 +3,7 @@ import { createGroup } from '@/app/_apis/client';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { groupsQueries } from '@/app/groups/_queries';
 import { createPortal } from 'react-dom';
-import { CreategroupFormData } from '@/app/_types/creategroup.types';
+import { GroupCreateFormData } from '@/app/_types/group.types';
 
 const ClubCreateModal = ({
   isOpen,
@@ -12,7 +12,7 @@ const ClubCreateModal = ({
   isOpen: boolean;
   onClose: () => void;
 }) => {
-  const [formData, setFormData] = useState<CreategroupFormData>({
+  const [formData, setFormData] = useState<GroupCreateFormData>({
     name: '',
     description: '',
     groupImage: null,
@@ -20,9 +20,16 @@ const ClubCreateModal = ({
   const queryClient = useQueryClient();
 
   const createGroupMutation = useMutation({
-    mutationFn: (formData: CreategroupFormData) => {
-      if (!formData.groupImage) {
-        throw new Error('이미지를 선택해주세요.');
+    mutationFn: (formData: GroupCreateFormData | FormData) => {
+      if (formData instanceof FormData) {
+        const imageFile = formData.get('groupImage');
+        if (!imageFile) {
+          throw new Error('이미지를 선택해주세요.');
+        }
+      } else {
+        if (!formData.groupImage) {
+          throw new Error('이미지를 선택해주세요.');
+        }
       }
       return createGroup(formData);
     },
@@ -93,11 +100,17 @@ const ClubCreateModal = ({
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    createGroupMutation.mutate({
-      name: formData.name,
-      description: formData.description,
-      groupImage: formData.groupImage,
-    });
+
+    // FormData 생성
+    const formDataToSend = new FormData();
+    formDataToSend.append('name', formData.name);
+    formDataToSend.append('description', formData.description);
+
+    if (formData.groupImage) {
+      formDataToSend.append('groupImage', formData.groupImage);
+    }
+
+    createGroupMutation.mutate(formDataToSend);
   };
 
   const handleClose = () => {

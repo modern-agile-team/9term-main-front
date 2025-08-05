@@ -6,6 +6,7 @@ import { GetGroupsResponse } from '../_types/group.types';
 interface ClubCardProps {
   club: GetGroupsResponse['data'][0];
   className?: string;
+  groupImageUrl: string | null;
 }
 
 const ClubCard = ({ club, className }: ClubCardProps) => {
@@ -31,10 +32,10 @@ const ClubCard = ({ club, className }: ClubCardProps) => {
         <Link href={`/groups/${club.id}`}>
           <Card className="flex flex-col cursor-pointer hover:shadow-lg hover:border-blue-500 transition-shadow absolute top-0 left-0 w-full h-full z-[2] [backface-visibility:hidden]">
             <div className="aspect-video w-full bg-gray-100 rounded-t-lg overflow-hidden">
-              {club.groupImage ? (
+              {club.groupImageUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
-                  src={club.groupImage}
+                  src={club.groupImageUrl}
                   alt={club.name}
                   className="w-full h-full object-cover"
                 />

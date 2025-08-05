@@ -11,7 +11,7 @@ export interface Post {
   groupId: number;
   title: string;
   content: string;
-  imageUrl: string | null; // API 응답에서는 URL 문자열
+  postImageUrl: string | null; 
   user: {
     name: string;
   };
@@ -19,7 +19,7 @@ export interface Post {
   updatedAt: string | null;
   likes: number;
   commentsCount: number;
-  isNotice: boolean; // 공지 여부
+  isNotice: boolean; 
 }
 
 export interface GetPostsResponse {
