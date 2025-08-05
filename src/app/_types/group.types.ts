@@ -1,12 +1,21 @@
+
+export interface GroupCreateFormData {
+  name: string;
+  description: string;
+  groupImage: File | null;
+}
+
+export interface Group {
+  id: number;
+  name: string;
+  description: string;
+  groupImageUrl: string | null; 
+  createdAt: string;
+  memberCount: string;
+}
+
 export interface GetGroupsResponse {
   status: string;
   message: string;
-  data: {
-    id: number;
-    name: string;
-    description: string;
-    createdAt: string;
-    memberCount: string;
-    groupImage: string | null; // API 응답에서는 URL 문자열
-  }[];
+  data: Group[];
 }

@@ -142,7 +142,7 @@ const GroupPage = () => {
                 id: postModalState.postData.id,
                 title: postModalState.postData.title,
                 content: postModalState.postData.content,
-                imageUrl: postModalState.postData.imageUrl || null,
+                postImageUrl: postModalState.postData.postImageUrl || null,
               }
             : null
         }

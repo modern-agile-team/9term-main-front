@@ -101,7 +101,7 @@ export default function HomePage() {
             <div className="flex gap-2 md:gap-4">
               {recommendedClubs.map((club: any) => (
                 <div key={club.id} className="w-[300px] flex-shrink-0">
-                  <ClubCard club={club} />
+                  <ClubCard club={club} groupImageUrl={club.groupImageUrl} />
                 </div>
               ))}
             </div>
@@ -129,7 +129,7 @@ export default function HomePage() {
               </div>
               {allClubs.map((club: any) => (
                 <div key={club.id} className="w-[300px] flex-shrink-0">
-                  <ClubCard club={club} />
+                  <ClubCard club={club} groupImageUrl={club.groupImageUrl} />
                 </div>
               ))}
             </div>

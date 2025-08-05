@@ -57,12 +57,12 @@ export default function PostDetailPage() {
       <div className="mb-6 text-gray-700 whitespace-pre-line">
         {post.content}
       </div>
-      {post.imageUrl && (
+      {post.postImageUrl && (
         <div className="mb-2 text-sm text-gray-600">
           <span className="mr-2">📍</span>
           <img
 
-            src={post.imageUrl}
+            src={post.postImageUrl}
 
             alt="게시물 이미지"
             className="w-full h-auto"
