@@ -50,11 +50,25 @@ const PostModal = ({
   }, [isOpen, initialData, groupId]);
 
   const postMutation = useMutation({
-    mutationFn: (submitFormData: FormData) => {
+
+    mutationFn: (
+      submitData:
+        | FormData
+        | { title: string; content: string; postImage: File | null }
+    ) => {
       if (isEditMode && initialData?.id) {
-        return editPost(groupId, initialData.id, submitFormData);
+        return editPost(
+          groupId,
+          initialData.id,
+          submitData as {
+            title: string;
+            content: string;
+            postImage: File | null;
+          }
+        );
+
       } else {
-        return createPost(groupId, submitFormData);
+        return createPost(groupId, submitData as FormData);
       }
     },
     onSuccess: () => {
@@ -80,13 +94,13 @@ const PostModal = ({
   };
 
   const handleImageChange = (file: File) => {
-    if (file && file.type === 'image/jpeg') {
+    if (file && (file.type === 'image/jpeg'||file.type === 'image/png'||file.type === 'image/jpg'||file.type === 'image/webp')) {
       setFormData((prev) => ({
         ...prev,
         postImage: file,
       }));
     } else {
-      alert('JPG 파일만 업로드 가능합니다.');
+      alert('JPG, PNG, JPG, WEBP 파일만 업로드 가능합니다.');
     }
   };
 
@@ -225,7 +239,13 @@ const PostModal = ({
               htmlFor="postImage"
               className="block text-sm font-medium text-gray-700 mb-2"
             >
-              게시물 이미지 (선택)
+              게시물 이미지{' '}
+              {isEditMode ? (
+                <span className="text-red-600">(수정 불가)</span>
+              ) : (
+                '(선택)'
+              )}
+
             </label>
 
             <div
@@ -246,12 +266,6 @@ const PostModal = ({
                       alt="미리보기"
                       className="mx-auto h-20 w-20 object-cover rounded-lg"
                     />
-                    {/* 수정 모드에서 새 이미지를 업로드했을 때 표시 */}
-                    {isEditMode && formData.postImage && (
-                      <p className="text-xs text-green-600 mt-1">
-                        새 이미지로 교체됩니다
-                      </p>
-                    )}
                   </div>
                 ) : (
                   <svg
@@ -278,7 +292,7 @@ const PostModal = ({
                       id="postImageInput"
                       name="postImage"
                       type="file"
-                      accept="image/jpeg"
+                      accept="image/jpeg, image/png, image/jpg, image/webp"
                       onChange={handleFileInputChange}
                       className="sr-only"
                     />
@@ -287,7 +301,7 @@ const PostModal = ({
                     또는 이곳에 파일을 드래그해서 업로드
                   </p>
                 </div>
-                <p className="text-xs text-gray-500">JPG 파일만 업로드 가능</p>
+                <p className="text-xs text-gray-500">JPG, PNG, JPG, WEBP 파일만 업로드 가능</p>
               </div>
             </div>
           </div>
