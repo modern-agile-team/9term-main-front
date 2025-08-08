@@ -11,13 +11,14 @@ export interface Post {
   groupId: number;
   title: string;
   content: string;
-  postImageUrl: string | null; 
+  postImageUrl: string | null;
   user: {
     name: string;
   };
   createdAt: string;
   updatedAt: string | null;
-  likes: number;
+  likesCount: number;
+  isLiked: boolean;
   commentsCount: number;
   isNotice: boolean; 
 }

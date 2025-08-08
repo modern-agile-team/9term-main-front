@@ -4,6 +4,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { groupsQueries } from '@/app/groups/_queries';
 import { createPortal } from 'react-dom';
 import { GroupCreateFormData } from '@/app/_types/group.types';
+const IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/jpg', 'image/webp'] as const;
 
 const ClubCreateModal = ({
   isOpen,
@@ -63,7 +64,7 @@ const ClubCreateModal = ({
   };
 
   const handleImageChange = (file: File) => {
-    if (file && (file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/jpg' || file.type === 'image/webp')) {
+    if (file && IMAGE_TYPES.some((type) => type === file.type)) {
       setFormData((prev) => ({
         ...prev,
         groupImage: file,

@@ -70,7 +70,6 @@ export default function PostItem({
       <h3 className="text-lg font-bold mb-2">{post.title || '게시글 제목'}</h3>
       <p className="text-gray-700 mb-3">{post.content || '게시글 내용'}</p>
 
-
       {post.postImageUrl && (
         <div className="mb-3">
           <img
@@ -81,11 +80,10 @@ export default function PostItem({
         </div>
       )}
 
-
       {/* 좋아요, 댓글, 저장 */}
       <div className="flex items-center text-sm text-gray-500 pt-3 border-t gap-2">
         <button className="flex items-center mr-4">
-          <span className="mr-1">👍</span> 좋아요 {post.likes || 0}
+          <span className="mr-1">👍</span> 좋아요 {post.likesCount || 0}
         </button>
         <button
           className="flex items-center mr-4"

@@ -5,6 +5,7 @@ import { groupsQueries } from '@/app/groups/_queries';
 import { createPortal } from 'react-dom';
 import { PostCreateFormData } from '@/app/_types/post.types';
 
+const IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/jpg', 'image/webp'] as const;
 interface PostModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -50,12 +51,7 @@ const PostModal = ({
   }, [isOpen, initialData, groupId]);
 
   const postMutation = useMutation({
-
-    mutationFn: (
-      submitData:
-        | FormData
-        | { title: string; content: string; postImage: File | null }
-    ) => {
+    mutationFn: (submitData: FormData | { title: string; content: string }) => {
       if (isEditMode && initialData?.id) {
         return editPost(
           groupId,
@@ -63,10 +59,8 @@ const PostModal = ({
           submitData as {
             title: string;
             content: string;
-            postImage: File | null;
           }
         );
-
       } else {
         return createPost(groupId, submitData as FormData);
       }
@@ -94,17 +88,21 @@ const PostModal = ({
   };
 
   const handleImageChange = (file: File) => {
-    if (file && (file.type === 'image/jpeg'||file.type === 'image/png'||file.type === 'image/jpg'||file.type === 'image/webp')) {
+    if (isEditMode) return;
+
+    if (file && IMAGE_TYPES.some((type) => type === file.type)) {
       setFormData((prev) => ({
         ...prev,
         postImage: file,
       }));
     } else {
-      alert('JPG, PNG, JPG, WEBP 파일만 업로드 가능합니다.');
+      alert('JPG, PNG, JPEG, WEBP 파일만 업로드 가능합니다.');
     }
   };
 
   const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (isEditMode) return; 
+
     const file = e.target.files?.[0];
     if (file) {
       handleImageChange(file);
@@ -112,16 +110,22 @@ const PostModal = ({
   };
 
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    if (isEditMode) return;
+
     e.preventDefault();
     setIsDragOver(true);
   };
 
   const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
+    if (isEditMode) return;
+
     e.preventDefault();
     setIsDragOver(false);
   };
 
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    if (isEditMode) return;
+
     e.preventDefault();
     setIsDragOver(false);
 
@@ -132,14 +136,21 @@ const PostModal = ({
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const submitFormData = new FormData();
-    submitFormData.append('title', formData.title);
-    submitFormData.append('content', formData.content);
-    if (formData.postImage) {
-      submitFormData.append('postImage', formData.postImage);
-    }
+    if (isEditMode) {
+      postMutation.mutate({
+        title: formData.title,
+        content: formData.content,
+      });
+    } else {
+      const submitFormData = new FormData();
+      submitFormData.append('title', formData.title);
+      submitFormData.append('content', formData.content);
+      if (formData.postImage) {
+        submitFormData.append('postImage', formData.postImage);
+      }
 
-    postMutation.mutate(submitFormData);
+      postMutation.mutate(submitFormData);
+    }
   };
 
   const handleClose = () => {
@@ -150,7 +161,6 @@ const PostModal = ({
 
   if (!isOpen) return null;
 
-  // 이미지 미리보기 소스 설정
   const getImagePreviewSrc = () => {
     if (formData.postImage) {
       return URL.createObjectURL(formData.postImage); // 새로 업로드한 파일
@@ -245,7 +255,6 @@ const PostModal = ({
               ) : (
                 '(선택)'
               )}
-
             </label>
 
             <div
@@ -285,9 +294,13 @@ const PostModal = ({
                 <div className="flex flex-col items-center text-sm text-gray-600">
                   <label
                     htmlFor="postImageInput"
-                    className="cursor-pointer bg-white border border-gray-300 rounded-md px-4 py-2 font-medium text-blue-600 hover:text-blue-500 hover:bg-gray-50 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-blue-500 mb-2"
+                    className={`cursor-pointer bg-white border border-gray-300 rounded-md px-4 py-2 font-medium mb-2 ${
+                      isEditMode
+                        ? 'text-gray-400 cursor-not-allowed'
+                        : 'text-blue-600 hover:text-blue-500 hover:bg-gray-50 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-blue-500'
+                    }`}
                   >
-                    <span>{isEditMode ? '이미지 변경' : '파일 선택'}</span>
+                    <span>{isEditMode ? '이미지 변경 불가' : '파일 선택'}</span>
                     <input
                       id="postImageInput"
                       name="postImage"
@@ -295,13 +308,18 @@ const PostModal = ({
                       accept="image/jpeg, image/png, image/jpg, image/webp"
                       onChange={handleFileInputChange}
                       className="sr-only"
+                      disabled={isEditMode}
                     />
                   </label>
                   <p className="text-center">
-                    또는 이곳에 파일을 드래그해서 업로드
+                    {isEditMode
+                      ? '수정 모드에서는 이미지 변경이 불가능합니다'
+                      : '또는 이곳에 파일을 드래그해서 업로드'}
                   </p>
                 </div>
-                <p className="text-xs text-gray-500">JPG, PNG, JPG, WEBP 파일만 업로드 가능</p>
+                <p className="text-xs text-gray-500">
+                  JPG, PNG, JPEG, WEBP 파일만 업로드 가능
+                </p>
               </div>
             </div>
           </div>
