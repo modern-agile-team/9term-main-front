@@ -20,7 +20,7 @@ export interface Post {
   likesCount: number;
   isLiked: boolean;
   commentsCount: number;
-  isNotice: boolean; 
+  isNotice: boolean;
 }
 
 export interface GetPostsResponse {
