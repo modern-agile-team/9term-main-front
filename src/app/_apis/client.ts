@@ -11,7 +11,7 @@ import {
 } from '@/app/_types/comment.types';
 
 import { DeletePostResponse } from '../_types/deletePostResponse';
- //import { CreategroupFormData } from '../_types/creategroup.types';
+//import { CreategroupFormData } from '../_types/creategroup.types';
 
 const baseURL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -155,11 +155,9 @@ export const createPost = async (
 export const editPost = async (
   groupId: number,
   postId: number,
-  postData:
-    | FormData
-    | { title: string; content: string; postImage: File | null }
+  postData: { title: string; content: string }
 ): Promise<Post | undefined> => {
-  const res = await put<Post>(`/groups/${groupId}/posts/${postId}`, postData);
+  const res = await patch<Post>(`/groups/${groupId}/posts/${postId}`, postData);
   return res;
 };
 

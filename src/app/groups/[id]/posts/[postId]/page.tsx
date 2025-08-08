@@ -71,7 +71,7 @@ export default function PostDetailPage() {
       )}
 
       <div className="flex items-center text-sm text-gray-500 gap-4 mt-4">
-        <span>👍 좋아요 {post.likes}</span>
+        <span>👍 좋아요 {post.likesCount}</span>
         <span>💬 댓글 {post.commentsCount}</span>
       </div>
       <hr className="my-6" />

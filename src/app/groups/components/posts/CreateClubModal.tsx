@@ -4,6 +4,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { groupsQueries } from '@/app/groups/_queries';
 import { createPortal } from 'react-dom';
 import { GroupCreateFormData } from '@/app/_types/group.types';
+const IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/jpg', 'image/webp'] as const;
 
 const ClubCreateModal = ({
   isOpen,
@@ -63,13 +64,13 @@ const ClubCreateModal = ({
   };
 
   const handleImageChange = (file: File) => {
-    if (file && file.type === 'image/jpeg') {
+    if (file && IMAGE_TYPES.some((type) => type === file.type)) {
       setFormData((prev) => ({
         ...prev,
         groupImage: file,
       }));
     } else {
-      alert('JPG 파일만 업로드 가능합니다.');
+      alert('JPG, PNG, JPG, WEBP 파일만 업로드 가능합니다.');
     }
   };
 
@@ -242,7 +243,7 @@ const ClubCreateModal = ({
                       id="clubProfile"
                       name="clubProfile"
                       type="file"
-                      accept="image/jpeg"
+                      accept="image/jpeg, image/png, image/jpg, image/webp"
                       onChange={handleFileInputChange}
                       className="sr-only"
                       required
@@ -252,7 +253,7 @@ const ClubCreateModal = ({
                     또는 이곳에 파일을 드래그해서 업로드
                   </p>
                 </div>
-                <p className="text-xs text-gray-500">JPG 파일만 업로드 가능</p>
+                <p className="text-xs text-gray-500">JPG, PNG, JPG, WEBP 파일만 업로드 가능</p>
               </div>
             </div>
           </div>
