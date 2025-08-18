@@ -2,6 +2,8 @@ import Link from 'next/link';
 import { GetGroupsResponse } from '@/app/_types/group.types';
 import { useQuery } from '@tanstack/react-query';
 import { groupsQueries } from '../_queries';
+import ClubEditModal from './posts/EditClubModal';
+import { useState } from 'react';
 
 interface SidebarProps {
   onCreatePost: () => void;
@@ -9,11 +11,14 @@ interface SidebarProps {
 }
 
 export default function Sidebar({ onCreatePost, groupId }: SidebarProps) {
+  const [isEditClubModalOpen, setIsEditClubModalOpen] = useState(false);
   const { data, isLoading, isError } = useQuery(groupsQueries.groups());
   const clubs: GetGroupsResponse['data'] = data?.data ?? [];
-  const club = clubs.find((club) => club.id === Number(groupId)); // groupId는 props나 params 등에서 받아옴
+  const club = clubs.find((club) => club.id === Number(groupId));
+
   if (isLoading) return <div>로딩 중...</div>;
   if (isError) return <div>그룹을 불러오지 못했습니다.</div>;
+
   return (
     <div className="h-full bg-white p-6 flex flex-col">
       {/* 동아리 프로필 섹션 */}
@@ -25,6 +30,16 @@ export default function Sidebar({ onCreatePost, groupId }: SidebarProps) {
               alt="동아리 프로필"
               className="w-full h-full object-cover"
             />
+          </div>
+          <div className="flex items-center space-x-2">
+            <button
+              className="text-gray-500 hover:text-gray-700"
+              onClick={() => {
+                setIsEditClubModalOpen(true);
+              }}
+            >
+              <span>🔄</span>
+            </button>
           </div>
           <div>
             <h2 className="text-xl font-bold">{club?.name}</h2>
@@ -41,7 +56,6 @@ export default function Sidebar({ onCreatePost, groupId }: SidebarProps) {
           </button>
 
           {/* 내 활동 및 알림 버튼 */}
-
           <Link
             href="/my-activities"
             className="flex items-center justify-between w-full px-4 py-2 text-left text-gray-700 bg-gray-50 rounded-lg hover:bg-gray-100"
@@ -92,11 +106,21 @@ export default function Sidebar({ onCreatePost, groupId }: SidebarProps) {
         className="mt-6 w-full px-4 py-2 text-red-600 border border-red-600 rounded-lg hover:bg-red-50 transition-colors"
         onClick={() => {
           if (confirm('정말로 동아리를 탈퇴하시겠습니까?')) {
+            // 탈퇴 로직 구현
           }
         }}
       >
         동아리 탈퇴하기
       </button>
+
+      {/* ClubEditModal 컴포넌트 렌더링 */}
+      {isEditClubModalOpen && club && (
+        <ClubEditModal
+          clubData={club}
+          isOpen={isEditClubModalOpen}
+          onClose={() => setIsEditClubModalOpen(false)}
+        />
+      )}
     </div>
   );
 }
