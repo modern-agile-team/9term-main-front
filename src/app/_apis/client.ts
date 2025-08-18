@@ -166,6 +166,10 @@ export const getGroups = async (): Promise<GetGroupsResponse> => {
   return res;
 };
 
+export const getGroup = async (groupId: number): Promise<any> => {
+  const res = await get<any>(`/groups/${groupId}`);
+  return res;
+};
 export const createGroup = async (
   formData:
     | FormData
@@ -174,12 +178,26 @@ export const createGroup = async (
   const res = await post<GetGroupsResponse>(`/groups`, formData);
   return res;
 };
-// export const createGroup = async (
-//   formData: CreategroupFormData
-// ): Promise<GetGroupsResponse | undefined> => {
-//   const res = await post<GetGroupsResponse>(`/groups`, formData);
-//   return res;
-// };
+
+export const updateGroup = async (
+  groupId: number,
+  formData: { name: string; description: string }
+): Promise<GetGroupsResponse | undefined> => {
+  const res = await patch<GetGroupsResponse>(`/groups/${groupId}`, formData);
+  return res;
+};
+
+export const updateGroupImage = async (
+  groupId: number,
+  formData: FormData
+): Promise<GetGroupsResponse | undefined> => {
+  const res = await put<GetGroupsResponse>(
+    `/groups/${groupId}/image`,
+    formData
+  );
+  return res;
+};
+
 
 export const getGroupPosts = async (groupId: string): Promise<Post[]> => {
   const res = await get<GetPostsResponse>(`/groups/${groupId}/posts`);

@@ -4,6 +4,7 @@ import { QueryClient } from '@tanstack/react-query';
 export const QUERY_KEYS = {
   // 그룹 관련
   groups: () => ['groups'] as const,
+  group: (groupId: number) => ['group', groupId] as const,
 
   // 그룹 > 게시글
   groupPosts: (groupId: number) => ['group', groupId, 'posts'] as const,
