@@ -60,7 +60,7 @@ const CommentItem = ({
   });
 
   // 답글 개수 조회 (항상 조회해서 개수만 확인)
-  const { data: repliesCount = [] } = useQuery({
+  const { data: repliesCount = 0 } = useQuery({
     queryKey: ['repliesCount', groupId, postId, comment.id],
     queryFn: () => getComments(groupId, postId, comment.id),
     enabled: isParent, // 부모댓글인 경우에만 조회
@@ -185,7 +185,7 @@ const CommentItem = ({
               onClick={() => setShowReplies(!showReplies)}
               className="text-sm text-blue-600 hover:text-blue-800"
             >
-              {showReplies ? '답글 숨기기' : '답글 보기'}
+              {showReplies ? '답글 숨기기' : `답글 ${repliesCount}개`}
             </button>
           </div>
         )}
