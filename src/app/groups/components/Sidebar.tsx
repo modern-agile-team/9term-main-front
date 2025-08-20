@@ -1,9 +1,13 @@
-import Link from 'next/link';
 import { GetGroupsResponse } from '@/app/_types/group.types';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { groupsQueries } from '../_queries';
 import ClubEditModal from './posts/EditClubModal';
 import { useState } from 'react';
+import { updateMemberStatus } from '@/app/_apis/client';
+import { useMyProfile } from '@/app/_services/auth-provider';
+import { CiCircleCheck, CiCircleRemove } from 'react-icons/ci';
+import { FaPencilAlt } from 'react-icons/fa';
+import { invalidateMemberRelatedQueries } from '@/app/_utils/query-utils';
 
 interface SidebarProps {
   onCreatePost: () => void;
@@ -12,54 +16,89 @@ interface SidebarProps {
 
 export default function Sidebar({ onCreatePost, groupId }: SidebarProps) {
   const [isEditClubModalOpen, setIsEditClubModalOpen] = useState(false);
+  const [showMembers, setShowMembers] = useState(false);
   const { data, isLoading, isError } = useQuery(groupsQueries.groups());
+  const {
+    data: members,
+    isLoading: membersLoading,
+    isError: membersError,
+  } = useQuery(groupsQueries.groupMembers(Number(groupId)));
+  const { data: me } = useMyProfile();
+  const queryClient = useQueryClient();
   const clubs: GetGroupsResponse['data'] = data?.data ?? [];
   const club = clubs.find((club) => club.id === Number(groupId));
+  const currentMember = members?.find((member) => member.name === me?.name);
+  const isManager = currentMember?.role === 'MANAGER';
+  const updateStatusMutation = useMutation({
+    mutationFn: ({
+      userId,
+      action,
+    }: {
+      userId: number;
+      action: 'APPROVE' | 'REJECT' | 'LEAVE';
+    }) => updateMemberStatus(groupId, userId, action),
+    onSuccess: (data, variables) => {
+      alert(`멤버 상태 변경 성공: ${variables.action} ${variables.userId}`);
+      invalidateMemberRelatedQueries(queryClient, groupId);
+    },
+    onError: (error) => {
+      alert('멤버 상태 변경에 실패했습니다.');
+      console.error('Update member status error:', error);
+    },
+  });
 
   if (isLoading) return <div>로딩 중...</div>;
   if (isError) return <div>그룹을 불러오지 못했습니다.</div>;
+
+  const getMemberStatusEmoji = (joinedAt: string) => {
+    const joinDate = new Date(joinedAt);
+    const now = new Date();
+
+    let months = (now.getFullYear() - joinDate.getFullYear()) * 12;
+    months -= joinDate.getMonth();
+    months += now.getMonth();
+
+    if (now.getDate() < joinDate.getDate()) {
+      months--;
+    }
+    if (months >= 12) return '🌴';
+    if (months >= 6) return '🌳';
+    if (months >= 3) return '🌻';
+    if (months >= 1) return '🌿';
+    return '🌱';
+  };
 
   return (
     <div className="h-full bg-white p-6 flex flex-col">
       {/* 동아리 프로필 섹션 */}
       <div className="border-b pb-6 mb-6">
-        <div className="flex items-center space-x-4 mb-4">
-          <div className="relative w-16 h-16 rounded-full overflow-hidden">
-            <img
-              src={club?.groupImageUrl || ''}
-              alt="동아리 프로필"
-              className="w-full h-full object-cover"
-            />
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center space-x-4">
+            <div className="relative w-16 h-16 rounded-full overflow-hidden">
+              <img
+                src={club?.groupImageUrl || ''}
+                alt="동아리 프로필"
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <div>
+              <h2 className="text-xl font-bold">{club?.name}</h2>
+              <p className="text-gray-600 text-sm">
+                회원 {club?.memberCount}명
+              </p>
+            </div>
           </div>
-          <div className="flex items-center space-x-2">
-            <button
-              className="text-gray-500 hover:text-gray-700"
-              onClick={() => {
-                setIsEditClubModalOpen(true);
-              }}
-            >
-              <span>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke-width="1.0"
-                  stroke="currentColor"
-                  className="size-4"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M11.42 15.17 17.25 21A2.652 2.652 0 0 0 21 17.25l-5.877-5.877M11.42 15.17l2.496-3.03c.317-.384.74-.626 1.208-.766M11.42 15.17l-4.655 5.653a2.548 2.548 0 1 1-3.586-3.586l6.837-5.63m5.108-.233c.55-.164 1.163-.188 1.743-.14a4.5 4.5 0 0 0 4.486-6.336l-3.276 3.277a3.004 3.004 0 0 1-2.25-2.25l3.276-3.276a4.5 4.5 0 0 0-6.336 4.486c.091 1.076-.071 2.264-.904 2.95l-.102.085m-1.745 1.437L5.909 7.5H4.5L2.25 3.75l1.5-1.5L7.5 4.5v1.409l4.26 4.26m-1.745 1.437 1.745-1.437m6.615 8.206L15.75 15.75M4.867 19.125h.008v.008h-.008v-.008Z"
-                  />
-                </svg>
-              </span>
-            </button>
-          </div>
-          <div>
-            <h2 className="text-xl font-bold">{club?.name}</h2>
-            <p className="text-gray-600 text-sm">회원 {club?.memberCount}명</p>
-          </div>
+
+          <button
+            className="text-gray-500 hover:text-gray-700"
+            onClick={() => {
+              setIsEditClubModalOpen(true);
+            }}
+          >
+            {isManager && (
+              <FaPencilAlt className="w-4 h-4 hover:text-gray-500 transition" />
+            )}
+          </button>
         </div>
 
         <div className="space-y-3">
@@ -70,63 +109,117 @@ export default function Sidebar({ onCreatePost, groupId }: SidebarProps) {
             <span className="mr-2">✏️</span> 새 게시글 작성하기
           </button>
 
-          {/* 내 활동 및 알림 버튼 */}
-          <Link
-            href="/my-activities"
+          {/* 멤버 버튼 */}
+          <button
+            onClick={() => {
+              setShowMembers(!showMembers);
+            }}
             className="flex items-center justify-between w-full px-4 py-2 text-left text-gray-700 bg-gray-50 rounded-lg hover:bg-gray-100"
           >
             <div className="flex items-center">
-              <span className="text-lg mr-2">📋</span>
-              <span>내 활동</span>
+              <span className="text-lg mr-2">🪪</span>
+              <span>멤버</span>
             </div>
-            <span className="text-sm text-gray-500">12개</span>
-          </Link>
-
-          <Link
-            href="/my-notifications"
-            className="flex items-center justify-between w-full px-4 py-2 text-left text-gray-700 bg-gray-50 rounded-lg hover:bg-gray-100"
-          >
-            <div className="flex items-center">
-              <span className="text-lg mr-2">🔔</span>
-              <span>알림</span>
-            </div>
-            <span className="bg-red-500 text-white text-xs rounded-full px-2 py-1">
-              3
+            <span className="text-sm text-gray-500">
+              {members?.filter((member) => member.status !== 'REJECTED')
+                .length || 0}
+              명
             </span>
-          </Link>
+          </button>
         </div>
       </div>
 
-      {/* 최근 활동 목록 */}
-      <div className="flex-1">
-        <h3 className="font-medium text-gray-900 mb-4">최근 활동</h3>
-        <div className="space-y-4">
-          <div className="p-3 bg-gray-50 rounded-lg">
-            <p className="text-sm text-gray-600">
-              새 공지사항이 등록되었습니다.
-            </p>
-            <p className="text-xs text-gray-400 mt-1">1시간 전</p>
-          </div>
-          <div className="p-3 bg-gray-50 rounded-lg">
-            <p className="text-sm text-gray-600">
-              회원님의 게시글에 새 댓글이 달렸습니다.
-            </p>
-            <p className="text-xs text-gray-400 mt-1">3시간 전</p>
+      {/* 멤버 목록 */}
+
+      {showMembers && (
+        <div className="flex-1 mb-6">
+          <h3 className="font-medium text-gray-900 mb-4">멤버 목록</h3>
+          <div className="space-y-3">
+            {membersLoading ? (
+              <div className="text-sm text-gray-500">멤버 목록 로딩 중...</div>
+            ) : membersError ? (
+              <div className="text-sm text-red-500">
+                멤버만 접근 가능합니다.
+              </div>
+            ) : (
+              members
+                ?.filter((member) => member.status !== 'REJECTED')
+                .map((member) => {
+                  return (
+                    <div
+                      key={member.userId}
+                      className="p-3 bg-gray-50 rounded-lg"
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center">
+                          <p className="text-sm font-medium text-gray-900">
+                            {member.name}
+                          </p>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <span className="text-sm text-gray-500">
+                            {member.role === 'MANAGER'
+                              ? '👑'
+                              : member.status === 'PENDING'
+                              ? '⏳ 대기중'
+                              : getMemberStatusEmoji(member.joinedAt)}
+                          </span>
+
+                          {/* 매니저만 승인/거절 버튼 표시 */}
+                          {isManager &&
+                            member.status === 'PENDING' &&
+                            member.role !== 'MANAGER' && (
+                              <div className="flex space-x-1">
+                                <button
+                                  onClick={() =>
+                                    updateStatusMutation.mutate({
+                                      userId: member.userId,
+                                      action: 'APPROVE',
+                                    })
+                                  }
+                                  disabled={updateStatusMutation.isPending}
+                                >
+                                  <CiCircleCheck className="w-6 h-6 hover:text-green-500 transition" />
+                                </button>
+                                <button
+                                  onClick={() =>
+                                    updateStatusMutation.mutate({
+                                      userId: member.userId,
+                                      action: 'REJECT',
+                                    })
+                                  }
+                                  disabled={updateStatusMutation.isPending}
+                                >
+                                  <CiCircleRemove className="w-6 h-6 hover:text-red-500 transition" />
+                                </button>
+                              </div>
+                            )}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })
+            )}
           </div>
         </div>
-      </div>
+      )}
 
       {/* 동아리 탈퇴 버튼 */}
-      <button
-        className="mt-6 w-full px-4 py-2 text-red-600 border border-red-600 rounded-lg hover:bg-red-50 transition-colors"
-        onClick={() => {
-          if (confirm('정말로 동아리를 탈퇴하시겠습니까?')) {
-            // 탈퇴 로직 구현
-          }
-        }}
-      >
-        동아리 탈퇴하기
-      </button>
+      <div className="mt-auto pt-6">
+        <button
+          className="w-full px-4 py-2 text-red-600 border border-red-600 rounded-lg hover:bg-red-50 transition-colors"
+          onClick={() => {
+            if (confirm('정말로 동아리를 탈퇴하시겠습니까?')) {
+              updateStatusMutation.mutate({
+                userId: currentMember?.userId ?? 0,
+                action: 'LEAVE',
+              });
+            }
+          }}
+        >
+          동아리 탈퇴하기
+        </button>
+      </div>
 
       {/* ClubEditModal 컴포넌트 렌더링 */}
       {isEditClubModalOpen && club && (

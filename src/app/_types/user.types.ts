@@ -1,8 +1,9 @@
 export interface User {
-  id?: number;
+  id: number;
+  userId: number;
   name: string;
-  username?: string;
-  role?: 'USER' | 'ADMIN';
-  createdAt?: string;
-  updatedAt?: string;
+  username: string;
+  role: 'USER' | 'ADMIN';
+  createdAt: string;
+  updatedAt: string;
 }

@@ -5,6 +5,8 @@ export const QUERY_KEYS = {
   // 그룹 관련
   groups: () => ['groups'] as const,
   group: (groupId: number) => ['group', groupId] as const,
+  // 그룹 > 멤버
+  groupMembers: (groupId: number) => ['group', groupId, 'members'] as const,
 
   // 그룹 > 게시글
   groupPosts: (groupId: number) => ['group', groupId, 'posts'] as const,
@@ -40,20 +42,18 @@ export const invalidatePostRelatedQueries = (
   });
 };
 
-// 댓글 삭제 후 쿼리 무효화 유틸리티 함수
-export const invalidateCommentDeleteQueries = (
+// 멤버 관련 쿼리 무효화 유틸리티 함수
+export const invalidateMemberRelatedQueries = (
   queryClient: QueryClient,
-  groupId: number,
-  postId: number
+  groupId: number
 ) => {
-  // 계층적 구조로 인해 게시글 쿼리만 무효화하면 댓글도 자동으로 무효화됨
   queryClient.invalidateQueries({
-    queryKey: QUERY_KEYS.post(groupId, postId),
+    queryKey: QUERY_KEYS.groupMembers(groupId),
   });
 };
 
-// 댓글 수정 후 쿼리 무효화 유틸리티 함수
-export const invalidateCommentUpdateQueries = (
+// 댓글 관련 쿼리 무효화 통합 함수 (삭제/수정/생성 모두 동일)
+export const invalidateCommentQueries = (
   queryClient: QueryClient,
   groupId: number,
   postId: number

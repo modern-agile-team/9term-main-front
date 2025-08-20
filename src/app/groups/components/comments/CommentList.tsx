@@ -5,8 +5,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Comment } from '@/app/_types/comment.types';
 import { deleteComment, updateComment } from '@/app/_apis/client';
 import {
-  invalidateCommentDeleteQueries,
-  invalidateCommentUpdateQueries,
+  invalidateCommentRelatedQueries,
 } from '@/app/_utils/query-utils';
 import { useMyProfile } from '@/app/_services/auth-provider';
 import { handleGeneralError } from '@/app/_utils/error-utils';
@@ -176,7 +175,7 @@ const CommentList = ({ comments, groupId, postId }: CommentListProps) => {
     mutationFn: (commentId: number) =>
       deleteComment(groupId, postId, commentId),
     onSuccess: () => {
-      invalidateCommentDeleteQueries(queryClient, groupId, postId);
+      invalidateCommentRelatedQueries(queryClient, groupId, postId);
       setDeletingCommentId(null);
     },
     onError: (error: any) => {
@@ -195,7 +194,7 @@ const CommentList = ({ comments, groupId, postId }: CommentListProps) => {
       content: string;
     }) => updateComment(groupId, postId, commentId, { content }),
     onSuccess: () => {
-      invalidateCommentUpdateQueries(queryClient, groupId, postId);
+      invalidateCommentRelatedQueries(queryClient, groupId, postId);
       setUpdatingCommentId(null);
     },
     onError: (error: any) => {
