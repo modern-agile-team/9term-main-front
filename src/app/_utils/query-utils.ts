@@ -24,7 +24,17 @@ export const invalidateCommentRelatedQueries = (
   groupId: number,
   postId: number
 ) => {
-  // 계층적 구조로 인해 게시글 쿼리만 무효화하면 댓글도 자동으로 무효화됨
+  // 부모댓글 목록 무효화
+  queryClient.invalidateQueries({
+    queryKey: QUERY_KEYS.comments(groupId, postId),
+  });
+  
+  // 모든 대댓글 쿼리 무효화 (replies로 시작하는 모든 쿼리)
+  queryClient.invalidateQueries({
+    queryKey: ['replies', groupId, postId],
+  });
+  
+  // 게시글 정보도 무효화 (댓글 수 업데이트)
   queryClient.invalidateQueries({
     queryKey: QUERY_KEYS.post(groupId, postId),
   });
@@ -46,7 +56,17 @@ export const invalidateCommentDeleteQueries = (
   groupId: number,
   postId: number
 ) => {
-  // 계층적 구조로 인해 게시글 쿼리만 무효화하면 댓글도 자동으로 무효화됨
+  // 부모댓글 목록 무효화
+  queryClient.invalidateQueries({
+    queryKey: QUERY_KEYS.comments(groupId, postId),
+  });
+  
+  // 모든 대댓글 쿼리 무효화
+  queryClient.invalidateQueries({
+    queryKey: ['replies', groupId, postId],
+  });
+  
+  // 게시글 정보도 무효화 (댓글 수 업데이트)
   queryClient.invalidateQueries({
     queryKey: QUERY_KEYS.post(groupId, postId),
   });
@@ -58,7 +78,17 @@ export const invalidateCommentUpdateQueries = (
   groupId: number,
   postId: number
 ) => {
-  // 계층적 구조로 인해 게시글 쿼리만 무효화하면 댓글도 자동으로 무효화됨
+  // 부모댓글 목록 무효화
+  queryClient.invalidateQueries({
+    queryKey: QUERY_KEYS.comments(groupId, postId),
+  });
+  
+  // 모든 대댓글 쿼리 무효화
+  queryClient.invalidateQueries({
+    queryKey: ['replies', groupId, postId],
+  });
+  
+  // 게시글 정보도 무효화
   queryClient.invalidateQueries({
     queryKey: QUERY_KEYS.post(groupId, postId),
   });

@@ -27,7 +27,7 @@ export default function PostDetailPage() {
 
   const { data: comments, isLoading: isCommentsLoading } = useQuery({
     queryKey: QUERY_KEYS.comments(groupId, postId),
-    queryFn: () => getComments(groupId, postId),
+    queryFn: () => getComments(groupId, postId), // 부모댓글만 가져오기
     enabled: !!groupId && !!postId,
   });
 

@@ -31,7 +31,6 @@ apiClient.interceptors.request.use(
     if (typeof window !== 'undefined') {
       const token = localStorage.getItem('token');
       if (token) {
-        // eslint-disable-next-line no-param-reassign
         config.headers.Authorization = `Bearer ${token}`;
       }
     }
@@ -166,8 +165,8 @@ export const getGroups = async (): Promise<GetGroupsResponse> => {
   return res;
 };
 
-export const getGroup = async (groupId: number): Promise<any> => {
-  const res = await get<any>(`/groups/${groupId}`);
+export const getGroup = async (groupId: number): Promise<unknown> => {
+  const res = await get<unknown>(`/groups/${groupId}`);
   return res;
 };
 export const createGroup = async (
@@ -220,11 +219,42 @@ export const getComments = async (
   if (parentId) {
     params.parentId = parentId;
   }
-  const res = await get<GetCommentsResponse>(
-    `/groups/${groupId}/posts/${postId}/comments`,
-    params
-  );
+  
+  const endpoint = `/groups/${groupId}/posts/${postId}/comments`;
+  
+  const res = await get<GetCommentsResponse>(endpoint, params);
   return res.data;
+};
+
+export const getAllComments = async (
+  groupId: number,
+  postId: number
+): Promise<Comment[]> => {
+  try {
+    // 먼저 부모댓글들만 가져오기
+    const parentComments = await getComments(groupId, postId);
+    
+    // 모든 댓글을 저장할 배열
+    const allComments: Comment[] = [...parentComments];
+    
+    // 각 부모댓글의 대댓글들 가져오기
+    for (const parentComment of parentComments) {
+      try {
+        const replies = await getComments(groupId, postId, parentComment.id);
+        if (replies && replies.length > 0) {
+          allComments.push(...replies);
+        }
+      } catch (error) {
+        console.error(`댓글 ${parentComment.id}의 대댓글 조회 실패:`, error);
+      }
+    }
+    
+    return allComments;
+  } catch (error) {
+    console.error('getAllComments 전체 실패:', error);
+    // 에러 발생 시 부모댓글만이라도 반환
+    return await getComments(groupId, postId);
+  }
 };
 
 export const createComment = async (
