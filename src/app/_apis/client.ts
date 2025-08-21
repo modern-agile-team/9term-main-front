@@ -2,7 +2,7 @@ import axios, { AxiosInstance, AxiosResponse } from 'axios';
 import { User } from '@/app/_types/user.types';
 import type { GetPostsResponse, Post } from '@/app/_types/post.types';
 //import type { GetGroupPostsResponse } from '@/app/_types/postcreate.types';
-import type { GetGroupsResponse } from '@/app/_types/group.types';
+import type { GetGroupsResponse, GroupMember } from '@/app/_types/group.types';
 import {
   Comment,
   GetCommentsResponse,
@@ -11,8 +11,6 @@ import {
 } from '@/app/_types/comment.types';
 
 import { DeletePostResponse } from '../_types/deletePostResponse';
-//import { CreategroupFormData } from '../_types/creategroup.types';
-
 const baseURL = process.env.NEXT_PUBLIC_API_URL;
 
 // API 클라이언트 기본 설정
@@ -198,7 +196,6 @@ export const updateGroupImage = async (
   return res;
 };
 
-
 export const getGroupPosts = async (groupId: string): Promise<Post[]> => {
   const res = await get<GetPostsResponse>(`/groups/${groupId}/posts`);
   return res.data ?? [];
@@ -232,7 +229,6 @@ export const createComment = async (
   postId: number,
   commentData: CreateCommentRequest
 ): Promise<CreateCommentResponse> => {
-  // 입력값 유효성 검사
   if (!groupId || !postId) {
     throw new Error('groupId와 postId가 필요합니다.');
   }
@@ -273,6 +269,33 @@ export const updateComment = async (
     `/groups/${groupId}/posts/${postId}/comments/${commentId}`,
     commentData
   );
+};
+
+export const getGroupMember = async (
+  groupId: number
+): Promise<GroupMember[]> => {
+  const res = await get<{ data: GroupMember[] }>(`/groups/${groupId}/members`);
+  return res.data;
+};
+
+export const groupJoin = async (
+  groupId: number
+): Promise<{ message: string; member: GroupMember }> => {
+  const res = await post<{ message: string; member: GroupMember }>(
+    `/groups/${groupId}/members`,
+    {
+      status: 'PENDING',
+    }
+  );
+  return res;
+};
+
+export const updateMemberStatus = async (
+  groupId: number,
+  userId: number,
+  action: 'APPROVE' | 'REJECT' | 'LEAVE'
+): Promise<void> => {
+  await post<void>(`/groups/${groupId}/members/${userId}/status`, { action });
 };
 
 export default apiClient;

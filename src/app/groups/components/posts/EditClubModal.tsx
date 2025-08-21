@@ -38,8 +38,6 @@ const ClubEditModal = ({ isOpen, onClose, clubData }: ClubEditModalProps) => {
   // 초기 데이터 설정
   useEffect(() => {
     if (clubData) {
-      console.log('clubData:', clubData);
-      console.log('clubData.groupImageUrl:', clubData.groupImageUrl);
       setFormData({
         name: clubData.name,
         description: clubData.description,
@@ -214,18 +212,11 @@ const ClubEditModal = ({ isOpen, onClose, clubData }: ClubEditModalProps) => {
 
   if (!isOpen) return null;
   const getImagePreviewSrc = () => {
-    console.log('EditClubModal - clubData:', clubData);
-    console.log(
-      'EditClubModal - clubData.groupImageUrl:',
-      clubData?.groupImageUrl
-    );
-    console.log('EditClubModal - formData.groupImage:', formData.groupImage);
-
     if (formData.groupImage) {
-      return URL.createObjectURL(formData.groupImage); // 새로 업로드한 파일
+      return URL.createObjectURL(formData.groupImage); 
     }
     if (clubData?.groupImageUrl) {
-      return clubData.groupImageUrl; // 기존 이미지 URL
+      return clubData.groupImageUrl; 
     }
     return null;
   };

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useParams } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 import BoardHeader from '@/app/groups/components/BoardHeader';
@@ -15,8 +15,9 @@ import type { Post } from '@/app/_types/post.types';
 import { useAuth, useMyProfile } from '@/app/_services/auth-provider';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { deletePost } from '@/app/_apis/client';
-import { invalidatePostRelatedQueries } from '@/app/_utils/query-utils';
+import { QUERY_KEYS } from '@/app/_utils/query-utils';
 import { handleGeneralError } from '@/app/_utils/error-utils';
+import JoinGroupBanner from '../components/JoinGroupBanner';
 
 import { groupsQueries } from '../_queries';
 
@@ -24,6 +25,7 @@ const GroupPage = () => {
   const params = useParams();
   const groupId = parseInt(params.id as string, 10);
   const [activeTab, setActiveTab] = useState('자유게시판');
+  const [showJoinBanner, setShowJoinBanner] = useState(false);
 
   // 통합 모달 상태 관리
   const [postModalState, setPostModalState] = useState<{
@@ -46,12 +48,18 @@ const GroupPage = () => {
     isLoading,
     isError,
   } = useQuery(groupsQueries.groupPosts(groupId));
+  const { data: groupData } = useQuery(groupsQueries.group(groupId));
+  const { data: membersData, isError: membersError } = useQuery(
+    groupsQueries.groupMembers(groupId)
+  );
 
   const deletePostMutation = useMutation({
     mutationFn: ({ groupId, postId }: { groupId: number; postId: number }) =>
       deletePost(groupId, postId),
     onSuccess: () => {
-      invalidatePostRelatedQueries(queryClient, groupId);
+      queryClient.invalidateQueries({
+        queryKey: QUERY_KEYS.groupPosts(groupId),
+      });
       setDeletePostId(null);
     },
     onError: (error: any) => {
@@ -94,7 +102,25 @@ const GroupPage = () => {
       postData: null,
     });
   };
-
+  // 멤버십 확인 로직
+  React.useEffect(() => {
+    if (!me) {
+      setShowJoinBanner(false);
+      return;
+    }
+    if (membersError) {
+      setShowJoinBanner(true);
+      return;
+    }
+    if (membersData) {
+      const isMember = membersData.some(
+        (member) => member.userId === me.userId
+      );
+      setShowJoinBanner(!isMember);
+    } else {
+      setShowJoinBanner(false);
+    }
+  }, [membersData, membersError, me]);
   const renderContent = () => {
     switch (activeTab) {
       case '일정':
@@ -156,6 +182,19 @@ const GroupPage = () => {
             deletePostMutation.mutate({ groupId, postId: deletePostId });
           }}
           onClose={() => setDeletePostId(null)}
+        />
+      )}
+      {/* 가입 배너 */}
+      {showJoinBanner && groupData && (
+        <JoinGroupBanner
+          groupId={groupId}
+          groupName={groupData.name}
+          onJoinSuccess={() => {
+            setShowJoinBanner(false);
+            queryClient.invalidateQueries({
+              queryKey: QUERY_KEYS.groupMembers(groupId),
+            });
+          }}
         />
       )}
     </div>
