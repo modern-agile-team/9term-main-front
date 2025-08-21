@@ -298,4 +298,15 @@ export const updateMemberStatus = async (
   await post<void>(`/groups/${groupId}/members/${userId}/status`, { action });
 };
 
+export const updateMyProfileImage = async (
+  formData: FormData
+): Promise<User> => {
+  const res = await patch<User>(`/users/me/image`, formData);
+  return res;
+};
+export const deleteMyProfileImage = async (): Promise<User> => {
+  const res = await deleteRequest<User>(`/users/me/image`);
+  return res;
+};
+
 export default apiClient;

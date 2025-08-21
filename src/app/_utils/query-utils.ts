@@ -2,6 +2,8 @@ import { QueryClient } from '@tanstack/react-query';
 
 // 쿼리 키 상수 (계층적 구조)
 export const QUERY_KEYS = {
+  // 프로필 관련
+  myProfile: () => ['myProfile'] as const,
   // 그룹 관련
   groups: () => ['groups'] as const,
   group: (groupId: number) => ['group', groupId] as const,
@@ -31,4 +33,3 @@ export const invalidateCommentRelatedQueries = (
     queryKey: QUERY_KEYS.post(groupId, postId),
   });
 };
-

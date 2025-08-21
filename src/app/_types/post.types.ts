@@ -14,6 +14,7 @@ export interface Post {
   postImageUrl: string | null;
   user: {
     name: string;
+    profileImgUrl: string | null;
   };
   createdAt: string;
   updatedAt: string | null;
