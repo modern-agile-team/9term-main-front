@@ -15,10 +15,7 @@ import type { Post } from '@/app/_types/post.types';
 import { useAuth, useMyProfile } from '@/app/_services/auth-provider';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { deletePost } from '@/app/_apis/client';
-import {
-  invalidatePostRelatedQueries,
-  QUERY_KEYS,
-} from '@/app/_utils/query-utils';
+import { QUERY_KEYS } from '@/app/_utils/query-utils';
 import { handleGeneralError } from '@/app/_utils/error-utils';
 import JoinGroupBanner from '../components/JoinGroupBanner';
 
@@ -60,7 +57,9 @@ const GroupPage = () => {
     mutationFn: ({ groupId, postId }: { groupId: number; postId: number }) =>
       deletePost(groupId, postId),
     onSuccess: () => {
-      invalidatePostRelatedQueries(queryClient, groupId);
+      queryClient.invalidateQueries({
+        queryKey: QUERY_KEYS.groupPosts(groupId),
+      });
       setDeletePostId(null);
     },
     onError: (error: any) => {

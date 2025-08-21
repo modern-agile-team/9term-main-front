@@ -7,7 +7,8 @@ import { updateMemberStatus } from '@/app/_apis/client';
 import { useMyProfile } from '@/app/_services/auth-provider';
 import { CiCircleCheck, CiCircleRemove } from 'react-icons/ci';
 import { FaPencilAlt } from 'react-icons/fa';
-import { invalidateMemberRelatedQueries } from '@/app/_utils/query-utils';
+import { QUERY_KEYS } from '@/app/_utils/query-utils';
+
 
 interface SidebarProps {
   onCreatePost: () => void;
@@ -39,8 +40,11 @@ export default function Sidebar({ onCreatePost, groupId }: SidebarProps) {
     }) => updateMemberStatus(groupId, userId, action),
     onSuccess: (data, variables) => {
       alert(`멤버 상태 변경 성공: ${variables.action} ${variables.userId}`);
-      invalidateMemberRelatedQueries(queryClient, groupId);
+      queryClient.invalidateQueries({
+        queryKey: QUERY_KEYS.groupMembers(groupId),
+      });
     },
+
     onError: (error) => {
       alert('멤버 상태 변경에 실패했습니다.');
       console.error('Update member status error:', error);

@@ -45,7 +45,7 @@ export default function RootLayout({
                       개인정보처리방침/이용약관
                     </a>
                     <a
-                      href="mailto:contact@modongu.com"
+                      href="https://open.kakao.com/o/sAfGpANh"
                       className="hover:underline text-gray-500 text-sm"
                     >
                       문의
