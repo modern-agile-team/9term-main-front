@@ -59,7 +59,7 @@ export default function PostItem({
       <div className="flex items-center mb-3">
         <div className="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold mr-3">
           <img
-            src={post.user.profileImgUrl || ''}
+            src={post.user.profileImageUrl || ''}
             alt="profile"
             className="w-full h-full object-cover rounded-full"
           />

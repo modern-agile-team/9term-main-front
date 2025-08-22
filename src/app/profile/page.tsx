@@ -100,7 +100,7 @@ export default function ProfilePage() {
 
   const getImageSrc = () => {
     if (previewImage) return previewImage;
-    return user.profileImgUrl || '';
+    return user.profileImageUrl || '';
   };
 
   return (
@@ -210,7 +210,7 @@ export default function ProfilePage() {
           </div>
 
           {/* 삭제 버튼 - 이미지가 있을 때만 표시 */}
-          {user.profileImgUrl && !previewImage && (
+          {user.profileImageUrl && !previewImage && (
             <button
               onClick={(e) => {
                 e.stopPropagation();

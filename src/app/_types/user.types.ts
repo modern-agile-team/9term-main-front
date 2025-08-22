@@ -6,5 +6,5 @@ export interface User {
   role: 'USER' | 'ADMIN';
   createdAt: string;
   updatedAt: string;
-  profileImgUrl: string | null;
+  profileImageUrl: string | null;
 }

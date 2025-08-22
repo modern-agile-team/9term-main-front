@@ -3,9 +3,9 @@
 import Link from 'next/link';
 import { useState, useRef, useEffect } from 'react';
 import NotificationList from '@/app/_components/NotificationList';
-import { useAuth, useMyProfile } from '@/app/_services/auth-provider'; 
+import { useAuth, useMyProfile } from '@/app/_services/auth-provider';
 import type { Notification } from '@/app/_types/notification.types';
-import { IoLogOutOutline } from "react-icons/io5";
+import { IoLogOutOutline } from 'react-icons/io5';
 
 export default function TopNavigation() {
   const [showNotifications, setShowNotifications] = useState(false);
@@ -123,7 +123,7 @@ export default function TopNavigation() {
                 >
                   <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
                     <img
-                      src={myProfile?.profileImgUrl || ''}
+                      src={myProfile?.profileImageUrl || ''}
                       alt="profile"
                       className="w-full h-full object-cover rounded-full"
                     />
