@@ -58,7 +58,11 @@ export default function PostItem({
       {/* 작성자 정보 */}
       <div className="flex items-center mb-3">
         <div className="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold mr-3">
-          {post.user.name.charAt(0) || '?'}
+          <img
+            src={post.user.profileImageUrl || ''}
+            alt="profile"
+            className="w-full h-full object-cover rounded-full"
+          />
         </div>
         <div>
           <div className="font-m  edium">{post.user.name || '사용자'}</div>

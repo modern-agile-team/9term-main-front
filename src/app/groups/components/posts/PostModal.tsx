@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import { createPost, editPost } from '@/app/_apis/client';
+'use client';
+import { useState, useEffect } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { createPost, editPost } from '@/app/_apis/post-api';
+import { IMAGE_TYPES } from '@/app/_types/image.types';
 import { groupsQueries } from '@/app/groups/_queries';
 import { createPortal } from 'react-dom';
 import { PostCreateFormData } from '@/app/_types/post.types';
 
-const IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/jpg', 'image/webp'] as const;
 interface PostModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -101,7 +102,7 @@ const PostModal = ({
   };
 
   const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (isEditMode) return; 
+    if (isEditMode) return;
 
     const file = e.target.files?.[0];
     if (file) {

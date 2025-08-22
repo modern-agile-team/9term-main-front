@@ -8,7 +8,7 @@ import { useAuth } from '@/app/_services/auth-provider';
 import SuccessModal from '@/app/_components/SuccessModal';
 import FailModal from '@/app/_components/FailModal';
 import { PATHS } from '@/app/(auth)/login/types/auth';
-import apiClient from '@/app/_apis/client';
+import { apiClient } from '@/app/_apis/client';
 
 const loginUser = async (credentials: {
   username: string;
