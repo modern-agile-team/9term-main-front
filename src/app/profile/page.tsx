@@ -1,18 +1,12 @@
 'use client';
 import { useMyProfile } from '@/app/_services/auth-provider';
 import { useMutation } from '@tanstack/react-query';
-import { deleteMyProfileImage, updateMyProfileImage } from '../_apis/client';
+import { deleteMyProfileImage, updateMyProfileImage } from '../_apis/user-api';
 import { QUERY_KEYS } from '../_utils/query-utils';
 import { useQueryClient } from '@tanstack/react-query';
 import { useState, useRef } from 'react';
-import { IoTrashOutline } from "react-icons/io5";
-
-const IMAGE_TYPES = [
-  'image/jpeg',
-  'image/png',
-  'image/jpg',
-  'image/webp',
-] as const;
+import { IoTrashOutline } from 'react-icons/io5';
+import { IMAGE_TYPES } from '../_types/image.types';
 
 export default function ProfilePage() {
   const { data: user, isLoading, isError } = useMyProfile();
@@ -67,7 +61,7 @@ export default function ProfilePage() {
       const previewUrl = URL.createObjectURL(file);
       setPreviewImage(previewUrl);
       const formDataToSend = new FormData();
-      formDataToSend.append('profileImage', file); 
+      formDataToSend.append('profileImage', file);
       updateProfileImageMutation.mutate(formDataToSend);
     } else {
       alert('JPG, PNG, WEBP 파일만 업로드 가능합니다.');
@@ -228,9 +222,9 @@ export default function ProfilePage() {
               className="absolute top-4 right-2 w-5 h-5 bg-gray-500 hover:bg-red-600 disabled:bg-gray-400 text-white rounded-full flex items-center justify-center shadow-lg transition-all duration-200 hover:scale-110 disabled:hover:scale-100"
               title="프로필 이미지 삭제"
             >
-              {deleteProfileImageMutation.isPending ||
+              {deleteProfileImageMutation.isPending || (
                 <IoTrashOutline className="w-4 h-4" />
-              }
+              )}
             </button>
           )}
         </div>

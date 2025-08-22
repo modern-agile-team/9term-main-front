@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
-import { createGroup } from '@/app/_apis/client';
+'use client';
+import { useState, useRef } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { createGroup } from '@/app/_apis/group-api';
+import { IMAGE_TYPES } from '@/app/_types/image.types';
 import { groupsQueries } from '@/app/groups/_queries';
 import { createPortal } from 'react-dom';
 import { GroupCreateFormData } from '@/app/_types/group.types';
-const IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/jpg', 'image/webp'] as const;
 
 const ClubCreateModal = ({
   isOpen,
@@ -253,7 +254,9 @@ const ClubCreateModal = ({
                     또는 이곳에 파일을 드래그해서 업로드
                   </p>
                 </div>
-                <p className="text-xs text-gray-500">JPG, PNG, JPG, WEBP 파일만 업로드 가능</p>
+                <p className="text-xs text-gray-500">
+                  JPG, PNG, JPG, WEBP 파일만 업로드 가능
+                </p>
               </div>
             </div>
           </div>

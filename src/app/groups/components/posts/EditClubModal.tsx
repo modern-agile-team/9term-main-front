@@ -1,17 +1,12 @@
+'use client';
 import React, { useState, useEffect, useRef } from 'react';
-import { updateGroup, updateGroupImage } from '@/app/_apis/client';
+import { updateGroup, updateGroupImage } from '@/app/_apis/group-api';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { groupsQueries } from '@/app/groups/_queries';
 import { createPortal } from 'react-dom';
 import { GroupCreateFormData, Group } from '@/app/_types/group.types';
 import { Card } from '@/app/_components/Card';
-
-const IMAGE_TYPES = [
-  'image/jpeg',
-  'image/png',
-  'image/jpg',
-  'image/webp',
-] as const;
+import { IMAGE_TYPES } from '@/app/_types/image.types';
 
 interface ClubEditModalProps {
   isOpen: boolean;
@@ -213,10 +208,10 @@ const ClubEditModal = ({ isOpen, onClose, clubData }: ClubEditModalProps) => {
   if (!isOpen) return null;
   const getImagePreviewSrc = () => {
     if (formData.groupImage) {
-      return URL.createObjectURL(formData.groupImage); 
+      return URL.createObjectURL(formData.groupImage);
     }
     if (clubData?.groupImageUrl) {
-      return clubData.groupImageUrl; 
+      return clubData.groupImageUrl;
     }
     return null;
   };
