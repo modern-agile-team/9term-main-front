@@ -2,9 +2,10 @@
 
 import { Post } from '@/app/_types/post.types';
 import { useEffect, useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useParams } from 'next/navigation';
 import { getComments } from '@/app/_apis/client';
+import { likePost, unlikePost } from '@/app/_apis/post-api';
 import CommentList from '@/app/groups/components/comments/CommentList';
 import CommentForm from '@/app/groups/components/comments/CommentForm';
 import { useMyProfile } from '@/app/_services/auth-provider';
@@ -25,6 +26,7 @@ export default function PostItem({
 }: PostItemProps) {
   const params = useParams();
   const groupId = parseInt(params.id as string, 10);
+  const queryClient = useQueryClient();
 
   const [formattedDate, setFormattedDate] = useState<string>('');
   const [menuOpen, setMenuOpen] = useState(false);
@@ -38,6 +40,18 @@ export default function PostItem({
 
   const { data: me } = useMyProfile();
   const currentUserId = me?.name;
+  const likeMutation = useMutation({
+    mutationFn: () =>
+      post.isLiked ? unlikePost(groupId, post.id) : likePost(groupId, post.id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: QUERY_KEYS.groupPosts(groupId),
+      });
+    },
+  });
+  const handleLikeClick = () => {
+    likeMutation.mutate();
+  };
 
   useEffect(() => {
     const date = new Date(post.createdAt);
@@ -86,8 +100,15 @@ export default function PostItem({
 
       {/* 좋아요, 댓글, 저장 */}
       <div className="flex items-center text-sm text-gray-500 pt-3 border-t gap-2">
-        <button className="flex items-center mr-4">
-          <span className="mr-1">👍</span> 좋아요 {post.likesCount || 0}
+        <button
+          className={`flex items-center mr-4 transition-colors ${
+            post.isLiked ? 'text-blue-500' : 'text-gray-500'
+          } ${likeMutation.isPending ? 'opacity-50' : ''}`}
+          onClick={handleLikeClick}
+          disabled={likeMutation.isPending}
+        >
+          <span className="mr-1">{post.isLiked ? '❤️' : '🤍'}</span>
+          좋아요 {post.likesCount || 0}
         </button>
         <button
           className="flex items-center mr-4"

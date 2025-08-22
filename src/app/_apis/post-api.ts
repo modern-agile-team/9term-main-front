@@ -1,6 +1,7 @@
 import type { GetPostsResponse, Post } from '@/app/_types/post.types';
 import { DeletePostResponse } from '@/app/_types/deletePostResponse';
 import { get, post, patch, del } from './axios-client';
+import { CreateLikeResponse } from '../_types/likes.types';
 
 export const deletePost = async (
   groupId: number,
@@ -41,4 +42,22 @@ export const getPost = async (
   postId: number
 ): Promise<Post> => {
   return await get<Post>(`/groups/${groupId}/posts/${postId}`);
+};
+
+export const likePost = async (
+  groupId: number,
+  postId: number
+): Promise<CreateLikeResponse> => {
+  return await post<CreateLikeResponse>(
+    `/groups/${groupId}/posts/${postId}/likes`
+  );
+};
+
+export const unlikePost = async (
+  groupId: number,
+  postId: number
+): Promise<CreateLikeResponse> => {
+  return await del<CreateLikeResponse>(
+    `/groups/${groupId}/posts/${postId}/likes`
+  );
 };
