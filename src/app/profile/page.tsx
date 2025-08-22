@@ -7,6 +7,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useState, useRef } from 'react';
 import { IoTrashOutline } from 'react-icons/io5';
 import { IMAGE_TYPES } from '../_types/image.types';
+import type { ApiError } from '../_types/error.types';
 
 export default function ProfilePage() {
   const { data: user, isLoading, isError } = useMyProfile();
@@ -25,7 +26,7 @@ export default function ProfilePage() {
       });
       alert('프로필 이미지가 성공적으로 삭제되었습니다!');
     },
-    onError: (error: any) => {
+    onError: (error: ApiError) => {
       alert(
         error?.response?.data?.message ||
           error?.message ||
@@ -45,7 +46,7 @@ export default function ProfilePage() {
       alert('프로필 이미지가 성공적으로 수정되었습니다!');
       setPreviewImage(null);
     },
-    onError: (error: any) => {
+    onError: (error: ApiError) => {
       alert(
         error?.response?.data?.message ||
           error?.message ||

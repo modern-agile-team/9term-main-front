@@ -1,4 +1,8 @@
-import type { GetGroupsResponse, GroupMember } from '@/app/_types/group.types';
+import type {
+  GetGroupsResponse,
+  GroupMember,
+  Group,
+} from '@/app/_types/group.types';
 import { get, post, patch, put } from './axios-client';
 
 export const getGroups = async (): Promise<GetGroupsResponse> => {
@@ -6,8 +10,8 @@ export const getGroups = async (): Promise<GetGroupsResponse> => {
   return res;
 };
 
-export const getGroup = async (groupId: number): Promise<any> => {
-  const res = await get<any>(`/groups/${groupId}`);
+export const getGroup = async (groupId: number): Promise<Group> => {
+  const res = await get<Group>(`/groups/${groupId}`);
   return res;
 };
 

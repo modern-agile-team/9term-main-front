@@ -1,5 +1,5 @@
 'use client';
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { createGroup } from '@/app/_apis/group-api';
 import { IMAGE_TYPES } from '@/app/_types/image.types';
