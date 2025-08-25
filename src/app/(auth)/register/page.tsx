@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { useMutation } from '@tanstack/react-query';
 import SuccessModal from '@/app/_components/SuccessModal';
 import FailModal from '@/app/_components/FailModal';
-import apiClient from '@/app/_apis/client';
+import { apiClient } from '@/app/_apis/client';
 
 const registerUser = async (userData: {
   username: string;

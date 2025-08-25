@@ -3,18 +3,17 @@
 import Link from 'next/link';
 import { useState, useRef, useEffect } from 'react';
 import NotificationList from '@/app/_components/NotificationList';
-import { useAuth, useMyProfile } from '@/app/_services/auth-provider'; // 새 인증 Provider 사용
+import { useAuth, useMyProfile } from '@/app/_services/auth-provider';
 import type { Notification } from '@/app/_types/notification.types';
+import { IoLogOutOutline } from 'react-icons/io5';
 
 export default function TopNavigation() {
   const [showNotifications, setShowNotifications] = useState(false);
   const notificationRef = useRef<HTMLDivElement>(null);
   const [menuOpen, setMenuOpen] = useState(false);
-  // Auth Context에서 로그인 상태와 로그아웃 함수 가져오기
   const { isLoggedIn, logout } = useAuth();
   const { data: myProfile } = useMyProfile();
 
-  // 알림 목록 외부 클릭 시 닫기
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (
@@ -64,14 +63,10 @@ export default function TopNavigation() {
   };
 
   const handleViewAllNotifications = () => {
-    // 모든 알림 페이지로 이동
     console.info('모든 알림 보기');
   };
-
-  // 로그아웃 핸들러 추가
   const handleLogout = () => {
     logout();
-    // 필요하다면 홈페이지로 리다이렉트하거나 다른 작업 수행
   };
 
   return (
@@ -84,26 +79,6 @@ export default function TopNavigation() {
 
           {/* PC/태블릿 메뉴/버튼 */}
           <div className="hidden md:flex items-center space-x-6">
-            {isLoggedIn && (
-              <ul className="flex space-x-4">
-                <li>
-                  <a
-                    href="#recommended-clubs"
-                    className="text-white hover:text-blue-300"
-                  >
-                    인기 동아리
-                  </a>
-                </li>
-                <li>
-                  <Link
-                    href="/groups"  
-                    className="text-white hover:text-blue-300"
-                  >
-                  전체 동아리
-                  </Link>
-                </li>
-              </ul>
-            )}
             {/* 알림 버튼 - 로그인 시에만 표시 */}
             {isLoggedIn && (
               <div className="relative inline-block" ref={notificationRef}>
@@ -147,18 +122,20 @@ export default function TopNavigation() {
                   className="flex items-center space-x-2 text-white hover:text-blue-300"
                 >
                   <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
-                    <span className="text-blue-600 font-medium">
-                      {myProfile?.name?.charAt(0) || '?'}
-                    </span>
+                    <img
+                      src={myProfile?.profileImageUrl || ''}
+                      alt="profile"
+                      className="w-full h-full object-cover rounded-full"
+                    />
                   </div>
                   <span>{myProfile?.name || '프로필'}</span>
                 </Link>
                 {/* 로그아웃 버튼 추가 */}
                 <button
                   onClick={handleLogout}
-                  className="text-white hover:text-blue-300 text-sm"
+                  className="text-white hover:text-blue-300 text-2xl"
                 >
-                  로그아웃
+                  <IoLogOutOutline />
                 </button>
               </div>
             ) : (

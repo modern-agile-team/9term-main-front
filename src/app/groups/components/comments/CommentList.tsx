@@ -90,8 +90,11 @@ const CommentItem = ({
   };
 
   const handleReplySubmit = () => {
-    if (replyContent.trim()) {
-      onReply(comment.id, replyContent.trim());
+    const trimmedReplyContent = replyContent.trim();
+    const hasReplyContent = trimmedReplyContent.length > 0;
+    
+    if (hasReplyContent) {
+      onReply(comment.id, trimmedReplyContent);
       setIsReplyFormOpen(false);
       setReplyContent('');
     }
@@ -264,7 +267,7 @@ const CommentList = ({ comments, groupId, postId }: CommentListProps) => {
     mutationFn: (commentId: number) =>
       deleteComment(groupId, postId, commentId),
     onSuccess: () => {
-      invalidateCommentDeleteQueries(queryClient, groupId, postId);
+      invalidateCommentRelatedQueries(queryClient, groupId, postId);
       setDeletingCommentId(null);
     },
     onError: (error: unknown) => {
@@ -283,7 +286,7 @@ const CommentList = ({ comments, groupId, postId }: CommentListProps) => {
       content: string;
     }) => updateComment(groupId, postId, commentId, { content }),
     onSuccess: () => {
-      invalidateCommentUpdateQueries(queryClient, groupId, postId);
+      invalidateCommentRelatedQueries(queryClient, groupId, postId);
       setUpdatingCommentId(null);
     },
     onError: (error: unknown) => {

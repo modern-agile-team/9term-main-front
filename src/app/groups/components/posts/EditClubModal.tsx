@@ -1,17 +1,12 @@
+'use client';
 import React, { useState, useEffect, useRef } from 'react';
-import { updateGroup, updateGroupImage } from '@/app/_apis/client';
+import { updateGroup, updateGroupImage } from '@/app/_apis/group-api';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { groupsQueries } from '@/app/groups/_queries';
 import { createPortal } from 'react-dom';
 import { GroupCreateFormData, Group } from '@/app/_types/group.types';
 import { Card } from '@/app/_components/Card';
-
-const IMAGE_TYPES = [
-  'image/jpeg',
-  'image/png',
-  'image/jpg',
-  'image/webp',
-] as const;
+import { IMAGE_TYPES } from '@/app/_types/image.types';
 
 interface ClubEditModalProps {
   isOpen: boolean;
@@ -38,8 +33,6 @@ const ClubEditModal = ({ isOpen, onClose, clubData }: ClubEditModalProps) => {
   // 초기 데이터 설정
   useEffect(() => {
     if (clubData) {
-      console.log('clubData:', clubData);
-      console.log('clubData.groupImageUrl:', clubData.groupImageUrl);
       setFormData({
         name: clubData.name,
         description: clubData.description,
@@ -214,18 +207,11 @@ const ClubEditModal = ({ isOpen, onClose, clubData }: ClubEditModalProps) => {
 
   if (!isOpen) return null;
   const getImagePreviewSrc = () => {
-    console.log('EditClubModal - clubData:', clubData);
-    console.log(
-      'EditClubModal - clubData.groupImageUrl:',
-      clubData?.groupImageUrl
-    );
-    console.log('EditClubModal - formData.groupImage:', formData.groupImage);
-
     if (formData.groupImage) {
-      return URL.createObjectURL(formData.groupImage); // 새로 업로드한 파일
+      return URL.createObjectURL(formData.groupImage);
     }
     if (clubData?.groupImageUrl) {
-      return clubData.groupImageUrl; // 기존 이미지 URL
+      return clubData.groupImageUrl;
     }
     return null;
   };
