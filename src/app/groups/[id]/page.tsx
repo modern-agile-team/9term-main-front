@@ -20,6 +20,7 @@ import { handleGeneralError } from '@/app/_utils/error-utils';
 import JoinGroupBanner from '../components/JoinGroupBanner';
 
 import { groupsQueries } from '../_queries';
+import { useMembership } from '@/app/_services/membership-provider';
 
 const GroupPage = () => {
   const params = useParams();
@@ -42,6 +43,7 @@ const GroupPage = () => {
   const { data: me } = useMyProfile();
   const { isLoggedIn } = useAuth();
   const queryClient = useQueryClient();
+  const { isMember } = useMembership(groupId);
 
   const {
     data: posts = [],
@@ -76,6 +78,10 @@ const GroupPage = () => {
   const handleCreateButtonClick = () => {
     if (!isLoggedIn) {
       alert('로그인 후 이용해 주세요.');
+      return;
+    }
+    if (!isMember) {
+      alert('그룹 가입 멤버만 게시물을 작성할 수 있습니다.');
       return;
     }
     setPostModalState({
