@@ -1,12 +1,15 @@
 'use client';
 
-import React, { useMemo, useState } from 'react';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import React, { useState } from 'react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Comment } from '@/app/_types/comment.types';
-import { deleteComment, updateComment } from '@/app/_apis/client';
 import {
-  invalidateCommentRelatedQueries,
-} from '@/app/_utils/query-utils';
+  deleteComment,
+  updateComment,
+  createComment,
+  getComments,
+} from '@/app/_apis/client';
+import { invalidateCommentRelatedQueries } from '@/app/_utils/query-utils';
 import { useMyProfile } from '@/app/_services/auth-provider';
 import { handleGeneralError } from '@/app/_utils/error-utils';
 
@@ -16,35 +19,18 @@ interface CommentListProps {
   postId: number;
 }
 
-const listToTree = (list: Comment[]): Comment[] => {
-  const map: { [key: number]: number } = {};
-  const roots: Comment[] = [];
-
-  list.forEach((node, index) => {
-    map[node.id] = index;
-    node.children = [];
-  });
-
-  list.forEach((node) => {
-    if (node.parentId !== null && list[map[node.parentId]]) {
-      list[map[node.parentId]].children?.push(node);
-    } else {
-      roots.push(node);
-    }
-  });
-
-  return roots;
-};
-
 interface CommentItemProps {
   comment: Comment;
   groupId: number;
   postId: number;
   onDelete: (commentId: number) => void;
   onUpdate: (commentId: number, content: string) => void;
+  onReply: (parentId: number, content: string) => void;
   currentUserId?: string;
   isDeleting: boolean;
   isUpdating: boolean;
+  isReplying: boolean;
+  isParent?: boolean; // 부모댓글인지 구분
 }
 
 const CommentItem = ({
@@ -53,12 +39,33 @@ const CommentItem = ({
   postId,
   onDelete,
   onUpdate,
+  onReply,
   currentUserId,
   isDeleting,
   isUpdating,
+  isReplying,
+  isParent = false,
 }: CommentItemProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editContent, setEditContent] = useState(comment.content);
+  const [isReplyFormOpen, setIsReplyFormOpen] = useState(false);
+  const [replyContent, setReplyContent] = useState('');
+  const [showReplies, setShowReplies] = useState(false);
+
+  // 대댓글 조회
+  const { data: replies = [] } = useQuery({
+    queryKey: ['replies', groupId, postId, comment.id],
+    queryFn: () => getComments(groupId, postId, comment.id),
+    enabled: isParent && showReplies, // 부모댓글이고 답글 보기가 활성화된 경우에만 조회
+  });
+
+  // 답글 개수 조회 (항상 조회해서 개수만 확인)
+  const { data: repliesCount = 0 } = useQuery({
+    queryKey: ['repliesCount', groupId, postId, comment.id],
+    queryFn: () => getComments(groupId, postId, comment.id),
+    enabled: isParent, // 부모댓글인 경우에만 조회
+    select: (data) => data.length, // 개수만 선택
+  });
 
   const handleEdit = () => {
     setIsEditing(true);
@@ -75,6 +82,27 @@ const CommentItem = ({
   const handleCancel = () => {
     setIsEditing(false);
     setEditContent(comment.content);
+  };
+
+  const handleReply = () => {
+    setIsReplyFormOpen(true);
+    setReplyContent('');
+  };
+
+  const handleReplySubmit = () => {
+    const trimmedReplyContent = replyContent.trim();
+    const hasReplyContent = trimmedReplyContent.length > 0;
+
+    if (hasReplyContent) {
+      onReply(comment.id, trimmedReplyContent);
+      setIsReplyFormOpen(false);
+      setReplyContent('');
+    }
+  };
+
+  const handleReplyCancel = () => {
+    setIsReplyFormOpen(false);
+    setReplyContent('');
   };
 
   return (
@@ -120,29 +148,87 @@ const CommentItem = ({
               <p className="text-gray-800 mt-1">{comment.content}</p>
             )}
           </div>
-          {currentUserId === comment.user.name && !isEditing && (
+          {!isEditing && (
             <div className="flex gap-1">
-              <button
-                onClick={handleEdit}
-                disabled={isDeleting || isUpdating}
-                className="px-2 py-1 text-xs text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                수정
-              </button>
-              <button
-                onClick={() => onDelete(comment.id)}
-                disabled={isDeleting || isUpdating}
-                className="px-2 py-1 text-xs text-red-600 hover:text-red-800 hover:bg-red-50 rounded disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {isDeleting ? '삭제 중...' : '삭제'}
-              </button>
+              {currentUserId && (
+                <button
+                  onClick={handleReply}
+                  disabled={isDeleting || isUpdating || isReplying}
+                  className="px-2 py-1 text-xs text-gray-600 hover:text-gray-800 hover:bg-gray-50 rounded disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  답글
+                </button>
+              )}
+              {currentUserId === comment.user.name && (
+                <>
+                  <button
+                    onClick={handleEdit}
+                    disabled={isDeleting || isUpdating || isReplying}
+                    className="px-2 py-1 text-xs text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    수정
+                  </button>
+                  <button
+                    onClick={() => onDelete(comment.id)}
+                    disabled={isDeleting || isUpdating || isReplying}
+                    className="px-2 py-1 text-xs text-red-600 hover:text-red-800 hover:bg-red-50 rounded disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {isDeleting ? '삭제 중...' : '삭제'}
+                  </button>
+                </>
+              )}
             </div>
           )}
         </div>
+
+        {/* 답글 보기 버튼 (부모댓글인 경우에만) */}
+        {isParent && (
+          <div className="mt-2">
+            <button
+              onClick={() => setShowReplies(!showReplies)}
+              className="text-sm text-blue-600 hover:text-blue-800"
+            >
+              {showReplies ? '답글 숨기기' : `답글 ${repliesCount}개`}
+            </button>
+          </div>
+        )}
       </div>
-      {comment.children && comment.children.length > 0 && (
+
+      {/* 답글 작성 폼 */}
+      {isReplyFormOpen && (
+        <div className="mt-3 pl-4 border-l-2 border-gray-200">
+          <div className="bg-gray-50 p-3 rounded-md">
+            <textarea
+              value={replyContent}
+              onChange={(e) => setReplyContent(e.target.value)}
+              className="w-full px-2 py-1 border border-gray-300 rounded text-sm resize-none"
+              rows={2}
+              placeholder={`@${comment.user.name}님에게 답글을 남겨보세요`}
+              aria-label="답글 작성"
+            />
+            <div className="flex gap-2 mt-2">
+              <button
+                onClick={handleReplySubmit}
+                disabled={!replyContent.trim() || isReplying}
+                className="px-2 py-1 text-xs bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isReplying ? '작성 중...' : '답글 작성'}
+              </button>
+              <button
+                onClick={handleReplyCancel}
+                className="px-2 py-1 text-xs bg-gray-500 text-white rounded hover:bg-gray-600"
+              >
+                취소
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 대댓글 목록 */}
+      {isParent && showReplies && replies.length > 0 && (
         <ul className="pl-8 mt-2 border-l-2 ml-4">
-          {comment.children.map((reply) => (
+          {replies.map((reply) => (
             <CommentItem
               key={reply.id}
               comment={reply}
@@ -150,9 +236,12 @@ const CommentItem = ({
               postId={postId}
               onDelete={onDelete}
               onUpdate={onUpdate}
+              onReply={onReply}
               currentUserId={currentUserId}
               isDeleting={isDeleting}
               isUpdating={isUpdating}
+              isReplying={isReplying}
+              isParent={false} // 대댓글은 부모가 아님
             />
           ))}
         </ul>
@@ -170,6 +259,9 @@ const CommentList = ({ comments, groupId, postId }: CommentListProps) => {
   const [updatingCommentId, setUpdatingCommentId] = useState<number | null>(
     null
   );
+  const [replyingCommentId, setReplyingCommentId] = useState<number | null>(
+    null
+  );
 
   const deleteCommentMutation = useMutation({
     mutationFn: (commentId: number) =>
@@ -178,7 +270,7 @@ const CommentList = ({ comments, groupId, postId }: CommentListProps) => {
       invalidateCommentRelatedQueries(queryClient, groupId, postId);
       setDeletingCommentId(null);
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
       console.error('댓글 삭제 실패:', error);
       alert(handleGeneralError(error));
       setDeletingCommentId(null);
@@ -197,10 +289,30 @@ const CommentList = ({ comments, groupId, postId }: CommentListProps) => {
       invalidateCommentRelatedQueries(queryClient, groupId, postId);
       setUpdatingCommentId(null);
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
       console.error('댓글 수정 실패:', error);
       alert(handleGeneralError(error));
       setUpdatingCommentId(null);
+    },
+  });
+
+  const createReplyMutation = useMutation({
+    mutationFn: ({
+      parentId,
+      content,
+    }: {
+      parentId: number;
+      content: string;
+    }) => createComment(groupId, postId, { content, parentId }),
+    onSuccess: () => {
+      // 모든 관련 쿼리 무효화
+      invalidateCommentRelatedQueries(queryClient, groupId, postId);
+      setReplyingCommentId(null);
+    },
+    onError: (error: unknown) => {
+      console.error('답글 작성 실패:', error);
+      alert(handleGeneralError(error));
+      setReplyingCommentId(null);
     },
   });
 
@@ -216,7 +328,10 @@ const CommentList = ({ comments, groupId, postId }: CommentListProps) => {
     updateCommentMutation.mutate({ commentId, content });
   };
 
-  const commentTree = useMemo(() => listToTree(comments), [comments]);
+  const handleReplyComment = (parentId: number, content: string) => {
+    setReplyingCommentId(parentId);
+    createReplyMutation.mutate({ parentId, content });
+  };
 
   if (comments.length === 0) {
     return (
@@ -229,7 +344,7 @@ const CommentList = ({ comments, groupId, postId }: CommentListProps) => {
   return (
     <div>
       <ul>
-        {commentTree.map((comment) => (
+        {comments?.map((comment) => (
           <CommentItem
             key={comment.id}
             comment={comment}
@@ -237,9 +352,12 @@ const CommentList = ({ comments, groupId, postId }: CommentListProps) => {
             postId={postId}
             onDelete={handleDeleteComment}
             onUpdate={handleUpdateComment}
+            onReply={handleReplyComment}
             currentUserId={currentUser?.name}
             isDeleting={deletingCommentId === comment.id}
             isUpdating={updatingCommentId === comment.id}
+            isReplying={replyingCommentId === comment.id}
+            isParent={true} // 모든 댓글이 부모댓글
           />
         ))}
       </ul>
