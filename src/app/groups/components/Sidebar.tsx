@@ -3,12 +3,12 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { groupsQueries } from '../_queries';
 import ClubEditModal from './posts/EditClubModal';
 import { useState } from 'react';
-import { updateMemberStatus } from '@/app/_apis/client';
+import { updateMemberStatus, leaveGroup } from '@/app/_apis/client';
 import { useMyProfile } from '@/app/_services/auth-provider';
 import { CiCircleCheck, CiCircleRemove } from 'react-icons/ci';
 import { FaPencilAlt } from 'react-icons/fa';
 import { QUERY_KEYS } from '@/app/_utils/query-utils';
-
+import { useRouter } from 'next/navigation';
 
 interface SidebarProps {
   onCreatePost: () => void;
@@ -26,6 +26,7 @@ export default function Sidebar({ onCreatePost, groupId }: SidebarProps) {
   } = useQuery(groupsQueries.groupMembers(Number(groupId)));
   const { data: me } = useMyProfile();
   const queryClient = useQueryClient();
+  const router = useRouter();
   const clubs: GetGroupsResponse['data'] = data?.data ?? [];
   const club = clubs.find((club) => club.id === Number(groupId));
   const currentMember = members?.find((member) => member.name === me?.name);
@@ -36,7 +37,7 @@ export default function Sidebar({ onCreatePost, groupId }: SidebarProps) {
       action,
     }: {
       userId: number;
-      action: 'APPROVE' | 'REJECT' | 'LEAVE';
+      action: 'APPROVE' | 'REJECT';
     }) => updateMemberStatus(groupId, userId, action),
     onSuccess: (data, variables) => {
       alert(`멤버 상태 변경 성공: ${variables.action} ${variables.userId}`);
@@ -48,6 +49,22 @@ export default function Sidebar({ onCreatePost, groupId }: SidebarProps) {
     onError: (error) => {
       alert('멤버 상태 변경에 실패했습니다.');
       console.error('Update member status error:', error);
+    },
+  });
+
+  const leaveGroupMutation = useMutation({
+    mutationFn: () => leaveGroup(groupId),
+    onSuccess: () => {
+      alert('동아리를 성공적으로 탈퇴했습니다.');
+      queryClient.invalidateQueries({
+      
+        queryKey: QUERY_KEYS.groupMembers(groupId),
+      });
+      router.push('/');
+    },
+    onError: (error) => {
+      alert('동아리 탈퇴에 실패했습니다.');
+      console.error('Leave group error:', error);
     },
   });
 
@@ -211,17 +228,15 @@ export default function Sidebar({ onCreatePost, groupId }: SidebarProps) {
       {/* 동아리 탈퇴 버튼 */}
       <div className="mt-auto pt-6">
         <button
-          className="w-full px-4 py-2 text-red-600 border border-red-600 rounded-lg hover:bg-red-50 transition-colors"
+          className="w-full px-4 py-2 text-red-600 border border-red-600 rounded-lg hover:bg-red-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           onClick={() => {
             if (confirm('정말로 동아리를 탈퇴하시겠습니까?')) {
-              updateStatusMutation.mutate({
-                userId: currentMember?.userId ?? 0,
-                action: 'LEAVE',
-              });
+              leaveGroupMutation.mutate();
             }
           }}
+          disabled={leaveGroupMutation.isPending}
         >
-          동아리 탈퇴하기
+          {leaveGroupMutation.isPending ? '탈퇴 중...' : '동아리 탈퇴하기'}
         </button>
       </div>
 

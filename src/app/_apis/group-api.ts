@@ -65,7 +65,10 @@ export const groupJoin = async (
 export const updateMemberStatus = async (
   groupId: number,
   userId: number,
-  action: 'APPROVE' | 'REJECT' | 'LEAVE'
+  action: 'APPROVE' | 'REJECT'
 ): Promise<void> => {
   await post<void>(`/groups/${groupId}/members/${userId}/status`, { action });
+};
+export const leaveGroup = async (groupId: number): Promise<void> => {
+  await post<void>(`/groups/${groupId}/members/me/leave`);
 };
