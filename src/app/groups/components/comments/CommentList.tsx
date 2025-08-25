@@ -3,12 +3,13 @@
 import React, { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Comment } from '@/app/_types/comment.types';
-import { deleteComment, updateComment, createComment, getComments } from '@/app/_apis/client';
 import {
-  invalidateCommentDeleteQueries,
-  invalidateCommentUpdateQueries,
-  invalidateCommentRelatedQueries,
-} from '@/app/_utils/query-utils';
+  deleteComment,
+  updateComment,
+  createComment,
+  getComments,
+} from '@/app/_apis/client';
+import { invalidateCommentRelatedQueries } from '@/app/_utils/query-utils';
 import { useMyProfile } from '@/app/_services/auth-provider';
 import { handleGeneralError } from '@/app/_utils/error-utils';
 
@@ -17,7 +18,6 @@ interface CommentListProps {
   groupId: number;
   postId: number;
 }
-
 
 interface CommentItemProps {
   comment: Comment;
@@ -92,7 +92,7 @@ const CommentItem = ({
   const handleReplySubmit = () => {
     const trimmedReplyContent = replyContent.trim();
     const hasReplyContent = trimmedReplyContent.length > 0;
-    
+
     if (hasReplyContent) {
       onReply(comment.id, trimmedReplyContent);
       setIsReplyFormOpen(false);
@@ -180,7 +180,7 @@ const CommentItem = ({
             </div>
           )}
         </div>
-        
+
         {/* 답글 보기 버튼 (부모댓글인 경우에만) */}
         {isParent && (
           <div className="mt-2">
@@ -193,7 +193,7 @@ const CommentItem = ({
           </div>
         )}
       </div>
-      
+
       {/* 답글 작성 폼 */}
       {isReplyFormOpen && (
         <div className="mt-3 pl-4 border-l-2 border-gray-200">
@@ -224,7 +224,7 @@ const CommentItem = ({
           </div>
         </div>
       )}
-      
+
       {/* 대댓글 목록 */}
       {isParent && showReplies && replies.length > 0 && (
         <ul className="pl-8 mt-2 border-l-2 ml-4">
@@ -308,7 +308,6 @@ const CommentList = ({ comments, groupId, postId }: CommentListProps) => {
       // 모든 관련 쿼리 무효화
       invalidateCommentRelatedQueries(queryClient, groupId, postId);
       setReplyingCommentId(null);
-      
     },
     onError: (error: unknown) => {
       console.error('답글 작성 실패:', error);
@@ -333,7 +332,6 @@ const CommentList = ({ comments, groupId, postId }: CommentListProps) => {
     setReplyingCommentId(parentId);
     createReplyMutation.mutate({ parentId, content });
   };
-
 
   if (comments.length === 0) {
     return (
