@@ -20,6 +20,10 @@ import { handleGeneralError } from '@/app/_utils/error-utils';
 import JoinGroupBanner from '../components/JoinGroupBanner';
 
 import { groupsQueries } from '../_queries';
+import {
+  useMembership,
+  useGroupMembers,
+} from '@/app/_services/membership-provider';
 
 const GroupPage = () => {
   const params = useParams();
@@ -42,6 +46,7 @@ const GroupPage = () => {
   const { data: me } = useMyProfile();
   const { isLoggedIn } = useAuth();
   const queryClient = useQueryClient();
+  const { isMember } = useMembership(groupId);
 
   const {
     data: posts = [],
@@ -49,9 +54,7 @@ const GroupPage = () => {
     isError,
   } = useQuery(groupsQueries.groupPosts(groupId));
   const { data: groupData } = useQuery(groupsQueries.group(groupId));
-  const { data: membersData, isError: membersError } = useQuery(
-    groupsQueries.groupMembers(groupId)
-  );
+  const { data: membersData, isError: membersError } = useGroupMembers(groupId);
 
   const deletePostMutation = useMutation({
     mutationFn: ({ groupId, postId }: { groupId: number; postId: number }) =>
@@ -76,6 +79,10 @@ const GroupPage = () => {
   const handleCreateButtonClick = () => {
     if (!isLoggedIn) {
       alert('로그인 후 이용해 주세요.');
+      return;
+    }
+    if (!isMember) {
+      alert('그룹 가입 멤버만 게시물을 작성할 수 있습니다.');
       return;
     }
     setPostModalState({

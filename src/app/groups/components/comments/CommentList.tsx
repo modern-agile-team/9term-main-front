@@ -11,6 +11,7 @@ import {
 } from '@/app/_apis/client';
 import { invalidateCommentRelatedQueries } from '@/app/_utils/query-utils';
 import { useMyProfile } from '@/app/_services/auth-provider';
+import { useMembership } from '@/app/_services/membership-provider';
 import { handleGeneralError } from '@/app/_utils/error-utils';
 
 interface CommentListProps {
@@ -51,6 +52,7 @@ const CommentItem = ({
   const [isReplyFormOpen, setIsReplyFormOpen] = useState(false);
   const [replyContent, setReplyContent] = useState('');
   const [showReplies, setShowReplies] = useState(false);
+  const { isMember, isManager } = useMembership(groupId);
 
   // 대댓글 조회
   const { data: replies = [] } = useQuery({
@@ -150,33 +152,39 @@ const CommentItem = ({
           </div>
           {!isEditing && (
             <div className="flex gap-1">
-              {currentUserId && (
+              {currentUserId && isMember && (
                 <button
                   onClick={handleReply}
                   disabled={isDeleting || isUpdating || isReplying}
                   className="px-2 py-1 text-xs text-gray-600 hover:text-gray-800 hover:bg-gray-50 rounded disabled:opacity-50 disabled:cursor-not-allowed"
+                  title={
+                    !isMember
+                      ? '그룹 가입 멤버만 답글을 작성할 수 있습니다.'
+                      : ''
+                  }
                 >
                   답글
                 </button>
               )}
-              {currentUserId === comment.user.name && (
-                <>
-                  <button
-                    onClick={handleEdit}
-                    disabled={isDeleting || isUpdating || isReplying}
-                    className="px-2 py-1 text-xs text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    수정
-                  </button>
-                  <button
-                    onClick={() => onDelete(comment.id)}
-                    disabled={isDeleting || isUpdating || isReplying}
-                    className="px-2 py-1 text-xs text-red-600 hover:text-red-800 hover:bg-red-50 rounded disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {isDeleting ? '삭제 중...' : '삭제'}
-                  </button>
-                </>
-              )}
+              {currentUserId === comment.user.name &&
+                (isMember || isManager) && (
+                  <>
+                    <button
+                      onClick={handleEdit}
+                      disabled={isDeleting || isUpdating || isReplying}
+                      className="px-2 py-1 text-xs text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      수정
+                    </button>
+                    <button
+                      onClick={() => onDelete(comment.id)}
+                      disabled={isDeleting || isUpdating || isReplying}
+                      className="px-2 py-1 text-xs text-red-600 hover:text-red-800 hover:bg-red-50 rounded disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {isDeleting ? '삭제 중...' : '삭제'}
+                    </button>
+                  </>
+                )}
             </div>
           )}
         </div>

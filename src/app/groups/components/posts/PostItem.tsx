@@ -9,6 +9,7 @@ import { likePost, unlikePost } from '@/app/_apis/post-api';
 import CommentList from '@/app/groups/components/comments/CommentList';
 import CommentForm from '@/app/groups/components/comments/CommentForm';
 import { useMyProfile } from '@/app/_services/auth-provider';
+import { useMembership } from '@/app/_services/membership-provider';
 import { QUERY_KEYS } from '@/app/_utils/query-utils';
 
 interface PostItemProps {
@@ -40,6 +41,7 @@ export default function PostItem({
 
   const { data: me } = useMyProfile();
   const currentUserId = me?.name;
+  const { isMember, isManager } = useMembership(groupId);
   const likeMutation = useMutation({
     mutationFn: () =>
       post.isLiked ? unlikePost(groupId, post.id) : likePost(groupId, post.id),
@@ -103,22 +105,30 @@ export default function PostItem({
         <button
           className={`flex items-center mr-4 transition-colors ${
             post.isLiked ? 'text-blue-500' : 'text-gray-500'
-          } ${likeMutation.isPending ? 'opacity-50' : ''}`}
-          onClick={handleLikeClick}
-          disabled={likeMutation.isPending}
+          } ${likeMutation.isPending ? 'opacity-50' : ''} ${
+            !isMember ? 'opacity-50 cursor-not-allowed' : ''
+          }`}
+          onClick={isMember ? handleLikeClick : undefined}
+          disabled={likeMutation.isPending || !isMember}
+          title={!isMember ? '그룹 가입 멤버만 좋아요를 할 수 있습니다.' : ''}
         >
           <span className="mr-1">{post.isLiked ? '❤️' : '🤍'}</span>
           좋아요 {post.likesCount || 0}
         </button>
         <button
-          className="flex items-center mr-4"
-          onClick={() => setIsCommentOpen((prev) => !prev)}
+          className={`flex items-center mr-4 ${
+            !isMember ? 'opacity-50 cursor-not-allowed' : ''
+          }`}
+          onClick={
+            isMember ? () => setIsCommentOpen((prev) => !prev) : undefined
+          }
+          title={!isMember ? '그룹 가입 멤버만 댓글을 볼 수 있습니다.' : ''}
         >
           <span className="mr-1">💬</span> 댓글{' '}
           {comments ? comments.length : post.commentsCount || 0}
         </button>
 
-        {currentUserId && post.user.name === currentUserId && (
+        {currentUserId && (post.user.name === currentUserId || isManager) && (
           <div className="ml-auto relative">
             <button
               className="flex items-center px-2 py-1 text-gray-600 hover:text-gray-900"
@@ -187,7 +197,7 @@ export default function PostItem({
               postId={post.id}
             />
           )}
-          <CommentForm postId={post.id} groupId={groupId} />
+          {isMember && <CommentForm postId={post.id} groupId={groupId} />}
         </div>
       )}
     </div>

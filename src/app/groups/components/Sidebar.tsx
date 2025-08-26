@@ -5,6 +5,10 @@ import ClubEditModal from './posts/EditClubModal';
 import { useState } from 'react';
 import { updateMemberStatus, leaveGroup } from '@/app/_apis/client';
 import { useMyProfile } from '@/app/_services/auth-provider';
+import {
+  useMembership,
+  useGroupMembers,
+} from '@/app/_services/membership-provider';
 import { CiCircleCheck, CiCircleRemove } from 'react-icons/ci';
 import { FaPencilAlt } from 'react-icons/fa';
 import { QUERY_KEYS } from '@/app/_utils/query-utils';
@@ -23,13 +27,14 @@ export default function Sidebar({ onCreatePost, groupId }: SidebarProps) {
     data: members,
     isLoading: membersLoading,
     isError: membersError,
-  } = useQuery(groupsQueries.groupMembers(Number(groupId)));
+  } = useGroupMembers(Number(groupId));
   const { data: me } = useMyProfile();
   const queryClient = useQueryClient();
   const router = useRouter();
+  const { isMember } = useMembership(groupId);
   const clubs: GetGroupsResponse['data'] = data?.data ?? [];
   const club = clubs.find((club) => club.id === Number(groupId));
-  const currentMember = members?.find((member) => member.name === me?.name);
+  const currentMember = members?.find((member) => member.userId === me?.userId);
   const isManager = currentMember?.role === 'MANAGER';
   const updateStatusMutation = useMutation({
     mutationFn: ({
@@ -57,7 +62,6 @@ export default function Sidebar({ onCreatePost, groupId }: SidebarProps) {
     onSuccess: () => {
       alert('동아리를 성공적으로 탈퇴했습니다.');
       queryClient.invalidateQueries({
-      
         queryKey: QUERY_KEYS.groupMembers(groupId),
       });
       router.push('/');
@@ -124,8 +128,15 @@ export default function Sidebar({ onCreatePost, groupId }: SidebarProps) {
 
         <div className="space-y-3">
           <button
-            className="flex items-center justify-center w-full py-2 bg-blue-600 text-white rounded-lg font-medium"
-            onClick={onCreatePost}
+            className={`flex items-center justify-center w-full py-2 rounded-lg font-medium ${
+              isMember
+                ? 'bg-blue-600 text-white hover:bg-blue-700'
+                : 'bg-gray-400 text-gray-200 cursor-not-allowed'
+            }`}
+            onClick={isMember ? onCreatePost : undefined}
+            title={
+              !isMember ? '그룹 가입 멤버만 게시물을 작성할 수 있습니다.' : ''
+            }
           >
             <span className="mr-2">✏️</span> 새 게시글 작성하기
           </button>
