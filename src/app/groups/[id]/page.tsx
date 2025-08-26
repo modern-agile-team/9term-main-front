@@ -20,7 +20,10 @@ import { handleGeneralError } from '@/app/_utils/error-utils';
 import JoinGroupBanner from '../components/JoinGroupBanner';
 
 import { groupsQueries } from '../_queries';
-import { useMembership } from '@/app/_services/membership-provider';
+import {
+  useMembership,
+  useGroupMembers,
+} from '@/app/_services/membership-provider';
 
 const GroupPage = () => {
   const params = useParams();
@@ -51,9 +54,7 @@ const GroupPage = () => {
     isError,
   } = useQuery(groupsQueries.groupPosts(groupId));
   const { data: groupData } = useQuery(groupsQueries.group(groupId));
-  const { data: membersData, isError: membersError } = useQuery(
-    groupsQueries.groupMembers(groupId)
-  );
+  const { data: membersData, isError: membersError } = useGroupMembers(groupId);
 
   const deletePostMutation = useMutation({
     mutationFn: ({ groupId, postId }: { groupId: number; postId: number }) =>

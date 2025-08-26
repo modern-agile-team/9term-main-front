@@ -5,7 +5,10 @@ import ClubEditModal from './posts/EditClubModal';
 import { useState } from 'react';
 import { updateMemberStatus, leaveGroup } from '@/app/_apis/client';
 import { useMyProfile } from '@/app/_services/auth-provider';
-import { useMembership } from '@/app/_services/membership-provider';
+import {
+  useMembership,
+  useGroupMembers,
+} from '@/app/_services/membership-provider';
 import { CiCircleCheck, CiCircleRemove } from 'react-icons/ci';
 import { FaPencilAlt } from 'react-icons/fa';
 import { QUERY_KEYS } from '@/app/_utils/query-utils';
@@ -24,7 +27,7 @@ export default function Sidebar({ onCreatePost, groupId }: SidebarProps) {
     data: members,
     isLoading: membersLoading,
     isError: membersError,
-  } = useQuery(groupsQueries.groupMembers(Number(groupId)));
+  } = useGroupMembers(Number(groupId));
   const { data: me } = useMyProfile();
   const queryClient = useQueryClient();
   const router = useRouter();
