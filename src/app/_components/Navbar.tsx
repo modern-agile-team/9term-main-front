@@ -73,7 +73,7 @@ export default function TopNavigation() {
     <div className="fixed top-0 left-0 w-full z-50 bg-blue-600 shadow-sm border-b">
       <div className="max-w-7xl mx-auto px-4 py-3">
         <div className="flex items-center justify-between">
-          <Link href="/home" className="text-2xl font-bold text-white">
+          <Link href="/" className="text-2xl font-bold text-white">
             모동구
           </Link>
 
@@ -105,14 +105,14 @@ export default function TopNavigation() {
             )}
 
             {/* 설정 버튼 - 로그인 시에만 표시 */}
-            {/* {isLoggedIn && (
+            {isLoggedIn && (
               <Link
                 href="/settings"
                 className="flex items-center text-gray-700 hover:text-blue-600"
               >
                 <span className="text-lg">⚙️</span>
               </Link>
-            )} */}
+            )}
 
             {/* 로그인/프로필 버튼 */}
             {isLoggedIn ? (
@@ -163,7 +163,6 @@ export default function TopNavigation() {
             </svg>
           </button>
         </div>
-
         {/* 모바일 드롭다운 메뉴 */}
         {menuOpen && (
           <div className="md:hidden mt-2 bg-blue-900 rounded-lg shadow-lg py-4 px-2 flex flex-col gap-4">
