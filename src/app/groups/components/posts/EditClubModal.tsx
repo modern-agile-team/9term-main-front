@@ -1,19 +1,28 @@
 'use client';
 import React, { useState, useEffect, useRef } from 'react';
-import { updateGroup, updateGroupImage } from '@/app/_apis/group-api';
+import { MdErrorOutline } from 'react-icons/md';
+import { IoIosClose } from "react-icons/io";
+import {
+  deleteGroup,
+  updateGroup,
+  updateGroupImage,
+} from '@/app/_apis/group-api';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { groupsQueries } from '@/app/groups/_queries';
 import { createPortal } from 'react-dom';
 import { GroupCreateFormData, Group } from '@/app/_types/group.types';
 import { Card } from '@/app/_components/Card';
 import { IMAGE_TYPES } from '@/app/_types/image.types';
+import { SuccessModal } from '@/app/_components/SuccessModal';
+import { useRouter } from 'next/navigation';
+import Image from 'next/image';
+import { ApiError } from '@/app/_types/error.types';
 
 interface ClubEditModalProps {
   isOpen: boolean;
   onClose: () => void;
   clubData: Group;
 }
-
 const ClubEditModal = ({ isOpen, onClose, clubData }: ClubEditModalProps) => {
   const [formData, setFormData] = useState<GroupCreateFormData>({
     name: '',
@@ -23,12 +32,15 @@ const ClubEditModal = ({ isOpen, onClose, clubData }: ClubEditModalProps) => {
   const [isEditingName, setIsEditingName] = useState(false);
   const [isEditingDescription, setIsEditingDescription] = useState(false);
   const [isDragOver, setIsDragOver] = useState(false);
+  const [showDeleteSuccessModal, setShowDeleteSuccessModal] = useState(false);
+  const [isDeleteConfirmed, setIsDeleteConfirmed] = useState(false);
 
   const nameInputRef = useRef<HTMLInputElement>(null);
   const descriptionTextareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const queryClient = useQueryClient();
+  const router = useRouter();
 
   // 초기 데이터 설정
   useEffect(() => {
@@ -76,7 +88,7 @@ const ClubEditModal = ({ isOpen, onClose, clubData }: ClubEditModalProps) => {
       setIsEditingName(false);
       setIsEditingDescription(false);
     },
-    onError: (error: any) => {
+    onError: (error: ApiError) => {
       alert(
         error?.response?.data?.message ||
           error?.message ||
@@ -100,11 +112,32 @@ const ClubEditModal = ({ isOpen, onClose, clubData }: ClubEditModalProps) => {
       alert('동아리 이미지가 성공적으로 수정되었습니다!');
       setFormData((prev) => ({ ...prev, groupImage: null }));
     },
-    onError: (error: any) => {
+    onError: (error: ApiError) => {
       alert(
         error?.response?.data?.message ||
           error?.message ||
           '동아리 이미지 수정에 실패했습니다.'
+      );
+    },
+  });
+
+  // 동아리 삭제 mutation
+  const deleteGroupMutation = useMutation({
+    mutationFn: (groupId: number) => {
+      return deleteGroup(groupId);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: groupsQueries.groups().queryKey,
+      });
+      // 삭제 성공 모달 표시
+      setShowDeleteSuccessModal(true);
+    },
+    onError: (error: ApiError) => {
+      alert(
+        error?.response?.data?.message ||
+          error?.message ||
+          '동아리 삭제에 실패했습니다.'
       );
     },
   });
@@ -202,7 +235,18 @@ const ClubEditModal = ({ isOpen, onClose, clubData }: ClubEditModalProps) => {
     setIsDragOver(false);
     setIsEditingName(false);
     setIsEditingDescription(false);
+    setIsDeleteConfirmed(false);
     onClose();
+  };
+
+  const handleDelete = () => {
+    deleteGroupMutation.mutate(clubData.id);
+  };
+
+  const handleDeleteSuccess = () => {
+    setShowDeleteSuccessModal(false);
+    onClose();
+    router.push('/home');
   };
 
   if (!isOpen) return null;
@@ -219,50 +263,28 @@ const ClubEditModal = ({ isOpen, onClose, clubData }: ClubEditModalProps) => {
 
   return createPortal(
     <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-lg shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
+      <div className="bg-white rounded-lg shadow-xl max-w-md w-full max-h-[90vh] overflow-hidden flex flex-col">
         {/* 헤더 */}
         <div className="flex items-center justify-between p-4 border-b border-gray-200">
-          <h2 className="text-lg font-semibold text-gray-900">동아리 수정</h2>
+          <h2 className="text-lg font-semibold text-gray-900">동아리 수정/삭제</h2>
+          
           <button
             onClick={handleClose}
             className="text-gray-400 hover:text-gray-600 transition-colors"
           >
-            <svg
-              className="w-5 h-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
+              <IoIosClose className="w-7 h-7" />
+              
           </button>
         </div>
 
         {/* 편집 가능한 ClubCard */}
-        <div className="p-6">
+        <div className="p-6 overflow-y-auto flex-1">
           <Card className="flex flex-col cursor-pointer hover:shadow-lg transition-shadow relative overflow-hidden">
             {/* 드래그 오버레이 */}
             {isDragOver && (
               <div className="absolute inset-0 bg-blue-500 bg-opacity-20 flex items-center justify-center z-10 border-2 border-dashed border-blue-500">
                 <div className="text-blue-700 text-center">
-                  <svg
-                    className="w-12 h-12 mx-auto mb-2"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-                    />
-                  </svg>
+                  
                   <p className="font-semibold">이미지 업로드</p>
                 </div>
               </div>
@@ -278,28 +300,17 @@ const ClubEditModal = ({ isOpen, onClose, clubData }: ClubEditModalProps) => {
               onDragLeave={handleDragLeave}
               onDrop={handleDrop}
             >
-              {imagePreviewSrc ? (
-                <img
+              {imagePreviewSrc && imagePreviewSrc.trim() !== '' ? (
+                <Image
                   src={imagePreviewSrc}
                   alt={clubData.name}
-                  className="w-full h-full object-cover transition-opacity group-hover:opacity-75"
+                  fill
+                  className="object-cover transition-opacity group-hover:opacity-75"
                 />
               ) : (
                 <div className="w-full h-full flex items-center justify-center text-gray-400">
                   <div className="text-center">
-                    <svg
-                      className="w-12 h-12 mx-auto mb-2"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-                      />
-                    </svg>
+                   
                     <p className="text-sm">이미지 클릭</p>
                   </div>
                 </div>
@@ -308,25 +319,7 @@ const ClubEditModal = ({ isOpen, onClose, clubData }: ClubEditModalProps) => {
               {/* 이미지 호버 오버레이 */}
               <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-200 flex items-center justify-center">
                 <div className="opacity-0 group-hover:opacity-100 transition-opacity text-white text-center">
-                  <svg
-                    className="w-8 h-8 mx-auto mb-1"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"
-                    />
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"
-                    />
-                  </svg>
+                  
                   <p className="text-xs font-medium">
                     {updateGroupImageMutation.isPending
                       ? '업로드 중...'
@@ -441,16 +434,74 @@ const ClubEditModal = ({ isOpen, onClose, clubData }: ClubEditModalProps) => {
               </button>
             </div>
           )}
+          {/* 삭제 버튼 */}
+          <div className="mt-6 pt-4 border-t border-gray-200">
+            <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+              <div className="flex items-start gap-3">
+                <div className="flex-shrink-0">
+                  <MdErrorOutline className="text-red-500 text-xl" />
+                </div>
+                <div className="flex-1">
+                  <h4 className="text-sm font-medium text-red-800 mb-1">
+                    위험한 작업
+                  </h4>
+                  <p className="text-sm text-red-700 mb-3">
+                    동아리를 삭제하면 모든 게시글, 댓글, 멤버 정보가 영구적으로
+                    삭제됩니다. 이 작업은 되돌릴 수 없습니다.
+                  </p>
 
-          {/* 도움말 */}
-          <div className="mt-4 text-xs text-gray-500 text-center">
-            <p>
-              💡 <strong>팁:</strong> 이름/설명 클릭해서 수정, 이미지는
-              클릭하거나 드래그해서 변경
-            </p>
+                  {/* 확인 체크박스 */}
+                  <div className="mb-3">
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={isDeleteConfirmed}
+                        onChange={(e) => setIsDeleteConfirmed(e.target.checked)}
+                        className="w-4 h-4 text-red-600 bg-gray-100 border-gray-300 rounded focus:ring-red-500 focus:ring-2"
+                      />
+                      <span className="text-sm text-red-700 font-medium">
+                        위 내용을 이해했으며, 동아리 삭제에 동의합니다
+                      </span>
+                    </label>
+                  </div>
+
+                  <button
+                    onClick={handleDelete}
+                    disabled={
+                      !isDeleteConfirmed || deleteGroupMutation.isPending
+                    }
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-gray-400"
+                  >
+                    {deleteGroupMutation.isPending ? (
+                      <>
+                        <span className="animate-spin">⏳</span>
+                        삭제 중...
+                      </>
+                    ) : (
+                      <>
+                        <span>🗑️</span>
+                        동아리 삭제
+                      </>
+                    )}
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
+
+         
         </div>
       </div>
+
+      {/* 삭제 성공 모달 */}
+      <SuccessModal
+        isOpen={showDeleteSuccessModal}
+        onClose={handleDeleteSuccess}
+        title="동아리 삭제 완료"
+        message="동아리가 성공적으로 삭제되었습니다."
+        buttonText="홈으로 이동"
+        onButtonClick={handleDeleteSuccess}
+      />
     </div>,
     document.body
   );

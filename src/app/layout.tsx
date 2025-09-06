@@ -7,8 +7,11 @@ export const metadata: Metadata = {
   title: 'MODONGGU',
   description: '모모, 동동, 구구와 함께하는 인덕대학교 동아리 플랫폼',
   icons: {
-    icon: '/main_img/모동구.webp',
-    shortcut: '/main_img/모동구.webp',
+    icon: [
+      { url: '/favicon.ico', sizes: '32x32', type: 'image/x-icon' },
+      { url: '/main_img/모동구.webp', sizes: 'any', type: 'image/webp' },
+    ],
+    shortcut: '/favicon.ico',
     apple: '/main_img/모동구.webp',
   },
 };

@@ -3,7 +3,7 @@ import type {
   GroupMember,
   Group,
 } from '@/app/_types/group.types';
-import { get, post, patch, put } from './axios-client';
+import { get, post, patch, put, del } from './axios-client';
 
 export const getGroups = async (): Promise<GetGroupsResponse> => {
   const res = await get<GetGroupsResponse>(`/groups`);
@@ -71,4 +71,7 @@ export const updateMemberStatus = async (
 };
 export const leaveGroup = async (groupId: number): Promise<void> => {
   await post<void>(`/groups/${groupId}/members/me/leave`);
+};
+ export const deleteGroup = async (groupId: number): Promise<void> => {
+  await del<void>(`/groups/${groupId}`);
 };
