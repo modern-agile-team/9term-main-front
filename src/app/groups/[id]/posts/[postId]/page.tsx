@@ -61,9 +61,7 @@ export default function PostDetailPage() {
         <div className="mb-2 text-sm text-gray-600">
           <span className="mr-2">📍</span>
           <img
-
             src={post.postImageUrl}
-
             alt="게시물 이미지"
             className="w-full h-auto"
           />

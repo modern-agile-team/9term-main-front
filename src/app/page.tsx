@@ -31,7 +31,6 @@ const characterFeatures = [
     personality: '창의성',
     color: 'from-purple-400 to-indigo-500',
   },
- 
 ];
 
 const features = [
