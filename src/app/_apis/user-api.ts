@@ -1,5 +1,6 @@
 import { User } from '@/app/_types/user.types';
 import { get, patch, del } from './axios-client';
+import { MyGroupsResponse } from '../_types/mygroup.types';
 
 export const getMyProfile = async (): Promise<User> => {
   const response = await get<{
@@ -20,5 +21,10 @@ export const updateMyProfileImage = async (
 
 export const deleteMyProfileImage = async (): Promise<User> => {
   const res = await del<User>(`/users/me/image`);
+  return res;
+};
+
+export const getUserGroups = async (): Promise<MyGroupsResponse> => {
+  const res = await get<MyGroupsResponse>(`/users/me/groups`);
   return res;
 };
