@@ -8,6 +8,7 @@ import Sidebar from '@/app/groups/components/Sidebar';
 import PostList from '@/app/groups/components/posts/PostList';
 import Calendar from '@/app/groups/components/Calendar';
 import ActivityStats from '@/app/groups/components/ActivityStats';
+import Gallery from '@/app/groups/components/Gallery';
 import PostCreateModal from '@/app/groups/components/posts/PostModal'; // 통합 모달
 import DeletePostModal from '@/app/groups/components/posts/DeletePostModal';
 
@@ -130,6 +131,8 @@ const GroupPage = () => {
   }, [membersData, membersError, me]);
   const renderContent = () => {
     switch (activeTab) {
+      case '갤러리':
+        return <Gallery groupId={groupId} />;
       case '일정':
         return <Calendar />;
       case '통계':
