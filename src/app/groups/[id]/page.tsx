@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 import BoardHeader from '@/app/groups/components/BoardHeader';
 import Sidebar from '@/app/groups/components/Sidebar';
@@ -15,7 +15,7 @@ import DeletePostModal from '@/app/groups/components/posts/DeletePostModal';
 import type { Post } from '@/app/_types/post.types';
 import { useAuth, useMyProfile } from '@/app/_services/auth-provider';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { deletePost } from '@/app/_apis/client';
+import { deletePost, leaveGroup } from '@/app/_apis/client';
 import { QUERY_KEYS } from '@/app/_utils/query-utils';
 import { handleGeneralError } from '@/app/_utils/error-utils';
 import JoinGroupBanner from '../components/JoinGroupBanner';
@@ -28,6 +28,7 @@ import {
 
 const GroupPage = () => {
   const params = useParams();
+  const router = useRouter();
   const groupId = parseInt(params.id as string, 10);
   const [activeTab, setActiveTab] = useState('자유게시판');
   const [showJoinBanner, setShowJoinBanner] = useState(false);
@@ -54,8 +55,10 @@ const GroupPage = () => {
     isLoading,
     isError,
   } = useQuery(groupsQueries.groupPosts(groupId));
-  const { data: groupData } = useQuery(groupsQueries.group(groupId));
+  const { data: groupsData } = useQuery(groupsQueries.groups());
+  const groupData = groupsData?.data?.find((group) => group.id === groupId);
   const { data: membersData, isError: membersError } = useGroupMembers(groupId);
+  const currentMember = membersData?.find((member) => member.userId === me?.userId);
 
   const deletePostMutation = useMutation({
     mutationFn: ({ groupId, postId }: { groupId: number; postId: number }) =>
@@ -68,6 +71,21 @@ const GroupPage = () => {
     },
     onError: (error: any) => {
       alert(handleGeneralError(error));
+    },
+  });
+
+  const leaveGroupMutation = useMutation({
+    mutationFn: () => leaveGroup(groupId),
+    onSuccess: () => {
+      alert('그룹을 성공적으로 탈퇴했습니다.');
+      queryClient.invalidateQueries({
+        queryKey: QUERY_KEYS.groupMembers(groupId),
+      });
+      router.push('/');
+    },
+    onError: (error: any) => {
+      alert('그룹 탈퇴에 실패했습니다.');
+      console.error('Leave group error:', error);
     },
   });
 
@@ -152,17 +170,75 @@ const GroupPage = () => {
   };
 
   return (
-    <div className="flex min-h-[calc(100vh-4rem)] relative mt-16">
-      {/* 데스크톱 사이드바 */}
-      <div className="hidden lg:block w-64 min-w-64">
-        <Sidebar onCreatePost={handleCreateButtonClick} groupId={groupId} />
+    <div className="min-h-screen">
+      {/* 그룹 헤더 섹션 */}
+      <div className="relative h-80 mx-4 mt-12 rounded-xl bg-gradient-to-r from-blue-500 to-purple-600">
+        {/* 배경 이미지 (API 추가 예정) */}
+        <div className="absolute "></div>
+        
+        {/* 그룹 정보 */}
+        <div className="relative z-10 h-full flex items-end">
+          <div className="max-w-6xl mx-auto w-full px-4 -mb-4">
+            <div className="flex items-end space-x-6">
+              {/* 그룹 이미지 */}
+              <div className="w-24 h-24 rounded-2xl bg-white shadow-lg overflow-hidden">
+                {groupData?.groupImageUrl ? (
+                  <img 
+                    src={groupData.groupImageUrl} 
+                    alt={groupData.name}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+                    <span className="text-gray-500 text-sm">이미지</span>
+                  </div>
+                )}
+              </div>
+              
+              {/* 그룹 정보 */}
+              <div className="text-white flex-1">
+                <div className="flex items-center justify-between mb-2">
+                  <h1 className="text-3xl font-bold">{groupData?.name || '그룹명'}</h1>
+                  {isMember && currentMember?.role === 'MANAGER' && (
+                    <button
+                      className="text-white/80 hover:text-white transition-colors"
+                      onClick={() => {
+                        // 편집 모달 열기 로직 추가 예정
+                      }}
+                    >
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                      </svg>
+                    </button>
+                  )}
+                </div>
+                <p className="text-white/80 mb-5  ">{groupData?.description || '그룹 설명'}</p>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
-      {/* 메인 컨텐츠 */}
-      <div className="flex-1 w-full lg:w-auto">
-        <div className="max-w-4xl mx-auto p-4 lg:p-6">
-          <BoardHeader activeTab={activeTab} setActiveTab={setActiveTab} />
-          {renderContent()}
+      {/* 메인 컨텐츠 영역 */}
+      <div className="max-w-6xl mx-auto px-4 py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+          {/* 메인 컨텐츠 */}
+          <div className="lg:col-span-3">
+            <div className="sticky top-24 z-20 ">
+              <BoardHeader activeTab={activeTab} setActiveTab={setActiveTab} />
+              <div className="mt-6 "></div>
+            </div>
+            <div>
+              {renderContent()}
+            </div>
+          </div>
+
+          {/* 사이드바 */}
+          <div className="lg:col-span-1">
+            <div className="sticky top-24">
+              <Sidebar onCreatePost={handleCreateButtonClick} groupId={groupId} />
+            </div>
+          </div>
         </div>
       </div>
 
