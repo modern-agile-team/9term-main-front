@@ -15,7 +15,7 @@ import DeletePostModal from '@/app/groups/components/posts/DeletePostModal';
 import type { Post } from '@/app/_types/post.types';
 import { useAuth, useMyProfile } from '@/app/_services/auth-provider';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { deletePost, leaveGroup } from '@/app/_apis/client';
+import { deletePost } from '@/app/_apis/client';
 import { QUERY_KEYS } from '@/app/_utils/query-utils';
 import { handleGeneralError } from '@/app/_utils/error-utils';
 import JoinGroupBanner from '../components/JoinGroupBanner';
@@ -74,20 +74,6 @@ const GroupPage = () => {
     },
   });
 
-  const leaveGroupMutation = useMutation({
-    mutationFn: () => leaveGroup(groupId),
-    onSuccess: () => {
-      alert('그룹을 성공적으로 탈퇴했습니다.');
-      queryClient.invalidateQueries({
-        queryKey: QUERY_KEYS.groupMembers(groupId),
-      });
-      router.push('/');
-    },
-    onError: (error: any) => {
-      alert('그룹 탈퇴에 실패했습니다.');
-      console.error('Leave group error:', error);
-    },
-  });
 
   const filteredPosts = posts.filter((post) =>
     activeTab === '공지' ? post.isNotice : !post.isNotice
