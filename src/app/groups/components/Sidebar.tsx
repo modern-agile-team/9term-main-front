@@ -94,38 +94,9 @@ export default function Sidebar({ onCreatePost, groupId }: SidebarProps) {
   };
 
   return (
-    <div className="h-full bg-white p-6 flex flex-col">
-      {/* 동아리 프로필 섹션 */}
-      <div className="border-b pb-6 mb-6">
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center space-x-4">
-            <div className="relative w-16 h-16 rounded-full overflow-hidden">
-              <img
-                src={club?.groupImageUrl || ''}
-                alt="동아리 프로필"
-                className="w-full h-full object-cover"
-              />
-            </div>
-            <div>
-              <h2 className="text-xl font-bold">{club?.name}</h2>
-              <p className="text-gray-600 text-sm">
-                회원 {club?.memberCount}명
-              </p>
-            </div>
-          </div>
-
-          <button
-            className="text-gray-500 hover:text-gray-700"
-            onClick={() => {
-              setIsEditClubModalOpen(true);
-            }}
-          >
-            {isManager && (
-              <FaPencilAlt className="w-4 h-4 hover:text-gray-500 transition" />
-            )}
-          </button>
-        </div>
-
+    <div className="h-full bg-white p-6 flex flex-col rounded-xl">
+      {/* 액션 버튼 섹션 */}
+      <div className="mb-6">
         <div className="space-y-3">
           <button
             className={`flex items-center justify-center w-full py-2 rounded-lg font-medium ${
@@ -140,6 +111,17 @@ export default function Sidebar({ onCreatePost, groupId }: SidebarProps) {
           >
             <span className="mr-2">✏️</span> 새 게시글 작성하기
           </button>
+
+          {/* 동아리 수정 */}
+          {isManager && (
+            <button
+              className="flex items-center justify-center w-full py-2 rounded-lg font-medium bg-gray-100 text-gray-700 hover:bg-gray-200"
+              onClick={() => setIsEditClubModalOpen(true)}
+            >
+              <FaPencilAlt className="w-4 h-4 mr-2" />
+              그룹 편집
+            </button>
+          )}
 
           {/* 멤버 버튼 */}
           <button
@@ -166,7 +148,7 @@ export default function Sidebar({ onCreatePost, groupId }: SidebarProps) {
       {showMembers && (
         <div className="flex-1 mb-6">
           <h3 className="font-medium text-gray-900 mb-4">멤버 목록</h3>
-          <div className="space-y-3">
+          <div className="space-y-3 max-h-80 overflow-y-auto">
             {membersLoading ? (
               <div className="text-sm text-gray-500">멤버 목록 로딩 중...</div>
             ) : membersError ? (
