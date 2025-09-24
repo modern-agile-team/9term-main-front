@@ -16,7 +16,8 @@ interface PostModalProps {
     id: number;
     title: string;
     content: string;
-    postImageUrl?: string | null;
+    postImageUrl: string | null;
+    category: string;
   } | null;
 }
 
@@ -34,6 +35,7 @@ const PostModal = ({
     title: '',
     content: '',
     postImage: null,
+    category: 'NORMAL',
   });
 
   const queryClient = useQueryClient();
@@ -46,13 +48,14 @@ const PostModal = ({
         title: initialData?.title || '',
         content: initialData?.content || '',
         postImage: null,
+        category: initialData?.category || 'NORMAL',
       });
       setIsDragOver(false);
     }
   }, [isOpen, initialData, groupId]);
 
   const postMutation = useMutation({
-    mutationFn: (submitData: FormData | { title: string; content: string }) => {
+    mutationFn: (submitData: FormData | { title: string; content: string; category: string }) => {
       if (isEditMode && initialData?.id) {
         return editPost(
           groupId,
@@ -60,6 +63,7 @@ const PostModal = ({
           submitData as {
             title: string;
             content: string;
+            category: string;
           }
         );
       } else {
@@ -70,7 +74,7 @@ const PostModal = ({
       queryClient.invalidateQueries({
         queryKey: groupsQueries.groupPosts(groupId).queryKey,
       });
-      setFormData({ groupId, title: '', content: '', postImage: null });
+      setFormData({ groupId, title: '', content: '', postImage: null, category: 'NORMAL' });
       onClose();
     },
     onError: (error: any) => {
@@ -85,6 +89,14 @@ const PostModal = ({
     setFormData((prev) => ({
       ...prev,
       [name]: value,
+    }));
+  };
+
+  const handleCategoryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const isAnnouncement = e.target.checked;
+    setFormData((prev) => ({
+      ...prev,
+      category: isAnnouncement ? 'ANNOUNCEMENT' : 'NORMAL',
     }));
   };
 
@@ -141,11 +153,13 @@ const PostModal = ({
       postMutation.mutate({
         title: formData.title,
         content: formData.content,
+        category: formData.category || 'NORMAL',
       });
     } else {
       const submitFormData = new FormData();
       submitFormData.append('title', formData.title);
       submitFormData.append('content', formData.content);
+      submitFormData.append('category', formData.category || 'NORMAL');
       if (formData.postImage) {
         submitFormData.append('postImage', formData.postImage);
       }
@@ -155,7 +169,7 @@ const PostModal = ({
   };
 
   const handleClose = () => {
-    setFormData({ groupId, title: '', content: '', postImage: null });
+    setFormData({ groupId, title: '', content: '', postImage: null, category: 'NORMAL' });
     setIsDragOver(false);
     onClose();
   };
@@ -176,7 +190,7 @@ const PostModal = ({
 
   return createPortal(
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-lg shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
+      <div className="bg-white rounded-lg shadow-xl max-w-md w-full max-h-[100vh] overflow-y-auto">
         {/* 헤더 - 모드에 따라 제목 변경 */}
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
           <h2 className="text-xl font-semibold text-gray-900">
@@ -323,6 +337,19 @@ const PostModal = ({
                 </p>
               </div>
             </div>
+          </div>
+
+          {/* 카테고리 선택 */}
+          <div className="flex justify-end">
+            <label className="flex items-center space-x-2 text-sm text-gray-700">
+              <input
+                type="checkbox"
+                checked={formData.category === 'ANNOUNCEMENT'}
+                onChange={handleCategoryChange}
+                className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+              />
+              <span>공지사항으로 등록</span>
+            </label>
           </div>
 
           {/* 버튼 */}
