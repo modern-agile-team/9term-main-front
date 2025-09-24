@@ -92,13 +92,6 @@ const PostModal = ({
     }));
   };
 
-  const handleCategoryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const isAnnouncement = e.target.checked;
-    setFormData((prev) => ({
-      ...prev,
-      category: isAnnouncement ? 'ANNOUNCEMENT' : 'NORMAL',
-    }));
-  };
 
   const handleImageChange = (file: File) => {
     if (isEditMode) return;
@@ -220,22 +213,53 @@ const PostModal = ({
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           {/* 게시물 제목 */}
           <div>
-            <label
-              htmlFor="title"
-              className="block text-sm font-medium text-gray-700 mb-2"
-            >
-              게시물 제목 *
-            </label>
-            <input
-              type="text"
-              id="title"
-              name="title"
-              value={formData.title}
-              onChange={handleInputChange}
+            <div className="flex justify-between items-center mb-2">
+              <label
+                htmlFor="category"
+                className="block text-sm font-medium text-gray-700"
+              >
+                게시물 분류 *
+              </label>
+            </div>
+            
+            <select
+              id="category"
+              name="category"
+              value={formData.category}
+              onChange={(e) => {
+                setFormData((prev) => ({
+                  ...prev,
+                  category: e.target.value,
+                }));
+              }}
               required
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="게시물 제목을 입력하세요"
-            />
+              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                formData.category === 'ANNOUNCEMENT' 
+                  ? 'border-red-300 bg-red-50 text-red-700' 
+                  : 'border-gray-300 bg-white text-gray-700'
+              }`}
+            >
+              <option value="NORMAL">📝 자유 게시판</option>
+              <option value="ANNOUNCEMENT">📢 공지사항</option>
+            </select>
+            <div className="mt-4">
+              <label
+                htmlFor="title"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
+                게시물 제목 *
+              </label>
+              <input
+                type="text"
+                id="title"
+                name="title"
+                value={formData.title}
+                onChange={handleInputChange}
+                required
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="게시물 제목을 입력하세요"
+              />
+            </div>
           </div>
 
           {/* 게시물 내용 */}
@@ -339,18 +363,6 @@ const PostModal = ({
             </div>
           </div>
 
-          {/* 카테고리 선택 */}
-          <div className="flex justify-end">
-            <label className="flex items-center space-x-2 text-sm text-gray-700">
-              <input
-                type="checkbox"
-                checked={formData.category === 'ANNOUNCEMENT'}
-                onChange={handleCategoryChange}
-                className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-              />
-              <span>공지사항으로 등록</span>
-            </label>
-          </div>
 
           {/* 버튼 */}
           <div className="flex justify-end space-x-3 pt-6 border-t border-gray-200">
