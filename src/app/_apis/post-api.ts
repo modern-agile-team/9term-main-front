@@ -26,7 +26,7 @@ export const createPost = async (
 export const editPost = async (
   groupId: number,
   postId: number,
-  postData: { title: string; content: string }
+  postData: { title: string; content: string; category: string }
 ): Promise<Post | undefined> => {
   const res = await patch<Post>(`/groups/${groupId}/posts/${postId}`, postData);
   return res;

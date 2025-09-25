@@ -3,6 +3,7 @@ export interface PostCreateFormData {
   title: string;
   content: string;
   postImage: File | null;
+  category: string;
 }
 
 export interface Post {
@@ -12,6 +13,7 @@ export interface Post {
   title: string;
   content: string;
   postImageUrl: string | null;
+  category: string;
   user: {
     name: string;
     profileImageUrl: string | null;

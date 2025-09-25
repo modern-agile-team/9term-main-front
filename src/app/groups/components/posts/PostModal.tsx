@@ -16,7 +16,8 @@ interface PostModalProps {
     id: number;
     title: string;
     content: string;
-    postImageUrl?: string | null;
+    postImageUrl: string | null;
+    category: string;
   } | null;
 }
 
@@ -34,6 +35,7 @@ const PostModal = ({
     title: '',
     content: '',
     postImage: null,
+    category: 'NORMAL',
   });
 
   const queryClient = useQueryClient();
@@ -46,13 +48,14 @@ const PostModal = ({
         title: initialData?.title || '',
         content: initialData?.content || '',
         postImage: null,
+        category: initialData?.category || 'NORMAL',
       });
       setIsDragOver(false);
     }
   }, [isOpen, initialData, groupId]);
 
   const postMutation = useMutation({
-    mutationFn: (submitData: FormData | { title: string; content: string }) => {
+    mutationFn: (submitData: FormData | { title: string; content: string; category: string }) => {
       if (isEditMode && initialData?.id) {
         return editPost(
           groupId,
@@ -60,6 +63,7 @@ const PostModal = ({
           submitData as {
             title: string;
             content: string;
+            category: string;
           }
         );
       } else {
@@ -70,7 +74,7 @@ const PostModal = ({
       queryClient.invalidateQueries({
         queryKey: groupsQueries.groupPosts(groupId).queryKey,
       });
-      setFormData({ groupId, title: '', content: '', postImage: null });
+      setFormData({ groupId, title: '', content: '', postImage: null, category: 'NORMAL' });
       onClose();
     },
     onError: (error: any) => {
@@ -87,6 +91,7 @@ const PostModal = ({
       [name]: value,
     }));
   };
+
 
   const handleImageChange = (file: File) => {
     if (isEditMode) return;
@@ -141,11 +146,13 @@ const PostModal = ({
       postMutation.mutate({
         title: formData.title,
         content: formData.content,
+        category: formData.category || 'NORMAL',
       });
     } else {
       const submitFormData = new FormData();
       submitFormData.append('title', formData.title);
       submitFormData.append('content', formData.content);
+      submitFormData.append('category', formData.category || 'NORMAL');
       if (formData.postImage) {
         submitFormData.append('postImage', formData.postImage);
       }
@@ -155,7 +162,7 @@ const PostModal = ({
   };
 
   const handleClose = () => {
-    setFormData({ groupId, title: '', content: '', postImage: null });
+    setFormData({ groupId, title: '', content: '', postImage: null, category: 'NORMAL' });
     setIsDragOver(false);
     onClose();
   };
@@ -176,7 +183,7 @@ const PostModal = ({
 
   return createPortal(
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-lg shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
+      <div className="bg-white rounded-lg shadow-xl max-w-md w-full max-h-[100vh] overflow-y-auto">
         {/* 헤더 - 모드에 따라 제목 변경 */}
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
           <h2 className="text-xl font-semibold text-gray-900">
@@ -206,22 +213,53 @@ const PostModal = ({
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           {/* 게시물 제목 */}
           <div>
-            <label
-              htmlFor="title"
-              className="block text-sm font-medium text-gray-700 mb-2"
-            >
-              게시물 제목 *
-            </label>
-            <input
-              type="text"
-              id="title"
-              name="title"
-              value={formData.title}
-              onChange={handleInputChange}
+            <div className="flex justify-between items-center mb-2">
+              <label
+                htmlFor="category"
+                className="block text-sm font-medium text-gray-700"
+              >
+                게시물 분류 *
+              </label>
+            </div>
+            
+            <select
+              id="category"
+              name="category"
+              value={formData.category}
+              onChange={(e) => {
+                setFormData((prev) => ({
+                  ...prev,
+                  category: e.target.value,
+                }));
+              }}
               required
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="게시물 제목을 입력하세요"
-            />
+              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                formData.category === 'ANNOUNCEMENT' 
+                  ? 'border-red-300 bg-red-50 text-red-700' 
+                  : 'border-gray-300 bg-white text-gray-700'
+              }`}
+            >
+              <option value="NORMAL">📝 자유 게시판</option>
+              <option value="ANNOUNCEMENT">📢 공지사항</option>
+            </select>
+            <div className="mt-4">
+              <label
+                htmlFor="title"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
+                게시물 제목 *
+              </label>
+              <input
+                type="text"
+                id="title"
+                name="title"
+                value={formData.title}
+                onChange={handleInputChange}
+                required
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="게시물 제목을 입력하세요"
+              />
+            </div>
           </div>
 
           {/* 게시물 내용 */}
@@ -324,6 +362,7 @@ const PostModal = ({
               </div>
             </div>
           </div>
+
 
           {/* 버튼 */}
           <div className="flex justify-end space-x-3 pt-6 border-t border-gray-200">

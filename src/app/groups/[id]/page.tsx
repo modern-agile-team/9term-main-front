@@ -74,9 +74,14 @@ const GroupPage = () => {
   });
 
 
-  const filteredPosts = posts.filter((post) =>
-    activeTab === '공지' ? post.isNotice : !post.isNotice
-  );
+  const filteredPosts = posts.filter((post) => {
+    if (activeTab === '공지') {
+      return post.category === 'ANNOUNCEMENT';
+    } else if (activeTab === '자유게시판') {
+      return post.category === 'NORMAL';
+    }
+    return true; // 다른 탭들은 모든 게시물 표시
+  });
   const deletingPost = posts.find((p) => p.id === deletePostId);
 
   // 게시물 생성 모달 열기
@@ -240,6 +245,7 @@ const GroupPage = () => {
                 title: postModalState.postData.title,
                 content: postModalState.postData.content,
                 postImageUrl: postModalState.postData.postImageUrl || null,
+                category: postModalState.postData.category,
               }
             : null
         }
