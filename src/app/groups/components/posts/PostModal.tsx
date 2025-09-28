@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { createPost, editPost } from '@/app/_apis/post-api';
 import { IMAGE_TYPES } from '@/app/_types/image.types';
-import { groupsQueries } from '@/app/groups/_queries';
+import { invalidatePostRelatedQueries } from '@/app/_utils/query-utils';
 import { createPortal } from 'react-dom';
 import { PostCreateFormData } from '@/app/_types/post.types';
 
@@ -71,9 +71,7 @@ const PostModal = ({
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: groupsQueries.groupPosts(groupId).queryKey,
-      });
+      invalidatePostRelatedQueries(queryClient, groupId);
       setFormData({ groupId, title: '', content: '', postImage: null, category: 'NORMAL' });
       onClose();
     },

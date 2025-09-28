@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { groupJoin } from '@/app/_apis/client';
 import { AxiosError } from 'axios';
+import { QUERY_KEYS } from '@/app/_utils/query-utils';
 
 interface JoinGroupBannerProps {
   groupId: number;
@@ -22,7 +23,7 @@ export default function JoinGroupBanner({
     mutationFn: (groupId: number) => groupJoin(groupId),
     onSuccess: (response: { message: string }) => {
       queryClient.invalidateQueries({
-        queryKey: ['group', groupId, 'members'],
+        queryKey: QUERY_KEYS.groupMembers(groupId),
       });
       setIsSubmitting(false);
       setIsVisible(false);

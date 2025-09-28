@@ -16,9 +16,11 @@ import type { Post } from '@/app/_types/post.types';
 import { useAuth, useMyProfile } from '@/app/_services/auth-provider';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { deletePost } from '@/app/_apis/client';
-import { QUERY_KEYS } from '@/app/_utils/query-utils';
+import { QUERY_KEYS, invalidatePostRelatedQueries } from '@/app/_utils/query-utils';
 import { handleGeneralError } from '@/app/_utils/error-utils';
 import JoinGroupBanner from '../components/JoinGroupBanner';
+import RecruitmentBadge from '../components/RecruitmentBadge';
+import RecruitmentStatusModal from '../components/RecruitmentStatusModal';
 
 import { groupsQueries } from '../_queries';
 import {
@@ -44,6 +46,7 @@ const GroupPage = () => {
   });
 
   const [deletePostId, setDeletePostId] = useState<number | null>(null);
+  const [isRecruitmentModalOpen, setIsRecruitmentModalOpen] = useState(false);
   const { data: me } = useMyProfile();
   const { isLoggedIn } = useAuth();
   const queryClient = useQueryClient();
@@ -63,9 +66,7 @@ const GroupPage = () => {
     mutationFn: ({ groupId, postId }: { groupId: number; postId: number }) =>
       deletePost(groupId, postId),
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: QUERY_KEYS.groupPosts(groupId),
-      });
+      invalidatePostRelatedQueries(queryClient, groupId);
       setDeletePostId(null);
     },
     onError: (error: any) => {
@@ -188,7 +189,28 @@ const GroupPage = () => {
               {/* 그룹 정보 */}
               <div className="text-white flex-1">
                 <div className="flex items-center justify-between mb-2">
-                  <h1 className="text-3xl font-bold">{groupData?.name || '그룹명'}</h1>
+                  <div className="flex items-center space-x-4">
+                    <h1 className="text-3xl font-bold">{groupData?.name || '그룹명'}</h1>
+                    <div className="flex items-center space-x-2">
+                      <RecruitmentBadge 
+                        status={
+                          groupData?.recruitStatus === 'ALWAYS_OPEN' ? 'always_open' :
+                          groupData?.recruitStatus === 'OPEN' ? 'recruiting' : 'closed'
+                        } 
+                        size="md" 
+                        variant="solid"
+                        className="text-white"
+                      />
+                      {isMember && currentMember?.role === 'MANAGER' && (
+                        <button
+                          onClick={() => setIsRecruitmentModalOpen(true)}
+                          className="px-3 py-1 text-xs bg-white/20 hover:bg-white/30 text-white rounded-full transition-colors"
+                        >
+                          변경
+                        </button>
+                      )}
+                    </div>
+                  </div>
                   {isMember && currentMember?.role === 'MANAGER' && (
                     <button
                       className="text-white/80 hover:text-white transition-colors"
@@ -261,6 +283,14 @@ const GroupPage = () => {
           onClose={() => setDeletePostId(null)}
         />
       )}
+
+      {/* 모집 상태 변경 모달 */}
+      <RecruitmentStatusModal
+        isOpen={isRecruitmentModalOpen}
+        onClose={() => setIsRecruitmentModalOpen(false)}
+        groupId={groupId}
+        currentStatus={groupData?.recruitStatus || 'CLOSED'}
+      />
       {/* 가입 배너 */}
       {showJoinBanner && groupData && (
         <JoinGroupBanner

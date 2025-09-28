@@ -11,6 +11,8 @@ export interface Group {
   groupImageUrl: string | null;
   createdAt: string;
   memberCount: string;
+  isRecruiting: boolean;
+  recruitStatus: 'ALWAYS_OPEN' | 'CLOSED' | 'OPEN';
 }
 
 export interface GetGroupsResponse {

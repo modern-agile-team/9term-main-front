@@ -100,3 +100,29 @@ export const invalidateCommentUpdateQueries = (
     queryKey: QUERY_KEYS.post(groupId, postId),
   });
 };
+
+// 그룹 관련 쿼리 무효화 유틸리티 함수
+export const invalidateGroupRelatedQueries = (
+  queryClient: QueryClient,
+  groupId: number
+) => {
+  // 모든 그룹 목록 무효화
+  queryClient.invalidateQueries({
+    queryKey: QUERY_KEYS.groups(),
+  });
+  
+  // 특정 그룹 정보 무효화
+  queryClient.invalidateQueries({
+    queryKey: QUERY_KEYS.group(groupId),
+  });
+  
+  // 그룹 멤버 목록 무효화
+  queryClient.invalidateQueries({
+    queryKey: QUERY_KEYS.groupMembers(groupId),
+  });
+  
+  // 그룹 게시글 목록 무효화
+  queryClient.invalidateQueries({
+    queryKey: QUERY_KEYS.groupPosts(groupId),
+  });
+};
