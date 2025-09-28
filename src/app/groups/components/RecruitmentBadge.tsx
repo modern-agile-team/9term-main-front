@@ -15,7 +15,6 @@ export default function RecruitmentBadge({
 }: RecruitmentBadgeProps) {
   const isRecruiting = status === 'recruiting';
   const isAlwaysOpen = status === 'always_open';
-  const isClosed = status === 'closed';
   
   const sizeClasses = {
     sm: 'px-2 py-1 text-xs',
