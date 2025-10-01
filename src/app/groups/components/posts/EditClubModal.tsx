@@ -8,7 +8,7 @@ import {
   updateGroupImage,
 } from '@/app/_apis/group-api';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { invalidateGroupRelatedQueries } from '@/app/_utils/query-utils';
+import { useInvalidateGroupRelatedQueries } from '@/app/_utils/query-utils';
 import { createPortal } from 'react-dom';
 import { GroupCreateFormData, Group } from '@/app/_types/group.types';
 import { Card } from '@/app/_components/Card';
@@ -40,6 +40,7 @@ const ClubEditModal = ({ isOpen, onClose, clubData }: ClubEditModalProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const queryClient = useQueryClient();
+  const invalidateGroupQueries = useInvalidateGroupRelatedQueries();
   const router = useRouter();
 
   // 초기 데이터 설정
@@ -78,7 +79,7 @@ const ClubEditModal = ({ isOpen, onClose, clubData }: ClubEditModalProps) => {
       return updateGroup(clubData.id, data);
     },
     onSuccess: () => {
-      invalidateGroupRelatedQueries(queryClient, clubData.id);
+      invalidateGroupQueries(clubData.id);
       alert('동아리 정보가 성공적으로 수정되었습니다!');
       setIsEditingName(false);
       setIsEditingDescription(false);
@@ -98,7 +99,7 @@ const ClubEditModal = ({ isOpen, onClose, clubData }: ClubEditModalProps) => {
       return updateGroupImage(clubData.id, formData);
     },
     onSuccess: () => {
-      invalidateGroupRelatedQueries(queryClient, clubData.id);
+      invalidateGroupQueries(clubData.id);
       alert('동아리 이미지가 성공적으로 수정되었습니다!');
       setFormData((prev) => ({ ...prev, groupImage: null }));
     },
@@ -117,7 +118,7 @@ const ClubEditModal = ({ isOpen, onClose, clubData }: ClubEditModalProps) => {
       return deleteGroup(groupId);
     },
     onSuccess: () => {
-      invalidateGroupRelatedQueries(queryClient, clubData.id);
+      invalidateGroupQueries(clubData.id);
       // 삭제 성공 모달 표시
       setShowDeleteSuccessModal(true);
     },
