@@ -19,8 +19,8 @@ export const createGroup = async (
   formData:
     | FormData
     | { name: string; description: string; groupImage: File | null }
-): Promise<GetGroupsResponse | undefined> => {
-  const res = await post<GetGroupsResponse>(`/groups`, formData);
+): Promise<Group | undefined> => {
+  const res = await post<Group>(`/groups`, formData);
   return res;
 };
 
@@ -74,4 +74,11 @@ export const leaveGroup = async (groupId: number): Promise<void> => {
 };
  export const deleteGroup = async (groupId: number): Promise<void> => {
   await del<void>(`/groups/${groupId}`);
+};
+
+export const updateRecruitmentStatus = async (
+  groupId: number,
+  recruitStatus: 'ALWAYS_OPEN' | 'CLOSED' | 'OPEN'
+): Promise<void> => {
+  await patch<void>(`/groups/${groupId}/recruitment`, { recruitStatus });
 };

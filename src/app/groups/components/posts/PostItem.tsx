@@ -10,7 +10,7 @@ import CommentList from '@/app/groups/components/comments/CommentList';
 import CommentForm from '@/app/groups/components/comments/CommentForm';
 import { useMyProfile } from '@/app/_services/auth-provider';
 import { useMembership } from '@/app/_services/membership-provider';
-import { QUERY_KEYS } from '@/app/_utils/query-utils';
+import { QUERY_KEYS, invalidatePostRelatedQueries } from '@/app/_utils/query-utils';
 
 interface PostItemProps {
   post: Post;
@@ -46,9 +46,7 @@ export default function PostItem({
     mutationFn: () =>
       post.isLiked ? unlikePost(groupId, post.id) : likePost(groupId, post.id),
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: QUERY_KEYS.groupPosts(groupId),
-      });
+      invalidatePostRelatedQueries(queryClient, groupId);
     },
   });
   const handleLikeClick = () => {

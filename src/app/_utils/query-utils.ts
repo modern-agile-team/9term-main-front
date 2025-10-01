@@ -1,4 +1,4 @@
-import { QueryClient } from '@tanstack/react-query';
+import { QueryClient, useQueryClient } from '@tanstack/react-query';
 
 // 쿼리 키 상수 (계층적 구조)
 export const QUERY_KEYS = {
@@ -99,4 +99,31 @@ export const invalidateCommentUpdateQueries = (
   queryClient.invalidateQueries({
     queryKey: QUERY_KEYS.post(groupId, postId),
   });
+};
+
+// 그룹 관련 쿼리 무효화 커스텀 훅
+export const useInvalidateGroupRelatedQueries = () => {
+  const queryClient = useQueryClient();
+  
+  return (groupId: number) => {
+    // 모든 그룹 목록 무효화
+    queryClient.invalidateQueries({
+      queryKey: QUERY_KEYS.groups(),
+    });
+    
+    // 특정 그룹 정보 무효화
+    queryClient.invalidateQueries({
+      queryKey: QUERY_KEYS.group(groupId),
+    });
+    
+    // 그룹 멤버 목록 무효화
+    queryClient.invalidateQueries({
+      queryKey: QUERY_KEYS.groupMembers(groupId),
+    });
+    
+    // 그룹 게시글 목록 무효화
+    queryClient.invalidateQueries({
+      queryKey: QUERY_KEYS.groupPosts(groupId),
+    });
+  };
 };
