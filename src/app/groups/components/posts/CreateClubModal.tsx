@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { createGroup } from '@/app/_apis/group-api';
 import { IMAGE_TYPES } from '@/app/_types/image.types';
-import { invalidateGroupRelatedQueries } from '@/app/_utils/query-utils';
+import { useInvalidateGroupRelatedQueries, QUERY_KEYS } from '@/app/_utils/query-utils';
 import { createPortal } from 'react-dom';
 import { GroupCreateFormData } from '@/app/_types/group.types';
 
@@ -20,6 +20,7 @@ const ClubCreateModal = ({
     groupImage: null,
   });
   const queryClient = useQueryClient();
+  const invalidateGroupQueries = useInvalidateGroupRelatedQueries();
 
   const createGroupMutation = useMutation({
     mutationFn: (formData: GroupCreateFormData | FormData) => {
@@ -36,14 +37,13 @@ const ClubCreateModal = ({
       return createGroup(formData);
     },
     onSuccess: (newGroup) => {
-      // 새로 생성된 그룹의 ID를 사용하여 쿼리 무효화
+      // 새 그룹 생성 시에는 항상 전체 그룹 목록 무효화
+      queryClient.invalidateQueries({
+        queryKey: QUERY_KEYS.groups(),
+      });
+      // 추가로 특정 그룹이 있다면 해당 그룹 관련 쿼리도 무효화
       if (newGroup?.id) {
-        invalidateGroupRelatedQueries(queryClient, newGroup.id);
-      } else {
-        // 그룹 ID가 없는 경우 전체 그룹 목록만 무효화
-        queryClient.invalidateQueries({
-          queryKey: ['groups'],
-        });
+        invalidateGroupQueries(newGroup.id);
       }
       alert('동아리가 성공적으로 생성되었습니다!');
       setFormData({ name: '', description: '', groupImage: null });
