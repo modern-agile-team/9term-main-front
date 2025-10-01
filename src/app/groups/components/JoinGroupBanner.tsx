@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import { groupJoin } from '@/app/_apis/client';
 import { AxiosError } from 'axios';
 import { useInvalidateGroupRelatedQueries } from '@/app/_utils/query-utils';
@@ -17,7 +17,6 @@ export default function JoinGroupBanner({
 }: JoinGroupBannerProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
-  const queryClient = useQueryClient();
   const invalidateGroupQueries = useInvalidateGroupRelatedQueries();
 
   const joinMutation = useMutation({

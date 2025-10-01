@@ -7,7 +7,7 @@ import {
   updateGroup,
   updateGroupImage,
 } from '@/app/_apis/group-api';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import { useInvalidateGroupRelatedQueries } from '@/app/_utils/query-utils';
 import { createPortal } from 'react-dom';
 import { GroupCreateFormData, Group } from '@/app/_types/group.types';
@@ -39,7 +39,6 @@ const ClubEditModal = ({ isOpen, onClose, clubData }: ClubEditModalProps) => {
   const descriptionTextareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const queryClient = useQueryClient();
   const invalidateGroupQueries = useInvalidateGroupRelatedQueries();
   const router = useRouter();
 

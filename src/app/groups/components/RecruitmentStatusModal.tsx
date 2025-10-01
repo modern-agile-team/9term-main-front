@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import { updateRecruitmentStatus } from '@/app/_apis/group-api';
 import { createPortal } from 'react-dom';
 import { useInvalidateGroupRelatedQueries } from '@/app/_utils/query-utils';
@@ -26,7 +26,6 @@ export default function RecruitmentStatusModal({
   currentStatus,
 }: RecruitmentStatusModalProps) {
   const [selectedStatus, setSelectedStatus] = useState(currentStatus);
-  const queryClient = useQueryClient();
   const invalidateGroupQueries = useInvalidateGroupRelatedQueries();
 
   // 모달이 열릴 때마다 현재 상태로 초기화
