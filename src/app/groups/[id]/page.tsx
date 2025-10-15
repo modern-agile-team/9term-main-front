@@ -163,9 +163,22 @@ const GroupPage = () => {
   return (
     <div className="min-h-screen">
       {/* 그룹 헤더 섹션 */}
-      <div className="relative h-80 mx-4 mt-12 rounded-xl bg-gradient-to-r from-blue-500 to-purple-600">
-        {/* 배경 이미지 (API 추가 예정) */}
-        <div className="absolute "></div>
+      <div className="relative h-80 mx-4 mt-12 rounded-xl overflow-visible group">
+        {/* 배너 배경 컨테이너 */}
+        <div className="absolute inset-0 rounded-xl overflow-hidden">
+          {/* 배경 이미지 */}
+          {groupData?.groupBannerUrl ? (
+            <img
+              src={groupData.groupBannerUrl}
+              alt="그룹 배너"
+              className="absolute inset-0 w-full h-full object-cover"
+            />
+          ) : (
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-600"></div>
+          )}
+          <div className="absolute inset-0 "></div>
+        </div>
+        
         
         {/* 그룹 정보 */}
         <div className="relative z-10 h-full flex items-end">
@@ -186,7 +199,7 @@ const GroupPage = () => {
                 )}
               </div>
               
-              {/* 그룹 정보 */}
+              {/* 모집 정보 */}
               <div className="text-white flex-1">
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center space-x-4">
@@ -211,18 +224,6 @@ const GroupPage = () => {
                       )}
                     </div>
                   </div>
-                  {isMember && currentMember?.role === 'MANAGER' && (
-                    <button
-                      className="text-white/80 hover:text-white transition-colors"
-                      onClick={() => {
-                        // 편집 모달 열기 로직 추가 예정
-                      }}
-                    >
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                      </svg>
-                    </button>
-                  )}
                 </div>
                 <p className="text-white/80 mb-5  ">{groupData?.description || '그룹 설명'}</p>
               </div>
@@ -291,6 +292,8 @@ const GroupPage = () => {
         groupId={groupId}
         currentStatus={groupData?.recruitStatus || 'CLOSED'}
       />
+
+
       {/* 가입 배너 */}
       {showJoinBanner && groupData && (
         <JoinGroupBanner

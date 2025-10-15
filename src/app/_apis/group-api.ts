@@ -82,3 +82,11 @@ export const updateRecruitmentStatus = async (
 ): Promise<void> => {
   await patch<void>(`/groups/${groupId}/recruitment`, { recruitStatus });
 };
+
+export const updateGroupBannerImage = async (
+  groupId: number,
+  formData: FormData
+): Promise<Group> => {
+  const res = await put<Group>(`/groups/${groupId}/image/banner`, formData);
+  return res;
+};
