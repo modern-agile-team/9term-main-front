@@ -2,7 +2,8 @@ import { GetGroupsResponse } from '@/app/_types/group.types';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { groupsQueries } from '../_queries';
 import ClubEditModal from './posts/EditClubModal';
-import { useState } from 'react';
+import EditBannerModal from './posts/EditBannerModal';
+import { useState, useEffect, useRef } from 'react';
 import { updateMemberStatus, leaveGroup } from '@/app/_apis/client';
 import { useMyProfile } from '@/app/_services/auth-provider';
 import {
@@ -21,7 +22,10 @@ interface SidebarProps {
 
 export default function Sidebar({ onCreatePost, groupId }: SidebarProps) {
   const [isEditClubModalOpen, setIsEditClubModalOpen] = useState(false);
+  const [isBannerModalOpen, setIsBannerModalOpen] = useState(false);
   const [showMembers, setShowMembers] = useState(false);
+  const [showEditDropdown, setShowEditDropdown] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
   const { data, isLoading, isError } = useQuery(groupsQueries.groups());
   const {
     data: members,
@@ -36,6 +40,23 @@ export default function Sidebar({ onCreatePost, groupId }: SidebarProps) {
   const club = clubs.find((club) => club.id === Number(groupId));
   const currentMember = members?.find((member) => member.userId === me?.userId);
   const isManager = currentMember?.role === 'MANAGER';
+
+  // 드롭다운 외부 클릭 시 닫기
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setShowEditDropdown(false);
+      }
+    };
+
+    if (showEditDropdown) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showEditDropdown]);
   const updateStatusMutation = useMutation({
     mutationFn: ({
       userId,
@@ -112,15 +133,56 @@ export default function Sidebar({ onCreatePost, groupId }: SidebarProps) {
             <span className="mr-2">✏️</span> 새 게시글 작성하기
           </button>
 
-          {/* 동아리 수정 */}
+          {/* 그룹 편집 드롭다운 */}
           {isManager && (
-            <button
-              className="flex items-center justify-center w-full py-2 rounded-lg font-medium bg-gray-100 text-gray-700 hover:bg-gray-200"
-              onClick={() => setIsEditClubModalOpen(true)}
-            >
-              <FaPencilAlt className="w-4 h-4 mr-2" />
-              그룹 편집
-            </button>
+            <div className="relative" ref={dropdownRef}>
+              <button
+                className="flex items-center justify-center w-full py-2 rounded-lg font-medium bg-gray-100 text-gray-700 hover:bg-gray-200"
+                onClick={() => setShowEditDropdown(!showEditDropdown)}
+              >
+                <FaPencilAlt className="w-4 h-4 mr-2" />
+                그룹 편집
+                <svg 
+                  className={`w-4 h-4 ml-2 transition-transform ${showEditDropdown ? 'rotate-180' : ''}`} 
+                  fill="none" 
+                  stroke="currentColor" 
+                  viewBox="0 0 24 24"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+              
+              {/* 드롭다운 메뉴 */}
+              {showEditDropdown && (
+                <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
+                  <button
+                    className="w-full px-4 py-3 text-left text-gray-700 hover:bg-gray-50 flex items-center space-x-3 border-b border-gray-100"
+                    onClick={() => {
+                      setIsEditClubModalOpen(true);
+                      setShowEditDropdown(false);
+                    }}
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                    </svg>
+                    <span>기본 정보</span>
+                  </button>
+                  
+                  <button
+                    className="w-full px-4 py-3 text-left text-gray-700 hover:bg-gray-50 flex items-center space-x-3"
+                    onClick={() => {
+                      setIsBannerModalOpen(true);
+                      setShowEditDropdown(false);
+                    }}
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    <span>배너 수정</span>
+                  </button>
+                </div>
+              )}
+            </div>
           )}
 
           {/* 멤버 버튼 */}
@@ -241,6 +303,14 @@ export default function Sidebar({ onCreatePost, groupId }: SidebarProps) {
           onClose={() => setIsEditClubModalOpen(false)}
         />
       )}
+
+      {/* EditBannerModal 컴포넌트 렌더링 */}
+      <EditBannerModal
+        isOpen={isBannerModalOpen}
+        onClose={() => setIsBannerModalOpen(false)}
+        groupId={groupId}
+        currentBannerUrl={club?.groupBannerUrl}
+      />
     </div>
   );
 }

@@ -9,6 +9,7 @@ export interface Group {
   name: string;
   description: string;
   groupImageUrl: string | null;
+  groupBannerUrl: string | null;
   createdAt: string;
   memberCount: string;
   isRecruiting: boolean;
