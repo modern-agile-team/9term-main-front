@@ -65,7 +65,7 @@ export default function Sidebar({ onCreatePost, groupId }: SidebarProps) {
       userId: number;
       action: 'APPROVE' | 'REJECT';
     }) => updateMemberStatus(groupId, userId, action),
-    onSuccess: (data, variables) => {
+    onSuccess: () => {
       alert(`멤버 상태 변경 성공`);
       queryClient.invalidateQueries({
         queryKey: QUERY_KEYS.groupMembers(groupId),

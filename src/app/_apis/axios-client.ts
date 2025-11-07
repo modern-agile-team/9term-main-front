@@ -49,7 +49,7 @@ apiClient.interceptors.response.use(
           error.config.headers.Authorization = `Bearer ${newToken}`;
           return apiClient(error.config);
         }
-      } catch (refreshError) {
+      } catch (_refreshError) {
         // refreshToken도 만료된 경우 로그아웃
         if (typeof window !== 'undefined') {
           localStorage.removeItem('token');

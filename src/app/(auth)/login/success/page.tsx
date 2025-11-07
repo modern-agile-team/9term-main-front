@@ -1,20 +1,15 @@
 'use client';
 
 import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import { useAuth } from '@/app/_services/auth-provider';
 
 export default function LoginSuccessPage() {
-  const router = useRouter();
   const { login } = useAuth();
 
   useEffect(() => {
     // URL Fragment에서 accessToken 추출
     const hash = window.location.hash;
     const token = new URLSearchParams(hash.replace('#', '')).get('accessToken');
-    
-    console.log('Login Success - URL hash:', hash);
-    console.log('Login Success - Extracted token:', token);
     
     if (token) {
       // 토큰을 localStorage에 저장
