@@ -11,6 +11,7 @@ const defaultHeaders = {
 const apiClient: AxiosInstance = axios.create({
   baseURL,
   headers: defaultHeaders,
+  withCredentials: true, // refreshToken 쿠키 자동 전송
 });
 
 apiClient.interceptors.request.use(
@@ -35,12 +36,25 @@ apiClient.interceptors.response.use(
   (response) => {
     return response;
   },
-  (error) => {
+  async (error) => {
     if (axios.isAxiosError(error) && error.response?.status === 401) {
-      // Handle unauthorized access
-      if (typeof window !== 'undefined') {
-        localStorage.removeItem('token');
-        window.location.href = '/login';
+      // accessToken 만료 시 자동 재발급
+      try {
+        const refreshRes = await axios.post(`${baseURL}/auth/refresh`, {}, { withCredentials: true });
+        const newToken = refreshRes.data.data.accessToken;
+        localStorage.setItem('token', newToken);
+        
+        // 기존 요청에 새 토큰 적용하여 재시도
+        if (error.config) {
+          error.config.headers.Authorization = `Bearer ${newToken}`;
+          return apiClient(error.config);
+        }
+      } catch {
+        // refreshToken도 만료된 경우 로그아웃
+        if (typeof window !== 'undefined') {
+          localStorage.removeItem('token');
+          window.location.href = '/login';
+        }
       }
     }
     return Promise.reject(error);
