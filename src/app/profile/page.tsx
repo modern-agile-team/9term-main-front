@@ -5,27 +5,90 @@ import { deleteMyProfileImage, updateMyProfileImage, getUserGroups } from '../_a
 import { QUERY_KEYS } from '../_utils/query-utils';
 import { useQueryClient } from '@tanstack/react-query';
 import { useState, useRef } from 'react';
-import { IoTrashOutline, IoPersonOutline, IoImagesOutline, IoCheckmarkCircle, IoAlertCircleOutline, IoArrowForwardOutline, IoPeopleOutline } from 'react-icons/io5';
+import { IoTrashOutline, IoPersonOutline, IoImagesOutline, IoCheckmarkCircle, IoAlertCircleOutline, IoArrowForwardOutline, IoPeopleOutline, IoCreateOutline, IoCheckmarkOutline, IoCloseOutline } from 'react-icons/io5';
 import { IMAGE_TYPES } from '../_types/image.types';
 import type { ApiError } from '../_types/error.types';
 import { MyGroup } from '../_types/mygroup.types';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import { namechange } from '../_apis/user-api';
 
 export default function ProfilePage() {
   const { data: user, isLoading, isError } = useMyProfile();
   const queryClient = useQueryClient();
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const nameInputRef = useRef<HTMLInputElement>(null);
   const [isDragOver, setIsDragOver] = useState(false);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const [isEditingName, setIsEditingName] = useState(false);
+  const [editingName, setEditingName] = useState('');
 
   // 내 그룹 목록 가져오기
   const { data: myGroups, isLoading: groupsLoading, isError: groupsError } = useQuery({
     queryKey: ['my-groups'],
     queryFn: getUserGroups,
   });
-  
+
+  const namechangeMutation = useMutation({
+    mutationFn: (name: string) => {
+      return namechange(name);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: QUERY_KEYS.myProfile(),
+      });
+      setIsEditingName(false);
+      setEditingName('');
+      alert('이름이 성공적으로 변경되었습니다!');
+    },
+    onError: (error: ApiError) => {
+      alert(
+        error?.response?.data?.message ||
+          error?.message ||
+          '이름 변경에 실패했습니다.'
+      );
+    },
+  });
+
+  const handleNameChange = (name: string) => {
+    if (!user) return;
+    if (!name.trim()) {
+      alert('이름을 입력해주세요.');
+      return;
+    }
+    if (name === user.name) {
+      setIsEditingName(false);
+      setEditingName('');
+      return;
+    }
+    namechangeMutation.mutate(name.trim());
+  };
+
+  const handleStartEditName = () => {
+    if (!user) return;
+    setEditingName(user.name);
+    setIsEditingName(true);
+    // 입력 필드에 포커스
+    setTimeout(() => {
+      nameInputRef.current?.focus();
+      nameInputRef.current?.select();
+    }, 0);
+  };
+
+  const handleCancelEditName = () => {
+    setIsEditingName(false);
+    setEditingName('');
+  };
+
+  const handleNameKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      handleNameChange(editingName);
+    } else if (e.key === 'Escape') {
+      handleCancelEditName();
+    }
+  };
+
   const deleteProfileImageMutation = useMutation({
     mutationFn: () => {
       return deleteMyProfileImage();
@@ -237,9 +300,55 @@ export default function ProfilePage() {
 
                   {/* 사용자 정보 */}
                   <div className="space-y-4">
-                    <h2 className="text-3xl font-bold text-gray-800">
-                      {user.name}
-                    </h2>
+                    <div className="flex items-center justify-center gap-2">
+                      {isEditingName ? (
+                        <div className="flex items-center gap-2 justify-center">
+                          <input
+                            ref={nameInputRef}
+                            type="text"
+                            value={editingName}
+                            onChange={(e) => setEditingName(e.target.value)}
+                            onKeyDown={handleNameKeyDown}
+                            disabled={namechangeMutation.isPending}
+                            className="w-auto min-w-[100px] px-1 py-1 text-lg font-bold text-gray-800 text-center border-2 border-purple-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
+                            maxLength={20}
+                          />
+                          <button
+                            onClick={() => handleNameChange(editingName)}
+                            disabled={namechangeMutation.isPending || !editingName.trim()}
+                            className="p-2 bg-green-500 hover:bg-green-600 disabled:bg-gray-300 text-white rounded-lg transition-colors duration-200 hover:scale-110 disabled:hover:scale-100 shadow-md"
+                            title="저장"
+                          >
+                            {namechangeMutation.isPending ? (
+                              <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                            ) : (
+                              <IoCheckmarkOutline className="w-5 h-5" />
+                            )}
+                          </button>
+                          <button
+                            onClick={handleCancelEditName}
+                            disabled={namechangeMutation.isPending}
+                            className="p-2 bg-red-500 hover:bg-red-600 disabled:bg-gray-300 text-white rounded-lg transition-colors duration-200 hover:scale-110 disabled:hover:scale-100 shadow-md"
+                            title="취소"
+                          >
+                            <IoCloseOutline className="w-5 h-5" />
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="relative flex items-center justify-center group">
+                          <h2 className="text-3xl font-bold text-gray-800">
+                            {user.name}
+                          </h2>
+                          <button
+                            onClick={handleStartEditName}
+                            className="absolute left-full ml-2 opacity-0 group-hover:opacity-100 p-1.5 bg-gray-100 hover:bg-purple-100 text-gray-600 hover:text-purple-600 rounded-lg transition-all duration-200 hover:scale-110"
+                            title="이름 변경"
+                          >
+                            <IoCreateOutline className="w-5 h-5" />
+                          </button>
+                        </div>
+                      )}
+                    </div>
                     <div className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-purple-100 to-pink-100 text-purple-700 rounded-full text-sm font-medium">
                       <span className="mr-1">@</span>
                       {user.username}
