@@ -28,3 +28,7 @@ export const getUserGroups = async (): Promise<MyGroupsResponse> => {
   const res = await get<MyGroupsResponse>(`/users/me/groups`);
   return res;
 };
+export const namechange = async (name: string): Promise<User> => {
+  const res = await patch<User>(`/users/me/name`, { name });
+  return res;
+};
