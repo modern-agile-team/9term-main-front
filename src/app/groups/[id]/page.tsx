@@ -7,7 +7,7 @@ import BoardHeader from '@/app/groups/components/BoardHeader';
 import Sidebar from '@/app/groups/components/Sidebar';
 import PostList from '@/app/groups/components/posts/PostList';
 import Calendar from '@/app/groups/components/Calendar';
-import ActivityStats from '@/app/groups/components/ActivityStats';
+//import ActivityStats from '@/app/groups/components/ActivityStats'; 통계계
 import Gallery from '@/app/groups/components/Gallery';
 import PostCreateModal from '@/app/groups/components/posts/PostModal'; // 통합 모달
 import DeletePostModal from '@/app/groups/components/posts/DeletePostModal';
