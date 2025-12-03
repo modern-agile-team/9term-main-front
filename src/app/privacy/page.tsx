@@ -59,7 +59,7 @@ export default function PrivacyPage() {
         제 4조 개인정보의 위탁처리
       </h2>
       <ul className="list-disc pl-6 mb-4">
-        <li>수탁업체: (주)카카오, 구글, 깃허브</li>
+        <li>수탁업체: (주)카카오, 구글 소셜로그인</li>
         <li>
           위탁업무: 서비스 제공을 위한, 이미지, 이메일, 이름(닉네임),
           고유식별번호 수집
@@ -119,9 +119,9 @@ export default function PrivacyPage() {
         제 10조 개인정보 보호 책임자 및 개인정보 침해 문의
       </h2>
       <ul className="list-disc pl-6 mb-4">
-        <li>부서명: front-end팀</li>
-        <li>담당자: 이희민 (front-end 팀장)</li>
-        <li>이메일: modonggu@gmail.com</li>
+        <li>부서명: 모동구팀</li>
+        <li>담당자: 권혁진 </li>
+        <li>이메일: kweon5025@gmail.com</li>
         <li>
           기타 개인정보 침해에 대한 피해 구제, 상담은 아래의 기관에 문의하실 수
           있습니다.
