@@ -38,7 +38,7 @@ export default function HomePage() {
 
   return (
     <div className="max-w-6xl mx-auto px-1 pt-16">
-      {/* 임시 공지사항 */}
+      {/* 임시 공지사항
       <div className="mb-4">
         <div className="bg-white border border-gray-200 px-4 py-3 rounded-lg shadow-sm">
           <div className="flex items-center justify-between">
@@ -54,7 +54,7 @@ export default function HomePage() {
             <span className="text-gray-500 text-xs">방금 전</span>
           </div>
         </div>
-      </div>
+      </div> */}
 
       <section className="relative rounded-2xl h-[340px] md:h-[400px] flex flex-col justify-center items-center text-white text-center shadow-lg mb-8 overflow-hidden">
         {heroImages.map((img, idx) => (
