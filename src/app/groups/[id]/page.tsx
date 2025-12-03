@@ -144,8 +144,8 @@ const GroupPage = () => {
         return <Gallery groupId={groupId} />;
       case '일정':
         return <Calendar />;
-      case '통계':
-        return <ActivityStats />;
+     // case '통계':
+     //   return <ActivityStats />;
       default:
         if (isLoading) return <div>로딩 중...</div>;
         if (isError) return <div>게시글을 불러오지 못했습니다.</div>;

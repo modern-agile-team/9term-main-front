@@ -211,7 +211,7 @@ export default function IntroPage() {
                   <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-cyan-600 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 </button>
               </Link>
-              <Link href="/register">
+              <Link href="/login">
                 <button className="group px-8 py-4 bg-white/10 backdrop-blur-md hover:bg-white/20 text-white font-semibold rounded-2xl transition-all duration-300 text-lg border border-white/20 shadow-xl hover:shadow-2xl transform hover:scale-105">
                   <span className="flex items-center gap-2">
                     회원가입

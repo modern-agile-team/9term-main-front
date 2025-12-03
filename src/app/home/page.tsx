@@ -112,7 +112,7 @@ export default function HomePage() {
           </h2>
           <div className="overflow-x-auto scrollbar-hide">
             <div className="grid grid-cols-4 gap-4 min-w-max px-2 py-2">
-              {recommendedClubs.slice(0, 4).map((club) => (
+              {recommendedClubs.slice(0, 3).map((club) => (
                 <ClubCard
                   key={club.id}
                   club={club}
