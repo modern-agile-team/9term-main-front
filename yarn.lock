@@ -32,7 +32,7 @@ __metadata:
     lucide-react: "npm:^0.486.0"
     mkcert: "npm:^3.2.0"
     msw: "npm:^2.7.3"
-    next: "npm:15.3.3"
+    next: "npm:^15.3.2"
     postcss: "npm:^8"
     react: "npm:^19.1.0"
     react-dom: "npm:^19.1.0"
@@ -6181,7 +6181,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"next@npm:15.3.3":
+"next@npm:^15.3.2":
   version: 15.3.3
   resolution: "next@npm:15.3.3"
   dependencies:
