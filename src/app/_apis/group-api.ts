@@ -92,5 +92,5 @@ export const updateGroupBannerImage = async (
 };
 
 export const updateManager = async (groupId: number,Id: number): Promise<void> => {
-  await patch<void>(`/groups/${groupId}/members/${Id}/role`, { role: 'MANAGER' });
+  await post<void>(`/groups/${groupId}/members/${Id}/role`, { role: 'MANAGER' });
 };
