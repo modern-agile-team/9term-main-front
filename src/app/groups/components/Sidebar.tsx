@@ -4,14 +4,14 @@ import { groupsQueries } from '../_queries';
 import ClubEditModal from './posts/EditClubModal';
 import EditBannerModal from './posts/EditBannerModal';
 import { useState, useEffect, useRef } from 'react';
-import { updateMemberStatus, leaveGroup } from '@/app/_apis/client';
+import { updateMemberStatus, leaveGroup, updateManager } from '@/app/_apis/client';
 import { useMyProfile } from '@/app/_services/auth-provider';
 import {
   useMembership,
   useGroupMembers,
 } from '@/app/_services/membership-provider';
 import { CiCircleCheck, CiCircleRemove } from 'react-icons/ci';
-import { FaPencilAlt } from 'react-icons/fa';
+import { FaPencilAlt, FaCrown } from 'react-icons/fa';
 import { QUERY_KEYS } from '@/app/_utils/query-utils';
 import { useRouter } from 'next/navigation';
 
@@ -90,6 +90,20 @@ export default function Sidebar({ onCreatePost, groupId }: SidebarProps) {
     onError: (error) => {
       alert('동아리 탈퇴에 실패했습니다.');
       console.error('Leave group error:', error);
+    },
+  });
+
+  const updateManagerMutation = useMutation({
+    mutationFn: (userId: number) => updateManager(groupId, userId),
+    onSuccess: () => {
+      alert('매니저 권한이 부여되었습니다.');
+      queryClient.invalidateQueries({
+        queryKey: QUERY_KEYS.groupMembers(groupId),
+      });
+    },
+    onError: (error: any) => {
+      alert(error?.response?.data?.message || '매니저 권한 부여에 실패했습니다.');
+      console.error('Update manager error:', error);
     },
   });
 
@@ -254,6 +268,7 @@ export default function Sidebar({ onCreatePost, groupId }: SidebarProps) {
                                     })
                                   }
                                   disabled={updateStatusMutation.isPending}
+                                  title="승인"
                                 >
                                   <CiCircleCheck className="w-6 h-6 hover:text-green-500 transition" />
                                 </button>
@@ -265,10 +280,34 @@ export default function Sidebar({ onCreatePost, groupId }: SidebarProps) {
                                     })
                                   }
                                   disabled={updateStatusMutation.isPending}
+                                  title="거절"
                                 >
                                   <CiCircleRemove className="w-6 h-6 hover:text-red-500 transition" />
                                 </button>
                               </div>
+                            )}
+
+                          {/* 매니저만 일반 회원을 매니저로 승격 버튼 표시 */}
+                          {isManager &&
+                            member.status === 'APPROVED' &&
+                            member.role !== 'MANAGER' &&
+                            member.userId !== me?.userId && (
+                              <button
+                                onClick={() => {
+                                  if (
+                                    confirm(
+                                      `${member.name}님에게 매니저 권한을 부여하시겠습니까?`
+                                    )
+                                  ) {
+                                    updateManagerMutation.mutate(member.userId);
+                                  }
+                                }}
+                                disabled={updateManagerMutation.isPending}
+                                className="p-1 rounded hover:bg-yellow-100 transition"
+                                title="매니저 권한 부여"
+                              >
+                                <FaCrown className="w-4 h-4 text-yellow-600 hover:text-yellow-700" />
+                              </button>
                             )}
                         </div>
                       </div>

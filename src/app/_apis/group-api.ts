@@ -90,3 +90,7 @@ export const updateGroupBannerImage = async (
   const res = await put<Group>(`/groups/${groupId}/image/banner`, formData);
   return res;
 };
+
+export const updateManager = async (groupId: number,Id: number): Promise<void> => {
+  await patch<void>(`/groups/${groupId}/members/${Id}/role`, { role: 'MANAGER' });
+};
