@@ -303,10 +303,10 @@ export default function Sidebar({ onCreatePost, groupId }: SidebarProps) {
                                   }
                                 }}
                                 disabled={updateManagerMutation.isPending}
-                                className="p-1 rounded hover:bg-yellow-100 transition"
+                                className="p-1 rounded hover:bg-gray-100 transition"
                                 title="매니저 권한 부여"
                               >
-                                <FaCrown className="w-4 h-4 text-yellow-600 hover:text-yellow-700" />
+                                <span className="text-lg grayscale hover:grayscale-0 transition-all">🌟</span>
                               </button>
                             )}
                         </div>
