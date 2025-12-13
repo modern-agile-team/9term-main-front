@@ -11,7 +11,7 @@ import {
   useGroupMembers,
 } from '@/app/_services/membership-provider';
 import { CiCircleCheck, CiCircleRemove } from 'react-icons/ci';
-import { FaPencilAlt, FaCrown } from 'react-icons/fa';
+import { FaPencilAlt } from 'react-icons/fa';
 import { QUERY_KEYS } from '@/app/_utils/query-utils';
 import { useRouter } from 'next/navigation';
 
