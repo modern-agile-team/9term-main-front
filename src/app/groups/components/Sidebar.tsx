@@ -319,20 +319,22 @@ export default function Sidebar({ onCreatePost, groupId }: SidebarProps) {
         </div>
       )}
 
-      {/* 동아리 탈퇴 버튼 */}
-      <div className="mt-auto pt-6">
-        <button
-          className="w-full px-4 py-2 text-red-600 border border-red-600 rounded-lg hover:bg-red-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-          onClick={() => {
-            if (confirm('정말로 동아리를 탈퇴하시겠습니까?')) {
-              leaveGroupMutation.mutate();
-            }
-          }}
-          disabled={leaveGroupMutation.isPending}
-        >
-          {leaveGroupMutation.isPending ? '탈퇴 중...' : '동아리 탈퇴하기'}
-        </button>
-      </div>
+      {/* 동아리 탈퇴 버튼 - 멤버만 표시 */}
+      {isMember && (
+        <div className="mt-auto pt-6">
+          <button
+            className="w-full px-4 py-2 text-red-600 border border-red-600 rounded-lg hover:bg-red-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            onClick={() => {
+              if (confirm('정말로 동아리를 탈퇴하시겠습니까?')) {
+                leaveGroupMutation.mutate();
+              }
+            }}
+            disabled={leaveGroupMutation.isPending}
+          >
+            {leaveGroupMutation.isPending ? '탈퇴 중...' : '동아리 탈퇴하기'}
+          </button>
+        </div>
+      )}
 
       {/* ClubEditModal 컴포넌트 렌더링 */}
       {isEditClubModalOpen && club && (
